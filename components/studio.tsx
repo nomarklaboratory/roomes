@@ -838,8 +838,8 @@ export default function Studio() {
             <span>
               <strong>Make it your own</strong>Swap the furniture, add little
               extras, and drag items into place. Zoom or go fullscreen for a
-              closer look. Choose Inside to explore at a 170 cm person's eye
-              level, then Sit in chair to try the seated view.
+              closer look. Choose Inside to explore at a 170 cm person&apos;s
+              eye level, then Sit in chair to try the seated view.
             </span>
           </li>
           <li>

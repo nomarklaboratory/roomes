@@ -24,7 +24,7 @@ import {
   type Action,
 } from "@/lib/workspace";
 import { RoomPreview } from "./room-preview";
-import type { CameraView } from "@/types/viewer";
+import type { CameraView, Posture } from "@/types/viewer";
 import { Icon } from "./icon";
 import { PlacementControls } from "./placement-controls";
 
@@ -80,8 +80,14 @@ export default function Studio() {
   const rental = quote(setup);
   const [category, setCategory] = useState<Category>("desk");
   const [view, setView] = useState<CameraView>("room");
+  const [posture, setPosture] = useState<Posture>("standing");
   const [previewExpanded, setPreviewExpanded] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
+  const sitInChair = () => {
+    setPosture("seated");
+    setView("walk");
+    setSelected(null);
+  };
   const [step, setStep] = useState<Step>("design");
   const [loaded, setLoaded] = useState(false);
   const [storageWarning, setStorageWarning] = useState(false);
@@ -293,6 +299,7 @@ export default function Studio() {
                     aria-label="First-person view"
                     aria-pressed={view === "walk"}
                     onClick={() => {
+                      setPosture("standing");
                       setView("walk");
                       setSelected(null);
                     }}
@@ -307,6 +314,9 @@ export default function Studio() {
                 <RoomPreview
                   setup={setup}
                   view={view}
+                  posture={posture}
+                  onPostureChange={setPosture}
+                  onSit={sitInChair}
                   onSelect={selectInScene}
                   selected={selected}
                   editable={step === "design"}
@@ -386,6 +396,7 @@ export default function Studio() {
                 selected={selected}
                 onChange={change}
                 onClose={() => setSelected(null)}
+                onSit={sitInChair}
               />
             )}
             <div className="below-scene">

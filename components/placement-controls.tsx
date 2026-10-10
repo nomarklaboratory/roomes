@@ -7,17 +7,20 @@ import {
 } from "@/lib/workspace";
 import { positionOf } from "@/lib/placement";
 import { Icon } from "./icon";
+import { SitInChairButton } from "./sit-in-chair-button";
 
 export function PlacementControls({
   setup,
   selected,
   onChange,
   onClose,
+  onSit,
 }: {
   setup: Setup;
   selected: string;
   onChange: (action: Action) => void;
   onClose: () => void;
+  onSit: () => void;
 }) {
   const item = setup.items.find((i) => i.id === selected);
   const product =
@@ -56,6 +59,9 @@ export function PlacementControls({
         </div>
       </div>
       <div className="placement-tools">
+        {selected === "chair" && (
+          <SitInChairButton onSit={onSit} label="Sit in this chair" />
+        )}
         <div className="nudge-buttons" aria-label={`Move ${product.name}`}>
           {directions.map(({ label, icon, x, z }) => (
             <button

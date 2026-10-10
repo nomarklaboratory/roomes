@@ -67,6 +67,7 @@ Room scans, accurate fit guarantees, live commerce, and a production asset backe
 
 - Calibrate a 170 cm viewer using representative eye levels: 159 cm standing and 124 cm seated on a 46 cm seat.
 - Sit in the selected chair, follow its placement, pause walking while seated, and stand up into clear floor space. Retain drag-to-look, recenter, and exit.
+- Expose direct seated entry in the overview and selected chair's movement controls; keep the Inside button as standing entry.
 - Ground chair casters and desk feet, keep the rug 8 mm thick, and clamp bevel radii to avoid inflated thin surfaces. Validate floor contact and seat height in compressed assets.
 - Provide visible zoom controls for overview and first-person cameras; fullscreen uses the browser API with viewport expansion as a fallback and a visible exit.
 - Version revised models/thumbnails to avoid stale caches; preserve rental state, prices, and item placement.

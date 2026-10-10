@@ -28,6 +28,7 @@ import {
 import { RoomFallback } from "./room-fallback";
 import type { Posture, SceneProps } from "@/types/viewer";
 import { PreviewTools } from "./preview-tools";
+import { SitInChairButton } from "./sit-in-chair-button";
 
 function Model({
   id,
@@ -601,7 +602,7 @@ export default function RoomScene(props: SceneProps) {
   const onReady = useCallback(() => setReady(true), []);
   const walkInput = useRef(newWalkInput());
   const wrapper = useRef<HTMLDivElement>(null);
-  const [posture, setPosture] = useState<Posture>("standing");
+  const { posture } = props;
   const [zoomSteps, setZoomSteps] = useState(0);
   const [fov, setFov] = useState(65);
   const looking = useRef<{ pointer: number; x: number; y: number } | null>(
@@ -748,6 +749,11 @@ export default function RoomScene(props: SceneProps) {
           else setZoomSteps((value) => value + direction);
         }}
       />
+      {!walking && ready && (
+        <div className="absolute bottom-10 left-5 z-[3]">
+          <SitInChairButton onSit={props.onSit} />
+        </div>
+      )}
       {walking && ready && (
         <WalkControls
           input={walkInput}
@@ -756,7 +762,7 @@ export default function RoomScene(props: SceneProps) {
           posture={posture}
           onPostureChange={(next) => {
             walkInput.current.keys.clear();
-            setPosture(next);
+            props.onPostureChange(next);
           }}
         />
       )}

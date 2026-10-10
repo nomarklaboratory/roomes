@@ -6,14 +6,14 @@
   "assets": {
     "electric-desk": {
       "path": "/models/electric-desk.glb",
-      "version": 1,
+      "version": 2,
       "method": "parametric-original",
       "family": "desk",
       "bytes": 14028,
       "triangles": 2700,
       "bounds": [
         1.2000000476837158,
-        0.730000000745058,
+        0.7525000007450581,
         0.6000000238418579
       ],
       "review": "approved-stylized",
@@ -21,14 +21,14 @@
     },
     "wooden-desk": {
       "path": "/models/wooden-desk.glb",
-      "version": 1,
+      "version": 2,
       "method": "parametric-original",
       "family": "desk",
       "bytes": 15688,
       "triangles": 2592,
       "bounds": [
         1.6180000111460686,
-        0.730000000745058,
+        0.7525000007450581,
         0.800000011920929
       ],
       "review": "approved-stylized",
@@ -36,14 +36,14 @@
     },
     "ergonomic-chair": {
       "path": "/models/ergonomic-chair.glb",
-      "version": 1,
+      "version": 2,
       "method": "parametric-original",
       "family": "chair",
-      "bytes": 23608,
+      "bytes": 23680,
       "triangles": 4624,
       "bounds": [
         0.6049999976158142,
-        1.1430000014305115,
+        1.0875000014305116,
         0.5966149252692932
       ],
       "review": "approved-stylized",
@@ -51,14 +51,14 @@
     },
     "task-chair": {
       "path": "/models/task-chair.glb",
-      "version": 1,
+      "version": 2,
       "method": "parametric-original",
       "family": "chair",
-      "bytes": 16220,
+      "bytes": 16292,
       "triangles": 2160,
       "bounds": [
         0.6049999976158142,
-        0.8817415067815142,
+        0.8262415067815143,
         0.5966149252692932
       ],
       "review": "approved-stylized",

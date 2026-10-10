@@ -26,7 +26,8 @@ import {
   type WalkInput,
 } from "./first-person";
 import { RoomFallback } from "./room-fallback";
-import type { SceneProps } from "./room-preview";
+import type { Posture, SceneProps } from "@/types/viewer";
+import { PreviewTools } from "./preview-tools";
 
 function Model({
   id,
@@ -280,7 +281,7 @@ function Block({
   return (
     <RoundedBox
       args={size}
-      radius={radius}
+      radius={Math.min(radius, Math.min(...size) / 2 - 0.00001)}
       smoothness={2}
       position={pos}
       rotation={rotation}
@@ -296,15 +297,15 @@ function Room({ color }: { color: string }) {
     <group>
       <Block
         size={[3.6, 0.12, 3.1]}
-        pos={[0, -0.07, 0]}
+        pos={[0, -0.06, 0]}
         color="#dfd0b8"
         radius={0.035}
       />
       {Array.from({ length: 12 }, (_, i) => (
         <Block
           key={i}
-          size={[0.006, 0.003, 3.03]}
-          pos={[-1.63 + i * 0.297, -0.006, 0]}
+          size={[0.006, 0.001, 3.03]}
+          pos={[-1.63 + i * 0.297, 0.0005, 0]}
           color="#cbb89c"
           radius={0.001}
         />
@@ -409,15 +410,15 @@ function Room({ color }: { color: string }) {
       {/* A woven rug and storage stool give the room a lived-in scale. */}
       <Block
         size={[2.2, 0.008, 1.6]}
-        pos={[0.15, 0.006, 0.47]}
+        pos={[0.15, 0.004, 0.47]}
         color="#ece5d4"
         radius={0.07}
       />
       {Array.from({ length: 14 }, (_, i) => (
         <Block
           key={i}
-          size={[2.12, 0.002, 0.009]}
-          pos={[0.15, 0.012, -0.26 + i * 0.11]}
+          size={[2.12, 0.001, 0.009]}
+          pos={[0.15, 0.0085, -0.26 + i * 0.11]}
           color="#ddd3bf"
           radius={0.001}
         />
@@ -432,11 +433,29 @@ function Room({ color }: { color: string }) {
     </group>
   );
 }
-function Camera({ view }: { view: SceneProps["view"] }) {
+function Camera({
+  view,
+  zoomSteps,
+}: {
+  view: SceneProps["view"];
+  zoomSteps: number;
+}) {
   const ref = useRef<React.ComponentRef<typeof CameraControls>>(null);
+  const lastZoom = useRef(zoomSteps);
   useEffect(() => {
-    const update = () => {
+    const delta = zoomSteps - lastZoom.current;
+    lastZoom.current = zoomSteps;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (delta) void ref.current?.dolly(delta * 0.7, !reduced);
+  }, [zoomSteps]);
+  useEffect(() => {
+    let lastFactor = 0;
+    const update = (event?: Event) => {
       const factor = window.matchMedia("(max-width: 700px)").matches ? 1.2 : 1;
+      if (event && factor === lastFactor) return;
+      lastFactor = factor;
       const reduced = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
       ).matches;
@@ -482,10 +501,16 @@ function Contents({
   editable,
   onMove,
   walkInput,
+  posture,
+  fov,
+  zoomSteps,
   onReady,
 }: SceneProps & {
   onReady: () => void;
   walkInput: React.RefObject<WalkInput>;
+  posture: Posture;
+  fov: number;
+  zoomSteps: number;
 }) {
   useEffect(() => {
     onReady();
@@ -559,9 +584,14 @@ function Contents({
         resolution={256}
       />
       {view === "walk" ? (
-        <FirstPersonCamera setup={setup} input={walkInput} />
+        <FirstPersonCamera
+          setup={setup}
+          input={walkInput}
+          posture={posture}
+          fov={fov}
+        />
       ) : (
-        <Camera view={view} />
+        <Camera view={view} zoomSteps={zoomSteps} />
       )}
     </group>
   );
@@ -571,6 +601,9 @@ export default function RoomScene(props: SceneProps) {
   const onReady = useCallback(() => setReady(true), []);
   const walkInput = useRef(newWalkInput());
   const wrapper = useRef<HTMLDivElement>(null);
+  const [posture, setPosture] = useState<Posture>("standing");
+  const [zoomSteps, setZoomSteps] = useState(0);
+  const [fov, setFov] = useState(65);
   const looking = useRef<{ pointer: number; x: number; y: number } | null>(
     null,
   );
@@ -597,7 +630,9 @@ export default function RoomScene(props: SceneProps) {
       role={walking ? "region" : undefined}
       aria-label={
         walking
-          ? "First-person workspace. Drag to look, use WASD or arrow keys to walk, Escape to exit."
+          ? posture === "seated"
+            ? "First-person workspace. Seated in your chair; drag to look, stand up to walk, Escape to exit."
+            : "First-person workspace. Drag to look, use WASD or arrow keys to walk, Escape to exit."
           : undefined
       }
       onKeyDown={
@@ -611,7 +646,8 @@ export default function RoomScene(props: SceneProps) {
               const direction = walkKey(e.key);
               if (direction) {
                 e.preventDefault();
-                walkInput.current.keys.add(direction);
+                if (posture === "standing")
+                  walkInput.current.keys.add(direction);
               }
             }
           : undefined
@@ -693,18 +729,39 @@ export default function RoomScene(props: SceneProps) {
               editable={props.editable && !walking}
               onReady={onReady}
               walkInput={walkInput}
+              posture={posture}
+              fov={fov}
+              zoomSteps={zoomSteps}
             />
           </Suspense>
         </Canvas>
       </div>
+      <PreviewTools
+        container={wrapper}
+        expanded={props.previewExpanded}
+        onExpandedChange={props.onPreviewExpandedChange}
+        onZoom={(direction) => {
+          if (walking)
+            setFov((value) =>
+              Math.max(35, Math.min(85, value - direction * 5)),
+            );
+          else setZoomSteps((value) => value + direction);
+        }}
+      />
       {walking && ready && (
-        <WalkControls input={walkInput} onExit={props.onExitWalk} />
+        <WalkControls
+          input={walkInput}
+          onExit={props.onExitWalk}
+          setup={props.setup}
+          posture={posture}
+          onPostureChange={(next) => {
+            walkInput.current.keys.clear();
+            setPosture(next);
+          }}
+        />
       )}
       {!ready && (
-        <div
-          className="loading-panel"
-          style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
-        >
+        <div className="loading-panel pointer-events-none absolute inset-0">
           Opening your little room…
         </div>
       )}

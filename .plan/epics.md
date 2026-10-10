@@ -63,6 +63,15 @@ Room scans, accurate fit guarantees, live commerce, and a production asset backe
 - Keep review read-only; retain pricing, product constraints, device saving, and a placement-aware 2D fallback.
 - Acceptance: real mouse/touch dragging, undo, reload persistence, and first-person navigation work on desktop/mobile, with no overflow or browser errors.
 
+## E10 — Human scale and preview controls
+
+- Calibrate a 170 cm viewer using representative eye levels: 159 cm standing and 124 cm seated on a 46 cm seat.
+- Sit in the selected chair, follow its placement, pause walking while seated, and stand up into clear floor space. Retain drag-to-look, recenter, and exit.
+- Ground chair casters and desk feet, keep the rug 8 mm thick, and clamp bevel radii to avoid inflated thin surfaces. Validate floor contact and seat height in compressed assets.
+- Provide visible zoom controls for overview and first-person cameras; fullscreen uses the browser API with viewport expansion as a fallback and a visible exit.
+- Version revised models/thumbnails to avoid stale caches; preserve rental state, prices, and item placement.
+- Acceptance: desktop/mobile zoom, fullscreen, fallback exit, seated navigation, and rental regression checks pass; visual inspection confirms a flat rug and visible chair wheels.
+
 ## Execution record
 
 - E01–E05 implemented: catalog, assets, presets, configuration, and simulated checkout.
@@ -76,3 +85,5 @@ Room scans, accurate fit guarantees, live commerce, and a production asset backe
 - Vercel onboarding guide followed: global CLI 63.1.2 authenticated, Vercel guidance installed/enabled, shared MCP endpoint configured, and MCP OAuth succeeded. Newly installed MCP tools require a client reload before their read-only documentation/team checks can run.
 - E09 implemented: surface-bounded dragging, precise movement/reset, placement-aware fallback, saved layout migration, and first-person walking/look/recenter/exit.
 - Eight domain tests, nine asset validations, and eight desktop/mobile browser tests pass, including actual touch/mouse dragging, cancellation recovery, atomic undo, persistence, and first-person navigation. Typecheck, lint, formatting, and the production build also pass.
+- E10 implemented: 170 cm standing/seated profile, seat-aware camera placement, flat rug and grounded furniture, model/thumbnail versions, zoom, and native/fallback fullscreen.
+- Ten domain tests and nine asset validations pass. Desktop/mobile browser checks cover all twelve scenarios, including seated walking suppression, zoom, fullscreen, Escape restoration, and rental regressions. Typecheck, lint, and formatting pass; visual inspection confirms the rug no longer hides the chair base.

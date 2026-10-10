@@ -2,6 +2,7 @@ import * as T from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
 import { mkdir, writeFile } from "node:fs/promises";
+import { catalog } from "../lib/catalog.ts";
 
 // GLTFExporter uses FileReader for buffers, even with texture-free binary exports.
 globalThis.FileReader = class {
@@ -89,7 +90,12 @@ function desk(w, d, electric = true) {
       [x, 0.36, 0],
       electric ? "metal" : "dark",
     );
-    box(g, [0.12, 0.045, d * 0.85], [x, 0.045, 0], electric ? "metal" : "dark");
+    box(
+      g,
+      [0.12, 0.045, d * 0.85],
+      [x, 0.0225, 0],
+      electric ? "metal" : "dark",
+    );
     box(g, [0.15, 0.025, d * 0.8], [x, 0.684, 0]);
   }
   box(g, [w * 0.72, 0.06, 0.04], [0, 0.63, -d * 0.24]);
@@ -112,29 +118,34 @@ function chair(ergonomic = true) {
     const x = Math.sin(a) * 0.29,
       z = Math.cos(a) * 0.29;
     rod(g, [0, 0.13, 0], [x, 0.08, z], 0.021, "dark");
-    const wheel = cyl(g, 0.036, 0.04, [x, 0.048, z], "dark");
+    const wheel = cyl(g, 0.036, 0.04, [x, 0.036, z], "dark");
     wheel.rotation.z = Math.PI / 2;
   }
-  box(g, [0.47, 0.095, 0.43], [0, 0.48, 0], fabric, 0.06);
+  const seating = new T.Group();
+  const productId = ergonomic ? "ergonomic-chair" : "task-chair";
+  seating.position.y = catalog[productId].seatHeight - (0.48 + 0.095 / 2);
+  g.add(seating);
+  const seat = box(seating, [0.47, 0.095, 0.43], [0, 0.48, 0], fabric, 0.06);
+  seat.name = "seat";
   const back = box(
-    g,
+    seating,
     [0.43, ergonomic ? 0.48 : 0.35, 0.07],
     [0, ergonomic ? 0.78 : 0.72, -0.2],
     fabric,
     0.05,
   );
   back.rotation.x = -0.12;
-  rod(g, [0, 0.42, -0.15], [0, 0.8, -0.23], 0.028, "dark");
+  rod(seating, [0, 0.42, -0.15], [0, 0.8, -0.23], 0.028, "dark");
   for (const x of [-0.27, 0.27]) {
-    rod(g, [x * 0.8, 0.47, 0], [x, 0.65, 0], 0.018, "dark");
-    box(g, [0.065, 0.04, 0.26], [x, 0.66, 0], "dark");
+    rod(seating, [x * 0.8, 0.47, 0], [x, 0.65, 0], 0.018, "dark");
+    box(seating, [0.065, 0.04, 0.26], [x, 0.66, 0], "dark");
   }
   if (ergonomic) {
-    box(g, [0.25, 0.15, 0.075], [0, 1.08, -0.23], "dark", 0.04);
-    rod(g, [0, 0.93, -0.22], [0, 1.05, -0.25]);
+    box(seating, [0.25, 0.15, 0.075], [0, 1.08, -0.23], "dark", 0.04);
+    rod(seating, [0, 0.93, -0.22], [0, 1.05, -0.25]);
     for (let i = 0; i < 7; i++)
       box(
-        g,
+        seating,
         [0.35, 0.008, 0.005],
         [0, 0.63 + i * 0.045, -0.159],
         "metal",
@@ -264,7 +275,7 @@ for (const [id, model] of Object.entries(models)) {
   });
   manifest.assets[id] = {
     path: `/models/${id}.glb`,
-    version: 1,
+    version: catalog[id].assetVersion ?? 1,
     method: "parametric-original",
     family: id.endsWith("-desk")
       ? "desk"

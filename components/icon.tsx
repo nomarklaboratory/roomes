@@ -23,6 +23,8 @@ const paths = {
   eye: "M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Zm13 0a3 3 0 1 1-6 0 3 3 0 0 1 6 0",
   up: "M12 20V4m-6 6 6-6 6 6",
   down: "M12 4v16m-6-6 6 6 6-6",
+  expand: "M8 3H3v5m13-5h5v5M3 16v5h5m8 0h5v-5",
+  collapse: "M3 8h5V3m8 0v5h5M8 21v-5H3m18 0h-5v5",
 };
 export function Icon({
   name,

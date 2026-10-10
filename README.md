@@ -18,7 +18,8 @@ Next.js App Router and Tailwind CSS provide the interface; React Three Fiber, Dr
 - Choose from two desks and two chairs, and change the tabletop finish.
 - Add monitors, a lamp, a plant, or a laptop stand. Up to two monitors must fit the desk; other extras are limited to one each.
 - Drag any setup item in the preview. Use Top for easier placement, or select a chip below the preview for movement buttons and position reset. Furniture moves in 10 cm steps; accessories in 2 cm steps. Undo and device saving include positions.
-- Choose **Inside** for first-person viewing. Drag to look; use WASD, arrow keys, or hold the onscreen direction buttons to walk. Recenter restores the starting viewpoint; Exit view or Escape returns to the room overview.
+- Use the **+ / −** controls to zoom and the expand button to make the preview fullscreen. A viewport expansion works in browsers without element fullscreen; its exit button or Escape restores the editor.
+- Choose **Inside** for a 170 cm person's first-person view, with estimated eye levels of 159 cm standing and 124 cm seated. Drag to look; use WASD, arrow keys, or hold the onscreen direction buttons to walk. **Sit in chair** places the viewpoint over the selected chair cushion and pauses walking; **Stand up** finds clear floor space beside it. Recenter restores the current posture's viewpoint; Exit view or Escape returns to the room overview.
 - Choose 1, 2, 4, or 8 weeks, review quantities and totals, then try the simulated request form.
 
 All prices are **illustrative USD weekly rates**. Models are stylized product-inspired illustrations; dimensions and finishes do not constitute a fit or availability guarantee. The Everyday chair and plant are clearly labeled concepts. No payment, reservation, or booking request is sent. Name, area, and delivery date stay in React memory and are cleared after confirmation; only the product configuration is saved on the device. Delivery dates are checked against Bali's UTC+8 calendar.
@@ -44,13 +45,15 @@ pnpm build
 pnpm start
 ```
 
-Domain tests exercise placement bounds, layout migration and undo, walking collisions, fit/reflow, quantities and occupied slots, grouped quotes, corrupted persistence, and date boundaries. Browser tests cover real mouse/touch dragging, precise moves, layout persistence, first-person navigation and exit, the complete rental flow, presets/finishes, desktop/mobile layouts, 3D readiness, the help dialog, and a device without WebGL. The public Vercel URL was also checked anonymously on desktop and mobile. Tests retain traces on failure and capture the editor, first-person view, and confirmation for visual inspection.
+Domain tests exercise viewer heights/posture, placement bounds, layout migration and undo, walking collisions, fit/reflow, quantities and occupied slots, grouped quotes, corrupted persistence, and date boundaries. Asset checks verify floor contact, chair seat height, geometry, compression, and budgets. Browser tests cover real mouse/touch dragging, precise moves, layout persistence, standing/seated navigation, zoom, fullscreen and its browser fallback, the complete rental flow, presets/finishes, desktop/mobile layouts, 3D readiness, the help dialog, and a device without WebGL. The public Vercel URL was also checked anonymously on desktop and mobile. Tests retain traces on failure and capture the editor, first-person views, fullscreen, and confirmation for visual inspection.
 
 ## Sustainable asset workflow
 
 The entire approved catalog uses original parametric models with reusable families and runtime material variants. Thumbnails are rendered in Blender. A manifest records bounds, versions, provenance, and budgets. The optional, bounded Meshy pilot was skipped because no credentials were configured; no credits were spent. AI generation happens offline, followed by optimization, dimension calibration, and human approval.
 
 See [asset workflow and pilot](docs/assets.md) for reproducible commands and the production pipeline. The agreed epics and scaling roadmap are in [.plan/epics.md](.plan/epics.md).
+
+See [viewer calibration](docs/viewer.md) for human proportions, seated positioning, and floor/rug geometry. The eye-height assumptions are representative preview measurements; exact product fit requires validated client dimensions.
 
 ## With more time
 

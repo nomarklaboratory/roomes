@@ -3,6 +3,7 @@ import { readFile, stat } from "node:fs/promises";
 import { NodeIO, getBounds } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import { MeshoptDecoder } from "meshoptimizer";
+import { catalog } from "../lib/catalog.ts";
 await MeshoptDecoder.ready;
 const io = new NodeIO()
   .registerExtensions(ALL_EXTENSIONS)
@@ -28,6 +29,27 @@ for (const [id, asset] of Object.entries(manifest.assets)) {
     `${id}: exceeds compressed 75 KB asset budget`,
   );
   assert.ok(doc.getRoot().listMeshes().length > 0, `${id}: no geometry`);
+  if (catalog[id].category === "desk" || catalog[id].category === "chair") {
+    assert.ok(
+      Math.abs(bounds.min[1]) < 0.001,
+      `${id}: feet must touch the ground`,
+    );
+    assert.ok(
+      Math.abs(bounds.max[1] - catalog[id].height) < 0.01,
+      `${id}: catalog height must match the grounded geometry`,
+    );
+  }
+  if (catalog[id].category === "chair") {
+    const seat = doc
+      .getRoot()
+      .listNodes()
+      .find((node) => node.getName() === "seat");
+    assert.ok(seat, `${id}: missing seat anchor geometry`);
+    assert.ok(
+      Math.abs(getBounds(seat).max[1] - catalog[id].seatHeight) < 0.001,
+      `${id}: seat geometry must match the seated camera height`,
+    );
+  }
   if (id.endsWith("-desk"))
     assert.ok(
       doc

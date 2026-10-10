@@ -23,7 +23,8 @@ import {
   validDeliveryDate,
   type Action,
 } from "@/lib/workspace";
-import { RoomPreview, type CameraView } from "./room-preview";
+import { RoomPreview } from "./room-preview";
+import type { CameraView } from "@/types/viewer";
 import { Icon } from "./icon";
 import { PlacementControls } from "./placement-controls";
 
@@ -64,7 +65,7 @@ function ProductPhoto({
   return (
     <div className={`product-photo ${compact ? "compact" : ""}`}>
       <Image
-        src={`/thumbnails/${product.id}.png`}
+        src={`/thumbnails/${product.id}.png?v=${product.assetVersion ?? 1}`}
         alt=""
         width={480}
         height={360}
@@ -79,6 +80,7 @@ export default function Studio() {
   const rental = quote(setup);
   const [category, setCategory] = useState<Category>("desk");
   const [view, setView] = useState<CameraView>("room");
+  const [previewExpanded, setPreviewExpanded] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   const [step, setStep] = useState<Step>("design");
   const [loaded, setLoaded] = useState(false);
@@ -266,7 +268,7 @@ export default function Studio() {
               </div>
             )}
             <div
-              className={`preview-stage ${view === "walk" ? "walking-stage" : ""}`}
+              className={`preview-stage ${view === "walk" ? "walking-stage" : ""} ${previewExpanded ? "fixed! inset-0 z-[100] h-dvh! w-screen! max-w-none! rounded-none! border-0!" : ""}`}
             >
               <div className="stage-top">
                 <span className="scene-label">
@@ -299,7 +301,9 @@ export default function Studio() {
                   </button>
                 </div>
               </div>
-              <div className="scene-container">
+              <div
+                className={`scene-container ${previewExpanded ? "inset-0!" : ""}`}
+              >
                 <RoomPreview
                   setup={setup}
                   view={view}
@@ -310,6 +314,8 @@ export default function Studio() {
                     change({ type: "place", id, position })
                   }
                   onExitWalk={() => setView("room")}
+                  previewExpanded={previewExpanded}
+                  onPreviewExpandedChange={setPreviewExpanded}
                 />
               </div>
               <div className="stage-bottom">
@@ -598,7 +604,7 @@ export default function Studio() {
                 {rental.lines.map((line) => (
                   <div key={line.product.id}>
                     <Image
-                      src={`/thumbnails/${line.product.id}.png`}
+                      src={`/thumbnails/${line.product.id}.png?v=${line.product.assetVersion ?? 1}`}
                       width={64}
                       height={48}
                       alt=""
@@ -831,8 +837,9 @@ export default function Studio() {
             <b>02</b>
             <span>
               <strong>Make it your own</strong>Swap the furniture, add little
-              extras, and drag items into place. Choose Inside to look around
-              from a first-person view.
+              extras, and drag items into place. Zoom or go fullscreen for a
+              closer look. Choose Inside to explore at a 170 cm person's eye
+              level, then Sit in chair to try the seated view.
             </span>
           </li>
           <li>

@@ -10,6 +10,8 @@ export type Product = {
   width: number;
   depth: number;
   height: number;
+  seatHeight?: number;
+  assetVersion?: number;
   kind?: AccessoryKind;
   concept?: boolean;
   source?: string;
@@ -26,6 +28,7 @@ const productData: readonly Omit<Product, "assetPath">[] = [
     width: 1.2,
     depth: 0.6,
     height: 0.75,
+    assetVersion: 2,
     source: "https://www.monis.rent/products/electrical-adjustable-desk",
   },
   {
@@ -37,6 +40,7 @@ const productData: readonly Omit<Product, "assetPath">[] = [
     width: 1.6,
     depth: 0.8,
     height: 0.75,
+    assetVersion: 2,
     source: "https://www.monis.rent/products/adjustable-wooden-desk",
   },
   {
@@ -47,7 +51,9 @@ const productData: readonly Omit<Product, "assetPath">[] = [
     weeklyCents: 600,
     width: 0.65,
     depth: 0.65,
-    height: 1.2,
+    height: 1.09,
+    seatHeight: 0.46,
+    assetVersion: 2,
     source: "https://www.monis.rent/products/ergonomic-office-chair",
   },
   {
@@ -58,7 +64,9 @@ const productData: readonly Omit<Product, "assetPath">[] = [
     weeklyCents: 400,
     width: 0.6,
     depth: 0.6,
-    height: 0.95,
+    height: 0.83,
+    seatHeight: 0.46,
+    assetVersion: 2,
     concept: true,
   },
   {
@@ -124,7 +132,7 @@ const productData: readonly Omit<Product, "assetPath">[] = [
 ];
 export const products: readonly Product[] = productData.map((product) => ({
   ...product,
-  assetPath: `/models/${product.id}.glb`,
+  assetPath: `/models/${product.id}.glb?v=${product.assetVersion ?? 1}`,
 }));
 export const catalog = Object.fromEntries(
   products.map((p) => [p.id, p]),

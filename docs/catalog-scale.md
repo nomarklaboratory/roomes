@@ -15,6 +15,8 @@ Sources checked **11 October 2026**. One scene unit is one metre. Catalog sizes 
 
 The [KOLMI laptop stand listing](https://www.monis.rent/products/ergonomic-laptop-stand) publishes no numeric dimensions. Its **28 × 24 × 15 cm** preview is explicitly estimated. Measure the actual stock in its deployed posture before approval. The Everyday chair and plant are original concepts with no matching rental SKU; their dimensions are labeled concepts. Replace them with measured stock for a production inventory adapter.
 
+Follow-up web search on the same date: the [manufacturer's laptop-stand collection](https://kolmi.id/collection/laptop-stand/) currently returns no products. Its [linked official marketplace](https://shopee.co.id/kolmiindonesia) exposes a laptop-stand category, but no verifiable dimension sheet for the rental model was found. Other sellers' similar stands do not establish the exact Monis version. The [full Monis catalog](https://www.monis.rent/products) displays one chair product, the OCA259PRO; no matching second chair or plant rental was found. The demo keeps its required second chair as an explicitly labeled concept rather than inventing a stock SKU or treating a similar product's dimensions as confirmed.
+
 ## Preventing scale drift
 
 `lib/catalog.ts` is the dimension source for the builder, placement, and seated camera. Each product carries evidence status, model/variant, source, check date, and posture notes. Desks and monitors are parameterized from those values. Other shapes are calibrated to their catalog envelopes; chair vertical geometry preserves the seat anchor. Every GLB rests at Y=0 and is centered on its X/Z footprint. Accessories rest at the selected desk height; default slots account for accessory depth.

@@ -43,7 +43,7 @@ pnpm build
 pnpm start
 ```
 
-Domain tests exercise fit/reflow/undo, quantities and occupied slots, grouped quotes, corrupted persistence, and date boundaries. Browser tests cover the complete rental flow, presets/finishes, reload persistence, desktop/mobile layouts, the help dialog, and a device without WebGL. Tests retain traces on failure and capture the editor and confirmation for visual inspection.
+Domain tests exercise fit/reflow/undo, quantities and occupied slots, grouped quotes, corrupted persistence, and date boundaries. Browser tests cover the complete rental flow, presets/finishes, reload persistence, desktop/mobile layouts, 3D readiness, the help dialog, and a device without WebGL. The public Vercel URL was also checked anonymously on desktop and mobile. Tests retain traces on failure and capture the editor and confirmation for visual inspection.
 
 ## Sustainable asset workflow
 

@@ -62,4 +62,6 @@ Free dragging, room scans, accurate fit guarantees, live commerce, and a product
 - Public Vercel production alias: https://roomes-lac.vercel.app.
 - Public source: https://github.com/nomarklaboratory/roomes.
 - desent-bot Read invitation sent (pending acceptance).
-- E06 final artifact verification and publishing in progress. E07–E08 remain the explicitly deferred production roadmap.
+- E06 complete: source published, Read invitation verified, production alias returns HTTP 200 without authentication, and anonymous desktop/mobile rental flows verified.
+- E07–E08 remain the explicitly deferred production roadmap.
+- Vercel onboarding guide followed: global CLI 63.1.2 authenticated, Vercel guidance installed/enabled, shared MCP endpoint configured, and MCP OAuth succeeded. Newly installed MCP tools require a client reload before their read-only documentation/team checks can run.

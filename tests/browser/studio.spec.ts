@@ -27,6 +27,10 @@ test("design, persist, undo and complete an explicitly simulated rental", async 
   await expect(page.getByRole("status")).toContainText("removed to fit");
   await page.getByRole("button", { name: "Undo", exact: true }).click();
   await expect(page.locator(".rental-price")).toContainText("$336");
+  await expect(page.locator(".loading-panel")).toHaveCount(0, {
+    timeout: 45000,
+  });
+  await expect(page.locator(".room-fallback")).toBeHidden();
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.getByRole("button", { name: "Top", exact: true }).click();
   await page.getByRole("button", { name: "Room", exact: true }).click();

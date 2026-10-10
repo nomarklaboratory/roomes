@@ -725,7 +725,11 @@ export default function Studio() {
               </h2>
               <p>
                 You’ve put together {rental.count} items for {setup.weeks}{" "}
-                weeks. Your workspace is saved on this device.
+                weeks. Your workspace is{" "}
+                {storageWarning
+                  ? "available in this tab"
+                  : "saved on this device"}
+                .
               </p>
               <div className="receipt-total">
                 <span>Your demo setup</span>

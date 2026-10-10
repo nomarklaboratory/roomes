@@ -2,7 +2,7 @@
 
 ## Agreed scope
 
-Challenge MVP: a desktop-first, mobile-usable 3D rental configurator inspired by IKEA Kreativ. Customers start from Essentials, Developer, or Creative, choose at least two desks and two chairs, add accessories in valid slots, and review a simulated rental request. Next.js, Tailwind, Vercel, public GitHub repository, and a Read invitation for desent-bot are required.
+Challenge MVP: a desktop-first, mobile-usable 3D rental configurator inspired by IKEA Kreativ. Customers start from Essentials, Developer, or Creative, choose at least two desks and two chairs, add accessories, arrange the setup, and review a simulated rental request. The follow-up scope adds direct movement and first-person viewing (E09). Next.js, Tailwind, Vercel, public GitHub repository, and a Read invitation for desent-bot are required.
 
 All prices are illustrative USD weekly rates; terms are 1, 2, 4, or 8 weeks. Default: Developer / 4 weeks. Product geometry is stylized. One chair and the plant are labeled concepts. No payment, live stock, real reservation, or personal-data persistence.
 
@@ -52,16 +52,27 @@ Connect authoritative catalog, prices, stock by date, service areas, delivery co
 
 ## Boundaries
 
-Free dragging, room scans, accurate fit guarantees, live commerce, and a production asset backend are outside this submission. Epics E07–E08 are a scaling roadmap, not unfinished MVP requirements.
+Room scans, accurate fit guarantees, live commerce, and a production asset backend are outside this submission. Epics E07–E08 are a scaling roadmap, not unfinished MVP requirements. Rotation and collision-aware furniture arrangement remain future extensions; current placement clamps items to room/tabletop bounds.
+
+## E09 — Movable items and first-person viewing
+
+- Direct mouse/touch dragging for desk, chair, and all selected accessories; accessories stay in desk-local coordinates and follow desk movement.
+- Dimension-based floor/tabletop bounds, precise accessible movement buttons, quick desk slots, per-item position reset, and one undo entry per completed drag.
+- Persist layout and custom positions; migrate earlier saved configurations and sanitize malformed coordinates.
+- Inside camera at eye level: drag to look, WASD/arrows or onscreen buttons to walk, room/furniture navigation collision checks, recenter, and Escape/visible exit.
+- Keep review read-only; retain pricing, product constraints, device saving, and a placement-aware 2D fallback.
+- Acceptance: real mouse/touch dragging, undo, reload persistence, and first-person navigation work on desktop/mobile, with no overflow or browser errors.
 
 ## Execution record
 
 - E01–E05 implemented: catalog, assets, presets, configuration, and simulated checkout.
 - Meshy credentials absent: procedural GLB fallback selected; zero AI credits spent.
-- Five domain tests, nine asset validations, six desktop/mobile browser tests, typecheck, lint, and production build pass.
+- Initial MVP: five domain tests, nine asset validations, six desktop/mobile browser tests, typecheck, lint, and production build passed.
 - Public Vercel production alias: https://roomes-lac.vercel.app.
 - Public source: https://github.com/nomarklaboratory/roomes.
 - desent-bot Read invitation sent (pending acceptance).
 - E06 complete: source published, Read invitation verified, production alias returns HTTP 200 without authentication, and anonymous desktop/mobile rental flows verified.
 - E07–E08 remain the explicitly deferred production roadmap.
 - Vercel onboarding guide followed: global CLI 63.1.2 authenticated, Vercel guidance installed/enabled, shared MCP endpoint configured, and MCP OAuth succeeded. Newly installed MCP tools require a client reload before their read-only documentation/team checks can run.
+- E09 implemented: surface-bounded dragging, precise movement/reset, placement-aware fallback, saved layout migration, and first-person walking/look/recenter/exit.
+- Eight domain tests, nine asset validations, and eight desktop/mobile browser tests pass, including actual touch/mouse dragging, cancellation recovery, atomic undo, persistence, and first-person navigation. Typecheck, lint, formatting, and the production build also pass.

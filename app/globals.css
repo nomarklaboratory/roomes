@@ -341,6 +341,132 @@ h1 em {
   @apply absolute;
   inset: 10px 0 4px;
 }
+.room-interaction,
+.room-canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.room-canvas {
+  touch-action: none;
+}
+.room-interaction.is-walking {
+  outline-offset: -3px;
+}
+.room-interaction.is-walking:focus-visible {
+  outline: 2px solid #6a8454;
+}
+.is-walking .room-canvas {
+  cursor: grab;
+}
+.is-walking .room-canvas:active {
+  cursor: grabbing;
+}
+.camera-options .inside-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border-left: 1px solid #dcded2;
+  margin-left: 3px;
+  color: #435635;
+}
+.walking-stage .scene-label,
+.walking-stage .stage-bottom,
+.walking-stage .room-dimension {
+  display: none;
+}
+.walking-stage .stage-top {
+  justify-content: flex-end;
+}
+.walk-hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.walk-caption {
+  position: absolute;
+  top: 62px;
+  left: 20px;
+  padding: 10px 13px;
+  border: 1px solid #fff7;
+  background: #f6f6edeb;
+  border-radius: 10px;
+  color: #354a30;
+}
+.walk-caption > span {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+.walk-caption small {
+  display: block;
+  font-size: 9px;
+  margin-top: 5px;
+  color: #647457;
+}
+.walk-actions {
+  position: absolute;
+  bottom: 22px;
+  left: 20px;
+  display: flex;
+  gap: 7px;
+  pointer-events: auto;
+}
+.walk-actions button,
+.walk-pad button {
+  background: #f7f7eeef;
+  border: 1px solid #cfd9c1;
+  color: #395334;
+  border-radius: 8px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.walk-actions button {
+  font-size: 10px;
+  padding: 0 12px;
+}
+.walk-actions .walk-exit {
+  background: #344c32;
+  color: #f8f9f3;
+  border-color: #344c32;
+}
+.walk-pad {
+  position: absolute;
+  right: 20px;
+  bottom: 22px;
+  display: grid;
+  grid-template-columns: repeat(3, 44px);
+  grid-template-rows: repeat(2, 44px);
+  gap: 4px;
+  pointer-events: auto;
+}
+.walk-pad button {
+  touch-action: none;
+  user-select: none;
+}
+.walk-pad button:active {
+  background: #c6e790;
+}
+.walk-forward {
+  grid-column: 2;
+}
+.walk-left {
+  grid-column: 1;
+  grid-row: 2;
+}
+.walk-backward {
+  grid-column: 2;
+  grid-row: 2;
+}
+.walk-right {
+  grid-column: 3;
+  grid-row: 2;
+}
 .stage-bottom {
   @apply flex items-center justify-between;
   position: absolute;
@@ -720,6 +846,51 @@ h2 {
 }
 .placement-panel > div:first-child {
   flex: 1;
+}
+.placement-title {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.placement-symbol {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #dce6cd;
+  color: #536a40;
+}
+.position-readout {
+  display: block;
+  margin-top: 7px;
+  font-size: 8px;
+  letter-spacing: 0.6px;
+  color: #6a785c;
+}
+.placement-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.nudge-buttons {
+  display: flex;
+  gap: 4px;
+}
+.nudge-buttons button {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dae0ce;
+  border-radius: 5px;
+  background: #f8f9f1;
+  color: #4f6341;
+}
+.nudge-buttons button:hover {
+  background: #dce6cd;
 }
 .placement-panel strong {
   display: block;
@@ -1226,6 +1397,52 @@ h2 {
   }
 }
 @media (max-width: 700px) {
+  .scene-label small {
+    display: none;
+  }
+  .camera-options .inside-button {
+    gap: 3px;
+  }
+  .walk-caption {
+    left: 23px;
+    top: 58px;
+    padding: 8px 10px;
+  }
+  .walk-actions {
+    left: 23px;
+    bottom: 16px;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .walk-pad {
+    right: 23px;
+    bottom: 16px;
+  }
+  .placement-panel {
+    flex-wrap: wrap;
+    position: relative;
+    padding: 12px;
+  }
+  .placement-panel .placement-title {
+    flex-basis: calc(100% - 40px);
+  }
+  .placement-panel > .icon-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 36px;
+    height: 36px;
+  }
+  .placement-tools {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .nudge-buttons button {
+    width: 44px;
+    height: 44px;
+  }
   .site-shell {
     padding: 0 17px;
   }

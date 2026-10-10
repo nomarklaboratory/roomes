@@ -20,6 +20,9 @@ const paths = {
   camera: "M4 7h4l2-3h4l2 3h4v13H4zM16 13a4 4 0 1 1-8 0 4 4 0 0 1 8 0",
   sun: "M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0",
   monitor: "M3 4h18v13H3zM12 17v4m-5 0h10",
+  eye: "M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Zm13 0a3 3 0 1 1-6 0 3 3 0 0 1 6 0",
+  up: "M12 20V4m-6 6 6-6 6 6",
+  down: "M12 4v16m-6-6 6 6 6-6",
 };
 export function Icon({
   name,

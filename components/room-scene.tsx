@@ -7,16 +7,24 @@ import {
   useMemo,
   useRef,
 } from "react";
-import { Canvas, type ThreeEvent } from "@react-three/fiber";
+import { Canvas, useThree, type ThreeEvent } from "@react-three/fiber";
 import {
   CameraControls,
   ContactShadows,
   useGLTF,
   RoundedBox,
+  CameraControlsImpl,
 } from "@react-three/drei";
-import { Mesh, MeshStandardMaterial, type Group } from "three";
+import { Mesh, MeshStandardMaterial, Plane, Vector3, type Group } from "three";
 import { catalog, finishes } from "@/lib/catalog";
-import type { Item } from "@/lib/workspace";
+import { clampPosition, positionOf, type Point } from "@/lib/placement";
+import {
+  FirstPersonCamera,
+  newWalkInput,
+  WalkControls,
+  walkKey,
+  type WalkInput,
+} from "./first-person";
 import { RoomFallback } from "./room-fallback";
 import type { SceneProps } from "./room-preview";
 
@@ -68,10 +76,192 @@ function Model({
       position={position}
       rotation-y={rotation}
       onClick={(e: ThreeEvent<MouseEvent>) => {
-        e.stopPropagation();
-        onSelect?.();
+        if (onSelect) {
+          e.stopPropagation();
+          onSelect();
+        }
       }}
     />
+  );
+}
+function Movable({
+  id,
+  setup,
+  selected,
+  editable,
+  onSelect,
+  onMove,
+  children,
+}: {
+  id: string;
+  setup: SceneProps["setup"];
+  selected: boolean;
+  editable: boolean;
+  onSelect: SceneProps["onSelect"];
+  onMove: SceneProps["onMove"];
+  children: React.ReactNode;
+}) {
+  const get = useThree((s) => s.get);
+  const gl = useThree((s) => s.gl);
+  const group = useRef<Group>(null);
+  const dragging = useRef<{
+    pointer: number;
+    offset: Point;
+    start: Point;
+    next: Point;
+    release: () => void;
+  } | null>(null);
+  const original = positionOf(setup, id);
+  const furniture = id === "desk" || id === "chair";
+  const y = furniture ? 0 : 0.754;
+  const plane = useMemo(() => new Plane(new Vector3(0, 1, 0), -y), [y]);
+  const point = useMemo(() => new Vector3(), []);
+  const [draft, setDraft] = useState<Point | null>(null);
+  const position = draft ?? original;
+  const enableControls = (enabled: boolean) => {
+    const controls = get().controls;
+    if (controls instanceof CameraControlsImpl) controls.enabled = enabled;
+  };
+  const end = (event: ThreeEvent<PointerEvent>, commit: boolean) => {
+    const drag = dragging.current;
+    if (!drag || drag.pointer !== event.pointerId) return;
+    event.stopPropagation();
+    dragging.current = null;
+    drag.release();
+    enableControls(true);
+    gl.domElement.removeAttribute("data-dragging");
+    gl.domElement.style.setProperty("cursor", "grab");
+    setDraft(null);
+    if (
+      commit &&
+      (drag.next.x !== drag.start.x || drag.next.z !== drag.start.z)
+    )
+      onMove(id, drag.next);
+  };
+  // Fiber clears hover on pointercancel but does not dispatch a mesh cancel
+  // handler. Listen on the native canvas so interruptions always restore orbit.
+  useEffect(() => {
+    const canvas = gl.domElement;
+    const cancel = (event?: Event) => {
+      const drag = dragging.current;
+      if (!drag) return;
+      if (event instanceof PointerEvent && event.pointerId !== drag.pointer)
+        return;
+      dragging.current = null;
+      drag.release();
+      const controls = get().controls;
+      if (controls instanceof CameraControlsImpl) controls.enabled = true;
+      canvas.removeAttribute("data-dragging");
+      canvas.style.removeProperty("cursor");
+      setDraft(null);
+    };
+    const lost = (event: PointerEvent) => {
+      const drag = dragging.current;
+      if (!drag || drag.pointer !== event.pointerId) return;
+      requestAnimationFrame(() => {
+        if (dragging.current === drag) cancel();
+      });
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") cancel();
+    };
+    canvas.addEventListener("pointercancel", cancel);
+    canvas.addEventListener("lostpointercapture", lost);
+    window.addEventListener("blur", cancel);
+    window.addEventListener("keydown", escape);
+    return () => {
+      canvas.removeEventListener("pointercancel", cancel);
+      canvas.removeEventListener("lostpointercapture", lost);
+      window.removeEventListener("blur", cancel);
+      window.removeEventListener("keydown", escape);
+      cancel();
+    };
+  }, [get, gl, editable]);
+  return (
+    <group
+      ref={group}
+      position={[position.x, y, position.z]}
+      onPointerDown={
+        editable
+          ? (e) => {
+              if (
+                e.button !== 0 ||
+                !e.isPrimary ||
+                gl.domElement.hasAttribute("data-dragging") ||
+                dragging.current ||
+                !e.ray.intersectPlane(plane, point)
+              )
+                return;
+              e.stopPropagation();
+              onSelect(id);
+              enableControls(false);
+              gl.domElement.setAttribute("data-dragging", id);
+              const origin = group.current!.getWorldPosition(new Vector3());
+              dragging.current = {
+                pointer: e.pointerId,
+                offset: { x: point.x - origin.x, z: point.z - origin.z },
+                start: original,
+                next: original,
+                release: () =>
+                  (
+                    e.target as {
+                      releasePointerCapture: (id: number) => void;
+                    } | null
+                  )?.releasePointerCapture(e.pointerId),
+              };
+              (
+                e.target as { setPointerCapture: (id: number) => void } | null
+              )?.setPointerCapture(e.pointerId);
+              gl.domElement.style.setProperty("cursor", "grabbing");
+            }
+          : undefined
+      }
+      onPointerMove={
+        editable
+          ? (e) => {
+              const drag = dragging.current;
+              if (!drag || drag.pointer !== e.pointerId) return;
+              e.stopPropagation();
+              if (!e.ray.intersectPlane(plane, point)) return;
+              const deskOffset = furniture ? { x: 0, z: 0 } : setup.layout.desk;
+              drag.next = clampPosition(setup, id, {
+                x: point.x - drag.offset.x - deskOffset.x,
+                z: point.z - drag.offset.z - deskOffset.z,
+              });
+              setDraft(drag.next);
+            }
+          : undefined
+      }
+      onPointerUp={editable ? (e) => end(e, true) : undefined}
+      onPointerOver={
+        editable
+          ? (e) => {
+              if (gl.domElement.hasAttribute("data-dragging")) return;
+              e.stopPropagation();
+              if (!dragging.current)
+                gl.domElement.style.setProperty("cursor", "grab");
+            }
+          : undefined
+      }
+      onPointerOut={
+        editable
+          ? () => {
+              if (!dragging.current)
+                gl.domElement.style.removeProperty("cursor");
+            }
+          : undefined
+      }
+    >
+      {children}
+      {selected && editable && (
+        <mesh rotation-x={-Math.PI / 2} position={[0, 0.012, 0]}>
+          <ringGeometry
+            args={furniture ? [0.33, 0.35, 48] : [0.1, 0.115, 40]}
+          />
+          <meshBasicMaterial color="#c3e77f" depthWrite={false} />
+        </mesh>
+      )}
+    </group>
   );
 }
 function Block({
@@ -242,23 +432,6 @@ function Room({ color }: { color: string }) {
     </group>
   );
 }
-function accessoryPosition(
-  item: Item,
-  width: number,
-  depth: number,
-): [number, number, number] {
-  const rear = item.slot.startsWith("rear");
-  const side = item.slot.endsWith("left")
-    ? -1
-    : item.slot.endsWith("right")
-      ? 1
-      : 0;
-  const product = catalog[item.productId];
-  const x = rear
-    ? side * (width / 2 - product.width / 2 - 0.015)
-    : side * (width / 2 - 0.13);
-  return [x, 0.754, rear ? -depth / 2 + 0.15 : depth / 2 - 0.14];
-}
 function Camera({ view }: { view: SceneProps["view"] }) {
   const ref = useRef<React.ComponentRef<typeof CameraControls>>(null);
   useEffect(() => {
@@ -294,7 +467,7 @@ function Camera({ view }: { view: SceneProps["view"] }) {
       makeDefault
       minDistance={3.5}
       maxDistance={11}
-      minPolarAngle={0.15}
+      minPolarAngle={view === "top" ? 0.001 : 0.15}
       maxPolarAngle={Math.PI / 2.05}
       dollySpeed={0.6}
       truckSpeed={0}
@@ -306,8 +479,14 @@ function Contents({
   view,
   onSelect,
   selected,
+  editable,
+  onMove,
+  walkInput,
   onReady,
-}: SceneProps & { onReady: () => void }) {
+}: SceneProps & {
+  onReady: () => void;
+  walkInput: React.RefObject<WalkInput>;
+}) {
   useEffect(() => {
     onReady();
   }, [onReady]);
@@ -318,7 +497,6 @@ function Contents({
       : setup.presetId === "essentials"
         ? "#ddd7bf"
         : "#b9c6a9";
-  const desk = catalog[setup.deskId];
   const root = useRef<Group>(null);
   return (
     <group ref={root}>
@@ -337,48 +515,41 @@ function Contents({
       />
       <directionalLight position={[4, 3, -2]} intensity={0.6} />
       <Room color={color} />
-      <group position={[0, 0, -0.43]}>
-        <Model
-          id={setup.deskId}
-          finish={finish}
-          onSelect={() => onSelect("desk")}
-        />
-        <Model
-          id={setup.chairId}
-          position={[0.16, 0, 0.78]}
-          rotation={Math.PI}
-          onSelect={() => onSelect("chair")}
-        />
+      <Movable
+        id="desk"
+        setup={setup}
+        selected={selected === "desk"}
+        editable={editable}
+        onSelect={onSelect}
+        onMove={onMove}
+      >
+        <Model id={setup.deskId} finish={finish} />
         {setup.items.map((item) => (
-          <Model
+          <Movable
             key={item.id}
-            id={item.productId}
-            position={accessoryPosition(item, desk.width, desk.depth)}
-            onSelect={() => onSelect(item.id)}
-          />
-        ))}
-        {selected && setup.items.some((i) => i.id === selected) && (
-          <mesh
-            rotation-x={-Math.PI / 2}
-            position={
-              accessoryPosition(
-                setup.items.find((i) => i.id === selected)!,
-                desk.width,
-                desk.depth,
-              ).map((n, i) => (i === 1 ? n + 0.003 : n)) as [
-                number,
-                number,
-                number,
-              ]
-            }
+            id={item.id}
+            setup={setup}
+            selected={selected === item.id}
+            editable={editable}
+            onSelect={onSelect}
+            onMove={onMove}
           >
-            <ringGeometry args={[0.095, 0.115, 40]} />
-            <meshBasicMaterial color="#d7ef93" depthWrite={false} />
-          </mesh>
-        )}
-      </group>
+            <Model id={item.productId} />
+          </Movable>
+        ))}
+      </Movable>
+      <Movable
+        id="chair"
+        setup={setup}
+        selected={selected === "chair"}
+        editable={editable}
+        onSelect={onSelect}
+        onMove={onMove}
+      >
+        <Model id={setup.chairId} rotation={Math.PI} />
+      </Movable>
       <ContactShadows
-        key={`${setup.deskId}-${setup.chairId}`}
+        key={`${setup.deskId}-${setup.chairId}-${JSON.stringify(setup.layout)}`}
         position={[0, -0.008, 0]}
         opacity={0.28}
         scale={5}
@@ -387,28 +558,148 @@ function Contents({
         frames={1}
         resolution={256}
       />
-      <Camera view={view} />
+      {view === "walk" ? (
+        <FirstPersonCamera setup={setup} input={walkInput} />
+      ) : (
+        <Camera view={view} />
+      )}
     </group>
   );
 }
 export default function RoomScene(props: SceneProps) {
   const [ready, setReady] = useState(false);
   const onReady = useCallback(() => setReady(true), []);
+  const walkInput = useRef(newWalkInput());
+  const wrapper = useRef<HTMLDivElement>(null);
+  const looking = useRef<{ pointer: number; x: number; y: number } | null>(
+    null,
+  );
+  const walking = props.view === "walk";
+  useEffect(() => {
+    if (walking) wrapper.current?.focus({ preventScroll: true });
+    const stop = () => {
+      walkInput.current.keys.clear();
+      looking.current = null;
+    };
+    window.addEventListener("blur", stop);
+    document.addEventListener("visibilitychange", stop);
+    return () => {
+      stop();
+      window.removeEventListener("blur", stop);
+      document.removeEventListener("visibilitychange", stop);
+    };
+  }, [walking]);
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      <Canvas
-        aria-label="Interactive 3D workspace preview. Drag to rotate, scroll to zoom."
-        shadows
-        camera={{ position: [4.5, 3.4, 5.3], fov: 37 }}
-        dpr={[1, 1.5]}
-        frameloop="demand"
-        gl={{ antialias: true, alpha: true }}
-        fallback={<RoomFallback setup={props.setup} />}
+    <div
+      ref={wrapper}
+      className={`room-interaction ${walking ? "is-walking" : ""}`}
+      tabIndex={walking ? 0 : -1}
+      role={walking ? "region" : undefined}
+      aria-label={
+        walking
+          ? "First-person workspace. Drag to look, use WASD or arrow keys to walk, Escape to exit."
+          : undefined
+      }
+      onKeyDown={
+        walking
+          ? (e) => {
+              if (e.key === "Escape") {
+                e.preventDefault();
+                props.onExitWalk();
+                return;
+              }
+              const direction = walkKey(e.key);
+              if (direction) {
+                e.preventDefault();
+                walkInput.current.keys.add(direction);
+              }
+            }
+          : undefined
+      }
+      onKeyUp={
+        walking
+          ? (e) => {
+              const direction = walkKey(e.key);
+              if (direction) {
+                e.preventDefault();
+                walkInput.current.keys.delete(direction);
+              }
+            }
+          : undefined
+      }
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget))
+          walkInput.current.keys.clear();
+      }}
+    >
+      <div
+        className="room-canvas"
+        onPointerDown={
+          walking
+            ? (e) => {
+                if (e.button !== 0 || looking.current) return;
+                wrapper.current?.focus({ preventScroll: true });
+                looking.current = {
+                  pointer: e.pointerId,
+                  x: e.clientX,
+                  y: e.clientY,
+                };
+                e.currentTarget.setPointerCapture(e.pointerId);
+              }
+            : undefined
+        }
+        onPointerMove={
+          walking
+            ? (e) => {
+                const look = looking.current;
+                if (!look || look.pointer !== e.pointerId) return;
+                walkInput.current.look(e.clientX - look.x, e.clientY - look.y);
+                look.x = e.clientX;
+                look.y = e.clientY;
+              }
+            : undefined
+        }
+        onPointerUp={
+          walking
+            ? (e) => {
+                looking.current = null;
+                e.currentTarget.releasePointerCapture(e.pointerId);
+              }
+            : undefined
+        }
+        onPointerCancel={() => {
+          looking.current = null;
+        }}
+        onLostPointerCapture={() => {
+          looking.current = null;
+        }}
       >
-        <Suspense fallback={null}>
-          <Contents {...props} onReady={onReady} />
-        </Suspense>
-      </Canvas>
+        <Canvas
+          aria-label={
+            walking
+              ? "First-person 3D workspace"
+              : "Interactive 3D workspace preview. Drag items to move; drag empty space to rotate, scroll to zoom."
+          }
+          shadows
+          camera={{ position: [4.5, 3.4, 5.3], fov: 37 }}
+          dpr={[1, 1.5]}
+          frameloop={walking ? "always" : "demand"}
+          gl={{ antialias: true, alpha: true }}
+          fallback={<RoomFallback setup={props.setup} />}
+        >
+          <Suspense fallback={null}>
+            <Contents
+              {...props}
+              editable={props.editable && !walking}
+              onReady={onReady}
+              walkInput={walkInput}
+            />
+          </Suspense>
+        </Canvas>
+      </div>
+      {walking && ready && (
+        <WalkControls input={walkInput} onExit={props.onExitWalk} />
+      )}
       {!ready && (
         <div
           className="loading-panel"

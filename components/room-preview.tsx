@@ -3,12 +3,16 @@ import dynamic from "next/dynamic";
 import { Component, type ReactNode } from "react";
 import { RoomFallback } from "./room-fallback";
 import type { Setup } from "@/lib/workspace";
-export type CameraView = "room" | "front" | "top";
+import type { Point } from "@/lib/placement";
+export type CameraView = "room" | "front" | "top" | "walk";
 export type SceneProps = {
   setup: Setup;
   view: CameraView;
   onSelect: (id: string) => void;
   selected: string | null;
+  editable: boolean;
+  onMove: (id: string, position: Point) => void;
+  onExitWalk: () => void;
 };
 const Scene = dynamic(() => import("./room-scene"), {
   ssr: false,

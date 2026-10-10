@@ -7,6 +7,13 @@ import {
   type PresetId,
   type Weeks,
 } from "./catalog.ts";
+import {
+  clampPosition,
+  defaultLayout,
+  isPoint,
+  type Layout,
+  type Point,
+} from "./placement.ts";
 
 export type Slot =
   | "rear-left"
@@ -15,7 +22,12 @@ export type Slot =
   | "front-left"
   | "front-center"
   | "front-right";
-export type Item = { id: string; productId: string; slot: Slot };
+export type Item = {
+  id: string;
+  productId: string;
+  slot: Slot;
+  position?: Point;
+};
 export type Setup = {
   presetId: PresetId;
   deskId: string;
@@ -23,6 +35,7 @@ export type Setup = {
   finish: Finish;
   weeks: Weeks;
   items: Item[];
+  layout: Layout;
 };
 const front: Slot[] = ["front-left", "front-right", "front-center"];
 const rear: Slot[] = ["rear-center", "rear-left", "rear-right"];
@@ -34,10 +47,14 @@ export function presetSetup(id: PresetId): Setup {
     chairId: preset.chair,
     finish: preset.finish,
     weeks: 4,
+    layout: defaultLayout(),
     items: preset.extras.map((productId, i) => ({
       id: `preset-${i}`,
       productId,
-      slot: "front-center",
+      slot:
+        catalog[productId].kind === "monitor"
+          ? "rear-center"
+          : front[i % front.length],
     })),
   });
 }
@@ -85,7 +102,22 @@ export function normalize(setup: Setup): Setup {
       item.slot = front.find((s) => !occupied.has(s))!;
     occupied.add(item.slot);
   }
-  return { ...setup, items };
+  const next = { ...setup, items };
+  return {
+    ...next,
+    layout: {
+      desk: clampPosition(next, "desk", setup.layout.desk),
+      chair: clampPosition(next, "chair", setup.layout.chair),
+    },
+    items: items.map((item) =>
+      item.position
+        ? {
+            ...item,
+            position: clampPosition(next, item.id, item.position),
+          }
+        : item,
+    ),
+  };
 }
 export function allowedSlots(setup: Setup, item: Item): Slot[] {
   const monitor = catalog[item.productId].kind === "monitor";
@@ -107,6 +139,8 @@ export type Action =
   | { type: "add"; productId: string; id: string }
   | { type: "remove"; id: string }
   | { type: "move"; id: string; slot: Slot }
+  | { type: "place"; id: string; position: Point }
+  | { type: "reset-position"; id: string }
   | { type: "reset" }
   | { type: "undo" }
   | { type: "hydrate"; setup: Setup };
@@ -154,7 +188,7 @@ export function reducer(state: History, action: Action): History {
       break;
     case "chair":
       if (catalog[action.id]?.category === "chair") {
-        next = { ...s, chairId: action.id };
+        next = normalize({ ...s, chairId: action.id });
         notice = "Chair updated.";
       }
       break;
@@ -194,11 +228,53 @@ export function reducer(state: History, action: Action): History {
         next = {
           ...s,
           items: s.items.map((i) =>
-            i.id === item.id ? { ...i, slot: action.slot } : i,
+            i.id === item.id
+              ? { ...i, slot: action.slot, position: undefined }
+              : i,
           ),
         };
         notice = "Position updated.";
       }
+      break;
+    }
+    case "place": {
+      if (!isPoint(action.position)) break;
+      if (action.id === "desk" || action.id === "chair") {
+        next = {
+          ...s,
+          layout: {
+            ...s.layout,
+            [action.id]: clampPosition(s, action.id, action.position),
+          },
+        };
+      } else if (s.items.some((i) => i.id === action.id)) {
+        next = {
+          ...s,
+          items: s.items.map((i) =>
+            i.id === action.id
+              ? { ...i, position: clampPosition(s, i.id, action.position) }
+              : i,
+          ),
+        };
+      }
+      notice = "Position updated. Undo to return to the previous spot.";
+      break;
+    }
+    case "reset-position": {
+      if (action.id === "desk" || action.id === "chair") {
+        next = {
+          ...s,
+          layout: { ...s.layout, [action.id]: defaultLayout()[action.id] },
+        };
+      } else {
+        next = {
+          ...s,
+          items: s.items.map((i) =>
+            i.id === action.id ? { ...i, position: undefined } : i,
+          ),
+        };
+      }
+      notice = "Item returned to its starting position.";
       break;
     }
   }
@@ -260,10 +336,21 @@ export function decodeSaved(raw: string | null): Setup | null {
       chairId: s.chairId,
       finish: s.finish,
       weeks: s.weeks,
+      layout: {
+        desk: isPoint(s.layout?.desk)
+          ? { x: s.layout.desk.x, z: s.layout.desk.z }
+          : defaultLayout().desk,
+        chair: isPoint(s.layout?.chair)
+          ? { x: s.layout.chair.x, z: s.layout.chair.z }
+          : defaultLayout().chair,
+      },
       items: s.items.map((i: Item) => ({
         id: i.id,
         productId: i.productId,
         slot: i.slot,
+        ...(isPoint(i.position)
+          ? { position: { x: i.position.x, z: i.position.z } }
+          : {}),
       })),
     });
   } catch {

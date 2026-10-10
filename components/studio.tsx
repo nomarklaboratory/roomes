@@ -13,7 +13,6 @@ import {
   type Product,
 } from "@/lib/catalog";
 import {
-  allowedSlots,
   baliToday,
   canAdd,
   decodeSaved,
@@ -26,6 +25,7 @@ import {
 } from "@/lib/workspace";
 import { RoomPreview, type CameraView } from "./room-preview";
 import { Icon } from "./icon";
+import { PlacementControls } from "./placement-controls";
 
 type Step = "design" | "review" | "done";
 function PresetArt({ index }: { index: number }) {
@@ -144,14 +144,11 @@ export default function Studio() {
     if (step !== "design") return;
     if (id === "desk" || id === "chair") {
       setCategory(id);
-      setSelected(null);
     } else {
       setCategory("accessory");
-      setSelected(id);
     }
+    setSelected(id);
   };
-  const activeItem = setup.items.find((i) => i.id === selected);
-  const canMove = activeItem ? allowedSlots(setup, activeItem) : [];
   const confirm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!name.trim()) {
@@ -268,7 +265,9 @@ export default function Studio() {
                 </div>
               </div>
             )}
-            <div className="preview-stage">
+            <div
+              className={`preview-stage ${view === "walk" ? "walking-stage" : ""}`}
+            >
               <div className="stage-top">
                 <span className="scene-label">
                   <span className="tiny-dot" />{" "}
@@ -287,6 +286,17 @@ export default function Studio() {
                       {v[0].toUpperCase() + v.slice(1)}
                     </button>
                   ))}
+                  <button
+                    className="inside-button"
+                    aria-label="First-person view"
+                    aria-pressed={view === "walk"}
+                    onClick={() => {
+                      setView("walk");
+                      setSelected(null);
+                    }}
+                  >
+                    <Icon name="eye" size={13} /> Inside
+                  </button>
                 </div>
               </div>
               <div className="scene-container">
@@ -295,12 +305,19 @@ export default function Studio() {
                   view={view}
                   onSelect={selectInScene}
                   selected={selected}
+                  editable={step === "design"}
+                  onMove={(id, position) =>
+                    change({ type: "place", id, position })
+                  }
+                  onExitWalk={() => setView("room")}
                 />
               </div>
               <div className="stage-bottom">
                 <span>
-                  <Icon name="move" size={15} /> Drag to explore · Scroll to
-                  zoom
+                  <Icon name="move" size={15} />{" "}
+                  {step === "design"
+                    ? "Drag items to move · Empty space to orbit"
+                    : "Drag to explore · Scroll to zoom"}
                 </span>
                 <span className="preview-note">STYLIZED 3D PREVIEW</span>
               </div>
@@ -311,18 +328,20 @@ export default function Studio() {
                 <span className="strip-label">IN YOUR SETUP</span>
                 <div className="item-chips">
                   <button
+                    aria-pressed={selected === "desk"}
                     onClick={() => {
                       setCategory("desk");
-                      setSelected(null);
+                      setSelected(selected === "desk" ? null : "desk");
                     }}
                   >
                     <Icon name="desk" size={14} />
                     Desk
                   </button>
                   <button
+                    aria-pressed={selected === "chair"}
                     onClick={() => {
                       setCategory("chair");
-                      setSelected(null);
+                      setSelected(selected === "chair" ? null : "chair");
                     }}
                   >
                     <Icon name="chair" size={14} />
@@ -355,44 +374,13 @@ export default function Studio() {
                 </div>
               </div>
             )}
-            {step === "design" && activeItem && (
-              <div className="placement-panel">
-                <div>
-                  <strong>{catalog[activeItem.productId].name}</strong>
-                  <small>Choose a position on your desk</small>
-                </div>
-                <div className="slot-buttons">
-                  {(catalog[activeItem.productId].kind === "monitor"
-                    ? ["rear-left", "rear-center", "rear-right"]
-                    : ["front-left", "front-center", "front-right"]
-                  ).map((s) => (
-                    <button
-                      key={s}
-                      disabled={!canMove.includes(s as typeof activeItem.slot)}
-                      aria-pressed={activeItem.slot === s}
-                      onClick={() =>
-                        change({
-                          type: "move",
-                          id: activeItem.id,
-                          slot: s as typeof activeItem.slot,
-                        })
-                      }
-                    >
-                      {s.split("-")[1]}
-                    </button>
-                  ))}
-                </div>
-                <button
-                  className="icon-button remove-item"
-                  aria-label={`Remove ${catalog[activeItem.productId].name}`}
-                  onClick={() => {
-                    change({ type: "remove", id: activeItem.id });
-                    setSelected(null);
-                  }}
-                >
-                  <Icon name="minus" />
-                </button>
-              </div>
+            {step === "design" && selected && view !== "walk" && (
+              <PlacementControls
+                setup={setup}
+                selected={selected}
+                onChange={change}
+                onClose={() => setSelected(null)}
+              />
             )}
             <div className="below-scene">
               <span>
@@ -843,7 +831,8 @@ export default function Studio() {
             <b>02</b>
             <span>
               <strong>Make it your own</strong>Swap the furniture, add little
-              extras, and explore in 3D.
+              extras, and drag items into place. Choose Inside to look around
+              from a first-person view.
             </span>
           </li>
           <li>

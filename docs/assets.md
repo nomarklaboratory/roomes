@@ -4,11 +4,11 @@ The browser consumes a small typed catalog and approved GLB files. It does not c
 
 ## Current assets
 
-All nine assets are original parametric designs made with Three.js. Blender renders the transparent thumbnails. They are product-inspired illustrations, not scans or accurate replicas. The electric desk uses the listed 120 × 60 cm option. The wooden desk illustrates the selector's 160 × 80 cm option; Monis's summary and selector differ, so the client must verify dimensions before a real fit claim. Chair and accessory dimensions are illustrative. The everyday chair and plant are concept products, labeled in the UI and review.
+All nine assets are original parametric designs made with Three.js. Blender renders the transparent thumbnails. They are product-inspired illustrations, not scans or accurate replicas. Six items use published dimensions for a specific preview posture. The laptop stand is explicitly estimated; the everyday chair and plant are labeled concepts. See [physical scale and primary sources](catalog-scale.md) for measurements, variant conflicts, and remaining intake work.
 
-Source references live in `lib/catalog.ts`. Desks and the ergonomic chair link to their product pages. Monitor, lamp, and laptop-stand references link to the Monis site because this snapshot is not an authoritative inventory adapter. No external product photos or stock 3D models are redistributed.
+Sources and measurement evidence live in `lib/catalog.ts`. Each real product links to its rental listing and, where needed, its manufacturer's dimension source. No external product photos or stock 3D models are redistributed.
 
-The manifest records asset method, family, version, bounds, triangle count, bytes, units, origin, and approval state. Models use metres, Y-up, and bottom-center origins. The optimizer preserves semantic material names for finish changes. It preserves the hierarchy and transforms to prevent geometry normalization from changing the dimensions of reused primitives.
+The manifest records asset method, family, version, dimensions and source evidence, bounds, triangle count, bytes, units, origin, and approval state. Models use metres, Y-up, and bottom-center origins. The optimizer preserves semantic material names for finish changes. It preserves hierarchy and transforms to prevent normalization from changing reused primitives.
 
 ## Rebuild
 

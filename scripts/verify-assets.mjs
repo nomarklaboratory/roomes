@@ -11,7 +11,14 @@ const io = new NodeIO()
 const manifest = JSON.parse(
   await readFile("public/models/manifest.json", "utf8"),
 );
+assert.deepEqual(
+  Object.keys(manifest.assets).sort(),
+  Object.keys(catalog).sort(),
+  "Every catalog item needs a calibrated asset",
+);
+assert.equal(manifest.units, "meters");
 for (const [id, asset] of Object.entries(manifest.assets)) {
+  const product = catalog[id];
   const file = `public${asset.path}`;
   const doc = await io.read(file);
   const scene = doc.getRoot().listScenes()[0];
@@ -24,6 +31,32 @@ for (const [id, asset] of Object.entries(manifest.assets)) {
       `${id}: bounds changed on axis ${i}, expected ${asset.bounds[i]}, got ${n}`,
     ),
   );
+  const expected = [product.width, product.height, product.depth];
+  actual.forEach((n, i) =>
+    assert.ok(
+      Math.abs(n - expected[i]) < 0.002,
+      `${id}: geometry axis ${i} must match catalog metres: ${n} vs ${expected[i]}`,
+    ),
+  );
+  assert.equal(
+    asset.version,
+    product.assetVersion ?? 1,
+    `${id}: cache version mismatch`,
+  );
+  assert.deepEqual(
+    asset.scale,
+    product.scale,
+    `${id}: measurement provenance mismatch`,
+  );
+  assert.ok(
+    Math.abs(bounds.min[1]) < 0.001,
+    `${id}: base must rest on its surface at Y=0`,
+  );
+  for (const axis of [0, 2])
+    assert.ok(
+      Math.abs(bounds.min[axis] + bounds.max[axis]) < 0.002,
+      `${id}: footprint must be centered on its placement origin`,
+    );
   assert.ok(
     (await stat(file)).size < 75000,
     `${id}: exceeds compressed 75 KB asset budget`,
@@ -48,6 +81,46 @@ for (const [id, asset] of Object.entries(manifest.assets)) {
     assert.ok(
       Math.abs(getBounds(seat).max[1] - catalog[id].seatHeight) < 0.001,
       `${id}: seat geometry must match the seated camera height`,
+    );
+    if (id === "ergonomic-chair") {
+      const seatBounds = getBounds(seat);
+      assert.ok(
+        Math.abs(seatBounds.max[0] - seatBounds.min[0] - 0.5) < 0.002,
+        "OCA259PRO seat width must be 50 cm",
+      );
+      assert.ok(
+        Math.abs(seatBounds.max[2] - seatBounds.min[2] - 0.48) < 0.002,
+        "OCA259PRO seat depth must be 48 cm",
+      );
+    }
+  }
+  if (product.screen) {
+    const screen = doc
+      .getRoot()
+      .listNodes()
+      .find((n) => n.getName() === "active-screen");
+    assert.ok(screen, `${id}: missing screen geometry`);
+    const b = getBounds(screen);
+    const w = b.max[0] - b.min[0],
+      h = b.max[1] - b.min[1];
+    assert.ok(
+      Math.abs(Math.hypot(w, h) / 0.0254 - product.screen.inches) < 0.1,
+      `${id}: inch size refers to the screen diagonal, not stand height`,
+    );
+    assert.ok(
+      Math.abs(w / h - product.screen.aspect) < 0.01,
+      `${id}: incorrect screen aspect ratio`,
+    );
+  }
+  if (product.category === "desk") {
+    const top = doc
+      .getRoot()
+      .listNodes()
+      .find((n) => n.getName() === "tabletop");
+    assert.ok(top, `${id}: missing tabletop anchor`);
+    assert.ok(
+      Math.abs(getBounds(top).max[1] - product.height) < 0.001,
+      `${id}: accessories must meet the tabletop surface`,
     );
   }
   if (id.endsWith("-desk"))

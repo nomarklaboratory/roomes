@@ -73,6 +73,15 @@ Room scans, accurate fit guarantees, live commerce, and a production asset backe
 - Version revised models/thumbnails to avoid stale caches; preserve rental state, prices, and item placement.
 - Acceptance: desktop/mobile zoom, fullscreen, fallback exit, seated navigation, and rental regression checks pass; visual inspection confirms a flat rug and visible chair wheels.
 
+## E11 — Catalog dimensions and real product scale
+
+- Audit live rental listings and manufacturer dimension diagrams per selected SKU/variant; retain dated sources and explain adjustment posture and conflicting fields.
+- Use one metre-based catalog for asset generation, placement envelopes, and seated camera anchors. Keep tabletop dimensions and monitor screen diagonal separate from stand height.
+- Rebuild/version all assets and thumbnails; opened lamp gets its actual deployed envelope. Place accessories at desk height and keep default slots inside the tabletop.
+- Show W × D × H and published/estimated/concept status in catalog and review; selected item exposes its source and posture notes.
+- Reject compressed models drifting over 2 mm on any axis, incorrect seat/tabletop anchors, wrong screen diagonal/aspect, stale versions, or incomplete provenance.
+- Acceptance: sourced products match published dimensions; unmeasured stock remains explicitly estimated. Desktop/mobile seated, placement, source display, and rental regressions pass. Client stock measurements remain required before exact delivery/fit guarantees.
+
 ## Execution record
 
 - E01–E05 implemented: catalog, assets, presets, configuration, and simulated checkout.

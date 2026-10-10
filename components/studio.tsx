@@ -27,6 +27,7 @@ import { RoomPreview } from "./room-preview";
 import type { CameraView, Posture } from "@/types/viewer";
 import { Icon } from "./icon";
 import { PlacementControls } from "./placement-controls";
+import { ProductDimensions } from "./product-dimensions";
 
 type Step = "design" | "review" | "done";
 function PresetArt({ index }: { index: number }) {
@@ -403,7 +404,7 @@ export default function Studio() {
               <span>
                 <Icon name="leaf" size={16} /> More living. Less owning.
               </span>
-              <span>Product-inspired models · Dimensions are illustrative</span>
+              <span>Life-size preview · Estimates labeled in the catalog</span>
             </div>
           </section>
           {step === "design" ? (
@@ -473,6 +474,7 @@ export default function Studio() {
                               <span className="product-subtitle">
                                 {p.subtitle}
                               </span>
+                              <ProductDimensions product={p} />
                               <span className="product-price">
                                 {money(p.weeklyCents)}
                                 <small> / week</small>
@@ -496,6 +498,7 @@ export default function Studio() {
                                 <small className="concept">CONCEPT</small>
                               )}
                             </strong>
+                            <ProductDimensions product={p} />
                             <span>
                               {money(p.weeklyCents)}
                               <small> / week</small>
@@ -626,9 +629,7 @@ export default function Studio() {
                         {line.quantity > 1 ? ` × ${line.quantity}` : ""}
                       </strong>
                       <small>
-                        {line.product.concept
-                          ? "Concept product"
-                          : "Product-inspired preview"}
+                        <ProductDimensions product={line.product} />
                       </small>
                     </span>
                     <b>
@@ -863,7 +864,9 @@ export default function Studio() {
         </ol>
         <p className="small-note">
           This challenge demo uses illustrative USD prices and original stylized
-          models. Concept products are labeled. The real monis.rent team can
+          models scaled to the catalog. Published dimensions, estimates, and
+          concepts are labeled. Adjustable desks are shown at 75 cm; the
+          ergonomic chair uses a 49 cm seat. The real monis.rent team can
           confirm availability, colors, delivery, and rental rates.
         </p>
         <button className="primary-button" onClick={() => setHelp(false)}>

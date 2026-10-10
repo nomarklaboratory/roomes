@@ -15,7 +15,10 @@ test("a 170 cm person's camera uses eye height and the actual chair seat height"
     const setup = { ...presetSetup("developer"), chairId };
     assert.equal(person.height, 1.7);
     assert.equal(eyeHeight(setup, "standing"), 1.59);
-    assert.equal(eyeHeight(setup, "seated"), 1.24);
+    assert.equal(
+      eyeHeight(setup, "seated"),
+      chairId === "ergonomic-chair" ? 1.27 : 1.24,
+    );
     assert.equal(
       eyeHeight(setup, "seated") - catalog[chairId].seatHeight!,
       person.seatedEyeAboveSeat,

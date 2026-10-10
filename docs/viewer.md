@@ -1,6 +1,6 @@
 # Viewer scale and posture
 
-The viewer represents a **170 cm person**. World units are metres. Camera height is the eye level, not the top of the head: **1.59 m standing**, and **0.78 m above the chair seat when seated**. Both procedural chair assets now have a **0.46 m seat surface**, giving **1.24 m seated eye level**.
+The viewer represents a **170 cm person**. World units are metres. Camera height is the eye level, not the top of the head: **1.59 m standing**, and **0.78 m above the chair seat when seated**. The ergonomic chair uses its manufacturer's **0.49 m minimum seat height**, giving **1.27 m seated eyes**. The concept Everyday chair uses an estimated **0.46 m seat**, giving **1.24 m seated eyes**. See [product dimensions and posture sources](catalog-scale.md).
 
 These are representative preview assumptions inferred from the stature, standing eye height, and seated eye height measurements in the [FAA Technical Operations anthropometric survey, Appendix B](https://hf.tc.faa.gov/hfds/download-hfds/hfds_pdfs/App_B_Tech_Ops_Anthropometrics.pdf). The standing eye level is about 93.5% of stature; seated eye height above the seat is about 46% of stature. The ratios are approximations from population summaries, not a prediction of an individual person's proportions or an ergonomic fit assessment.
 

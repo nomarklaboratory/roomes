@@ -19,7 +19,7 @@ Next.js App Router and Tailwind CSS provide the interface; React Three Fiber, Dr
 - Add monitors, a lamp, a plant, or a laptop stand. Up to two monitors must fit the desk; other extras are limited to one each.
 - Drag any setup item in the preview. Use Top for easier placement, or select a chip below the preview for movement buttons and position reset. Furniture moves in 10 cm steps; accessories in 2 cm steps. Undo and device saving include positions.
 - Use the **+ / −** controls to zoom and the expand button to make the preview fullscreen. A viewport expansion works in browsers without element fullscreen; its exit button or Escape restores the editor.
-- Click **Sit in chair** directly in the preview, or select the Chair chip and choose **Sit in this chair**. Both enter first person over the selected chair cushion at a 170 cm person's estimated seated eye level of 124 cm. Looking around stays enabled; **Stand up** returns to walking beside the chair.
+- Click **Sit in chair** directly in the preview, or select the Chair chip and choose **Sit in this chair**. Both enter first person over the selected chair cushion at a 170 cm person's estimated seated eye level: 127 cm on the ergonomic chair, 124 cm on the concept Everyday chair. Looking around stays enabled; **Stand up** returns to walking beside the chair.
 - Choose **Inside** to start standing at an estimated 159 cm eye level. Drag to look; use WASD, arrow keys, or hold the onscreen direction buttons to walk. The same Sit in chair / Stand up toggle is available inside the room. Recenter restores the current posture's viewpoint; Exit view or Escape returns to the overview.
 - Choose 1, 2, 4, or 8 weeks, review quantities and totals, then try the simulated request form.
 
@@ -55,6 +55,8 @@ The entire approved catalog uses original parametric models with reusable famili
 See [asset workflow and pilot](docs/assets.md) for reproducible commands and the production pipeline. The agreed epics and scaling roadmap are in [.plan/epics.md](.plan/epics.md).
 
 See [viewer calibration](docs/viewer.md) for human proportions, seated positioning, and floor/rug geometry. The eye-height assumptions are representative preview measurements; exact product fit requires validated client dimensions.
+
+See [catalog scale and live sources](docs/catalog-scale.md): six products use published assembled dimensions for their preview posture. The laptop stand is estimated; Everyday chair and plant are concepts. The catalog and checkout show W × D × H and evidence status; select an item in the preview to inspect its source and adjustment notes. Every compressed model is checked against catalog dimensions within 2 mm, with separate seat, tabletop, and screen checks.
 
 ## With more time
 

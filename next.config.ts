@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
     localPatterns: [
       { pathname: "/thumbnails/**", search: "?v=1" },
       { pathname: "/thumbnails/**", search: "?v=2" },
+      { pathname: "/thumbnails/**", search: "?v=3" },
     ],
   },
   turbopack: {

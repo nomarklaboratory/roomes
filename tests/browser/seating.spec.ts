@@ -19,7 +19,7 @@ test("sit directly from the preview or the selected chair, then stand up", async
   // The visible overview action enters seated first person in one click.
   await page.getByRole("button", { name: "Sit in chair", exact: true }).click();
   await expect(page.locator(".walk-caption")).toContainText(
-    "Seated eyes 124 cm",
+    "Seated eyes 127 cm",
   );
   await expect(page.locator(".walk-caption")).toContainText(
     "In Ergonomic chair",

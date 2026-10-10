@@ -41,14 +41,14 @@ test("free placement stays on its surface, moves desk contents together, and und
     position: { x: 20, z: -20 },
   });
   const position = positionOf(state.present, monitor.id);
-  assert.equal(position.x, 0.28);
+  assert.equal(position.x, 0.279);
   assert.equal(position.z, -0.185);
   state = reducer(state, {
     type: "place",
     id: "chair",
     position: { x: -20, z: 20 },
   });
-  assert.deepEqual(state.present.layout.chair, { x: -1.34, z: 1.09 });
+  assert.deepEqual(state.present.layout.chair, { x: -1.34, z: 1.085 });
   const invalid = reducer(state, {
     type: "place",
     id: "desk",
@@ -75,7 +75,7 @@ test("layouts persist safely, older saved setups migrate, and desk changes clamp
     state.present,
   );
   state = reducer(state, { type: "desk", id: "electric-desk" });
-  assert.deepEqual(positionOf(state.present, lamp.id), { x: 0.505, z: 0.205 });
+  assert.deepEqual(positionOf(state.present, lamp.id), { x: 0.51, z: 0.065 });
   const legacy = { ...presetSetup("developer"), layout: undefined };
   assert.deepEqual(
     decodeSaved(JSON.stringify({ version: 1, setup: legacy }))?.layout,

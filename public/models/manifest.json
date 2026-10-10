@@ -1,141 +1,261 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "units": "meters",
   "upAxis": "Y",
   "origin": "bottom-center",
   "assets": {
     "electric-desk": {
       "path": "/models/electric-desk.glb",
-      "version": 2,
+      "version": 3,
       "method": "parametric-original",
       "family": "desk",
-      "bytes": 14028,
+      "bytes": 14048,
       "triangles": 2700,
       "bounds": [
-        1.2000000476837158,
-        0.7525000007450581,
-        0.6000000238418579
+        1.2,
+        0.75,
+        0.6
       ],
+      "scale": {
+        "status": "listed",
+        "model": "Fantech WS414 / GD914 · Small",
+        "source": "https://www.monis.rent/products/electrical-adjustable-desk",
+        "checkedAt": "2026-10-11",
+        "note": "120 × 60 cm variant. Preview set at 75 cm; adjustable 70–118 cm.",
+        "heightRange": [
+          0.7,
+          1.18
+        ]
+      },
+      "dimensions": {
+        "width": 1.2,
+        "depth": 0.6,
+        "height": 0.75
+      },
       "review": "approved-stylized",
       "compression": "meshopt"
     },
     "wooden-desk": {
       "path": "/models/wooden-desk.glb",
-      "version": 2,
+      "version": 3,
       "method": "parametric-original",
       "family": "desk",
-      "bytes": 15688,
+      "bytes": 15712,
       "triangles": 2592,
       "bounds": [
-        1.6180000111460686,
-        0.7525000007450581,
-        0.800000011920929
+        1.6,
+        0.75,
+        0.8
       ],
+      "scale": {
+        "status": "listed",
+        "model": "IKEA Trotten · 160 × 80 cm",
+        "source": "https://www.monis.rent/products/adjustable-wooden-desk",
+        "checkedAt": "2026-10-11",
+        "note": "160 × 80 cm selector and technical specifications; summary differs. Preview set at 75 cm; adjustable 70–120 cm. Confirm variant before ordering.",
+        "heightRange": [
+          0.7,
+          1.2
+        ]
+      },
+      "dimensions": {
+        "width": 1.6,
+        "depth": 0.8,
+        "height": 0.75
+      },
       "review": "approved-stylized",
       "compression": "meshopt"
     },
     "ergonomic-chair": {
       "path": "/models/ergonomic-chair.glb",
-      "version": 2,
+      "version": 3,
       "method": "parametric-original",
       "family": "chair",
-      "bytes": 23680,
+      "bytes": 23836,
       "triangles": 4624,
       "bounds": [
-        0.6049999976158142,
-        1.0875000014305116,
-        0.5966149252692932
+        0.65,
+        1.15000000230968,
+        0.66
       ],
+      "scale": {
+        "status": "listed",
+        "model": "Fantech OCA259PRO",
+        "source": "https://fantech.ph/wp-content/uploads/2024/10/oca259-pro-black-7.jpg",
+        "checkedAt": "2026-10-11",
+        "note": "Manufacturer diagram: arms 61–65 cm wide, base 66 cm deep, seat 50 × 48 cm. Preview uses minimum seat / overall height, arms at widest setting, leg rest retracted.",
+        "heightRange": [
+          1.15,
+          1.28
+        ],
+        "seatHeightRange": [
+          0.49,
+          0.57
+        ]
+      },
+      "dimensions": {
+        "width": 0.65,
+        "depth": 0.66,
+        "height": 1.15,
+        "seatHeight": 0.49
+      },
       "review": "approved-stylized",
       "compression": "meshopt"
     },
     "task-chair": {
       "path": "/models/task-chair.glb",
-      "version": 2,
+      "version": 3,
       "method": "parametric-original",
       "family": "chair",
-      "bytes": 16292,
+      "bytes": 17824,
       "triangles": 2160,
       "bounds": [
-        0.6049999976158142,
-        0.8262415067815143,
-        0.5966149252692932
+        0.6,
+        0.8299999993294477,
+        0.5999999999999999
       ],
+      "scale": {
+        "status": "concept",
+        "note": "Original concept; 46 cm seat height. No matching rental SKU."
+      },
+      "dimensions": {
+        "width": 0.6,
+        "depth": 0.6,
+        "height": 0.83,
+        "seatHeight": 0.46
+      },
       "review": "approved-stylized",
       "compression": "meshopt"
     },
     "monitor-27": {
       "path": "/models/monitor-27.glb",
-      "version": 1,
+      "version": 3,
       "method": "parametric-original",
       "family": "monitor",
-      "bytes": 19248,
+      "bytes": 20664,
       "triangles": 3600,
       "bounds": [
-        0.6100000143051147,
-        0.43749999901652337,
-        0.17000000178813934
+        0.6129,
+        0.5149000000000001,
+        0.2
       ],
+      "scale": {
+        "status": "listed",
+        "model": "Redmi A27U / Xiaomi A27Ui",
+        "source": "https://www.monis.rent/products/27-4-k-multimedia-monitor",
+        "checkedAt": "2026-10-11",
+        "note": "Listed assembled dimensions including stand: 612.9 × 200 × 514.9 mm. Preview uses this stand position."
+      },
+      "dimensions": {
+        "width": 0.6129,
+        "depth": 0.2,
+        "height": 0.5149
+      },
       "review": "approved-stylized",
       "compression": "meshopt"
     },
     "monitor-34": {
       "path": "/models/monitor-34.glb",
-      "version": 1,
+      "version": 3,
       "method": "parametric-original",
       "family": "monitor",
-      "bytes": 19216,
+      "bytes": 19288,
       "triangles": 3600,
       "bounds": [
-        0.8100000023841858,
-        0.43749999901652337,
-        0.17000000178813934
+        0.8103900000000002,
+        0.52061,
+        0.24253
       ],
+      "scale": {
+        "status": "listed",
+        "model": "Xiaomi Mi Curved 34 · 144 Hz",
+        "source": "https://i01.appmifile.com/webfile/globalimg/Global_UG/Mi_Ecosystem/Mi_Curved_Gaming_Monitor_34/Mi_CurvedMonitor_34_All_V1.pdf",
+        "checkedAt": "2026-10-11",
+        "note": "Manufacturer manual gives width 810.39, depth 242.53, height 520.61 mm including stand. Resolves swapped depth/height labels on the rental listing. Stylized screen; curvature is not reproduced."
+      },
+      "dimensions": {
+        "width": 0.81039,
+        "depth": 0.24253,
+        "height": 0.52061
+      },
       "review": "approved-stylized",
       "compression": "meshopt"
     },
     "desk-lamp": {
       "path": "/models/desk-lamp.glb",
-      "version": 1,
+      "version": 3,
       "method": "parametric-original",
       "family": "desk-lamp",
-      "bytes": 6996,
-      "triangles": 320,
+      "bytes": 9464,
+      "triangles": 1028,
       "bounds": [
-        0.24300000125169754,
-        0.46751899187543783,
-        0.17000000178813934
+        0.15,
+        0.42,
+        0.43999999999999995
       ],
+      "scale": {
+        "status": "listed",
+        "model": "Xiaomi Mi LED Desk Lamp 1S",
+        "source": "https://www.mi.com/sg/support/faq/details/KA-07549/",
+        "checkedAt": "2026-10-11",
+        "note": "Manufacturer's opened posture: 440 × 150 × 420 mm, 150 mm base. Arm faces forward, so room width is 150 mm and depth is 440 mm. Rental listing's 162 × 162 × 479 mm does not describe this opened posture."
+      },
+      "dimensions": {
+        "width": 0.15,
+        "depth": 0.44,
+        "height": 0.42
+      },
       "review": "approved-stylized",
       "compression": "meshopt"
     },
     "plant": {
       "path": "/models/plant.glb",
-      "version": 1,
+      "version": 3,
       "method": "parametric-original",
       "family": "plant",
-      "bytes": 14964,
+      "bytes": 15116,
       "triangles": 2592,
       "bounds": [
-        0.27186958177798703,
-        0.369882398144786,
-        0.1689281499055889
+        0.19,
+        0.34999999999999987,
+        0.18999999999999997
       ],
+      "scale": {
+        "status": "concept",
+        "note": "Original plant concept; size is an illustration, not a rental SKU."
+      },
+      "dimensions": {
+        "width": 0.19,
+        "depth": 0.19,
+        "height": 0.35
+      },
       "review": "approved-stylized",
       "compression": "meshopt"
     },
     "laptop-stand": {
       "path": "/models/laptop-stand.glb",
-      "version": 1,
+      "version": 3,
       "method": "parametric-original",
       "family": "laptop-stand",
-      "bytes": 8888,
+      "bytes": 9016,
       "triangles": 1328,
       "bounds": [
-        0.2800000011920929,
-        0.17625625306136322,
-        0.2428446578780979
+        0.28,
+        0.15000000000000002,
+        0.24
       ],
+      "scale": {
+        "status": "estimated",
+        "model": "KOLMI",
+        "source": "https://www.monis.rent/products/ergonomic-laptop-stand",
+        "checkedAt": "2026-10-11",
+        "note": "Rental listing identifies KOLMI but publishes no dimensions. 28 × 24 × 15 cm is an estimate pending measurement of the actual stock."
+      },
+      "dimensions": {
+        "width": 0.28,
+        "depth": 0.24,
+        "height": 0.15
+      },
       "review": "approved-stylized",
       "compression": "meshopt"
     }

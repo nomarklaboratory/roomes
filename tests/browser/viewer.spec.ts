@@ -64,7 +64,7 @@ test("zoom, fullscreen, and a 170 cm seated viewer work without changing the ren
   const standing = await canvas.screenshot();
   await page.getByRole("button", { name: "Sit in chair", exact: true }).click();
   await expect(page.locator(".walk-caption")).toContainText(
-    "Seated eyes 124 cm",
+    "Seated eyes 127 cm",
   );
   await expect(
     page.getByRole("button", { name: "Walk forward", exact: true }),

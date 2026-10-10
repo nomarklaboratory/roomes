@@ -28,7 +28,9 @@ export function slotPosition(setup: Setup, item: Item): Point {
       : 0;
   return {
     x: side * (desk.width / 2 - product.width / 2 - 0.015),
-    z: rear ? -desk.depth / 2 + 0.15 : desk.depth / 2 - 0.14,
+    z: rear
+      ? -desk.depth / 2 + product.depth / 2 + 0.015
+      : desk.depth / 2 - product.depth / 2 - 0.015,
   };
 }
 export function positionOf(setup: Setup, id: string): Point {

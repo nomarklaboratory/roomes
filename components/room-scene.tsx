@@ -115,7 +115,7 @@ function Movable({
   } | null>(null);
   const original = positionOf(setup, id);
   const furniture = id === "desk" || id === "chair";
-  const y = furniture ? 0 : 0.754;
+  const y = furniture ? 0 : catalog[setup.deskId].height;
   const plane = useMemo(() => new Plane(new Vector3(0, 1, 0), -y), [y]);
   const point = useMemo(() => new Vector3(), []);
   const [draft, setDraft] = useState<Point | null>(null);

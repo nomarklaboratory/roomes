@@ -1,0 +1,288 @@
+import * as T from "three";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
+import { mkdir, writeFile } from "node:fs/promises";
+
+// GLTFExporter uses FileReader for buffers, even with texture-free binary exports.
+globalThis.FileReader = class {
+  async readAsArrayBuffer(blob) {
+    this.result = await blob.arrayBuffer();
+    this.onloadend?.();
+  }
+  async readAsDataURL(blob) {
+    this.result = `data:${blob.type};base64,${Buffer.from(await blob.arrayBuffer()).toString("base64")}`;
+    this.onloadend?.();
+  }
+};
+const palette = {
+  wood: "#c9a77f",
+  metal: "#dedbd2",
+  dark: "#343c37",
+  fabric: "#8b9c86",
+  screen: "#1f302c",
+  cream: "#e9e1d0",
+  green: "#66885a",
+  pot: "#be7251",
+};
+const mats = Object.fromEntries(
+  Object.entries(palette).map(([name, color]) => {
+    const m = new T.MeshStandardMaterial({
+      color,
+      roughness: 0.72,
+      metalness: name === "metal" ? 0.25 : 0,
+    });
+    m.name = name;
+    return [name, m];
+  }),
+);
+function box(g, size, pos, mat = "metal", radius = 0.018, rot = 0) {
+  const m = new T.Mesh(
+    new RoundedBoxGeometry(
+      ...size,
+      2,
+      Math.min(radius, ...size.map((v) => v / 2)),
+    ),
+    typeof mat === "string" ? mats[mat] : mat,
+  );
+  m.position.set(...pos);
+  m.rotation.z = rot;
+  g.add(m);
+  return m;
+}
+function cyl(g, radius, height, pos, mat = "metal", top = radius) {
+  const m = new T.Mesh(
+    new T.CylinderGeometry(top, radius, height, 16),
+    mats[mat],
+  );
+  m.position.set(...pos);
+  g.add(m);
+  return m;
+}
+function rod(g, a, b, r = 0.012, mat = "metal") {
+  const p = new T.Vector3(...a),
+    q = new T.Vector3(...b);
+  const m = cyl(
+    g,
+    r,
+    p.distanceTo(q),
+    p.clone().add(q).multiplyScalar(0.5).toArray(),
+    mat,
+  );
+  m.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), q.sub(p).normalize());
+  return m;
+}
+function sphere(g, size, pos, mat = "green", rot = 0) {
+  const m = new T.Mesh(new T.SphereGeometry(1, 16, 10), mats[mat]);
+  m.scale.set(...size);
+  m.position.set(...pos);
+  m.rotation.z = rot;
+  g.add(m);
+  return m;
+}
+function desk(w, d, electric = true) {
+  const g = new T.Group();
+  box(g, [w, 0.055, d], [0, 0.725, 0], "wood", 0.025);
+  for (const x of [-w * 0.36, w * 0.36]) {
+    box(
+      g,
+      [electric ? 0.07 : 0.055, 0.64, 0.07],
+      [x, 0.36, 0],
+      electric ? "metal" : "dark",
+    );
+    box(g, [0.12, 0.045, d * 0.85], [x, 0.045, 0], electric ? "metal" : "dark");
+    box(g, [0.15, 0.025, d * 0.8], [x, 0.684, 0]);
+  }
+  box(g, [w * 0.72, 0.06, 0.04], [0, 0.63, -d * 0.24]);
+  if (electric)
+    box(g, [0.09, 0.027, 0.035], [w * 0.33, 0.677, d * 0.42], "dark", 0.005);
+  else {
+    rod(g, [w * 0.43, 0.65, 0.2], [w * 0.5, 0.65, 0.2]);
+    rod(g, [w * 0.5, 0.65, 0.2], [w * 0.5, 0.58, 0.2]);
+    cyl(g, 0.018, 0.08, [w * 0.5, 0.55, 0.2], "dark");
+  }
+  return g;
+}
+function chair(ergonomic = true) {
+  const g = new T.Group();
+  const fabric = ergonomic ? "dark" : "fabric";
+  cyl(g, 0.033, 0.36, [0, 0.27, 0], "dark");
+  cyl(g, 0.056, 0.1, [0, 0.39, 0], "metal");
+  for (let i = 0; i < 5; i++) {
+    let a = (i * Math.PI * 2) / 5;
+    const x = Math.sin(a) * 0.29,
+      z = Math.cos(a) * 0.29;
+    rod(g, [0, 0.13, 0], [x, 0.08, z], 0.021, "dark");
+    const wheel = cyl(g, 0.036, 0.04, [x, 0.048, z], "dark");
+    wheel.rotation.z = Math.PI / 2;
+  }
+  box(g, [0.47, 0.095, 0.43], [0, 0.48, 0], fabric, 0.06);
+  const back = box(
+    g,
+    [0.43, ergonomic ? 0.48 : 0.35, 0.07],
+    [0, ergonomic ? 0.78 : 0.72, -0.2],
+    fabric,
+    0.05,
+  );
+  back.rotation.x = -0.12;
+  rod(g, [0, 0.42, -0.15], [0, 0.8, -0.23], 0.028, "dark");
+  for (const x of [-0.27, 0.27]) {
+    rod(g, [x * 0.8, 0.47, 0], [x, 0.65, 0], 0.018, "dark");
+    box(g, [0.065, 0.04, 0.26], [x, 0.66, 0], "dark");
+  }
+  if (ergonomic) {
+    box(g, [0.25, 0.15, 0.075], [0, 1.08, -0.23], "dark", 0.04);
+    rod(g, [0, 0.93, -0.22], [0, 1.05, -0.25]);
+    for (let i = 0; i < 7; i++)
+      box(
+        g,
+        [0.35, 0.008, 0.005],
+        [0, 0.63 + i * 0.045, -0.159],
+        "metal",
+        0.003,
+      );
+  }
+  return g;
+}
+function monitor(w = 0.61) {
+  const g = new T.Group();
+  box(g, [0.25, 0.018, 0.17], [0, 0.009, 0.01], "metal");
+  box(g, [0.034, 0.18, 0.033], [0, 0.12, -0.025]);
+  box(g, [w, 0.345, 0.03], [0, 0.265, 0], "dark", 0.012);
+  const screenMat = new T.MeshStandardMaterial({
+    color: "#23463b",
+    roughness: 0.8,
+    emissive: "#18372c",
+    emissiveIntensity: 0.25,
+  });
+  screenMat.name = "screen";
+  box(g, [w - 0.026, 0.317, 0.003], [0, 0.268, 0.017], screenMat, 0.004);
+  const colors = ["#d2e891", "#96bdb1", "#8aa19b"];
+  for (let i = 0; i < 3; i++) {
+    const m = new T.MeshStandardMaterial({
+      color: colors[i],
+      emissive: colors[i],
+      emissiveIntensity: 0.15,
+    });
+    box(
+      g,
+      [w * (i === 0 ? 0.4 : 0.3), 0.008, 0.002],
+      [-w * 0.2, 0.36 - i * 0.026, 0.02],
+      m,
+      0.002,
+    );
+  }
+  box(
+    g,
+    [w * 0.27, 0.16, 0.002],
+    [w * 0.25, 0.259, 0.02],
+    new T.MeshStandardMaterial({ color: "#74966e" }),
+    0.006,
+  );
+  for (let i = 0; i < 4; i++)
+    box(
+      g,
+      [w * 0.42, 0.006, 0.003],
+      [-w * 0.2, 0.245 - i * 0.023, 0.021],
+      new T.MeshStandardMaterial({ color: i % 2 ? "#d4ac7a" : "#91b8ab" }),
+      0.002,
+    );
+  return g;
+}
+function lamp() {
+  const g = new T.Group();
+  cyl(g, 0.085, 0.022, [0, 0.011, 0], "dark");
+  rod(g, [0, 0.025, 0], [0, 0.28, 0], 0.012, "dark");
+  rod(g, [0, 0.28, 0], [0.08, 0.43, 0], 0.012, "dark");
+  const shade = cyl(g, 0.075, 0.1, [0.085, 0.41, 0], "green", 0.033);
+  shade.rotation.z = -0.3;
+  cyl(g, 0.059, 0.004, [0.099, 0.366, 0], "cream");
+  return g;
+}
+function plant() {
+  const g = new T.Group();
+  cyl(g, 0.063, 0.13, [0, 0.065, 0], "pot", 0.078);
+  cyl(g, 0.07, 0.008, [0, 0.128, 0], "dark");
+  for (let i = 0; i < 7; i++) {
+    const a = i * 2.4,
+      x = Math.sin(a) * 0.08,
+      z = Math.cos(a) * 0.07,
+      y = 0.19 + (i % 3) * 0.035;
+    rod(g, [0, 0.12, 0], [x, y, z], 0.003, "green");
+    sphere(
+      g,
+      [0.035, 0.085, 0.015],
+      [x, y + 0.03, z],
+      "green",
+      Math.sin(a) * 0.65,
+    );
+  }
+  return g;
+}
+function stand() {
+  const g = new T.Group();
+  for (const x of [-0.09, 0.09]) {
+    rod(g, [x, 0.008, 0.09], [x, 0.13, -0.08], 0.016, "metal");
+    box(g, [0.035, 0.013, 0.22], [x, 0.01, 0]);
+  }
+  const top = box(g, [0.28, 0.018, 0.24], [0, 0.135, 0], "metal");
+  top.rotation.x = -0.25;
+  box(g, [0.28, 0.025, 0.017], [0, 0.102, 0.118]);
+  return g;
+}
+const models = {
+  "electric-desk": desk(1.2, 0.6),
+  "wooden-desk": desk(1.6, 0.8, false),
+  "ergonomic-chair": chair(),
+  "task-chair": chair(false),
+  "monitor-27": monitor(),
+  "monitor-34": monitor(0.81),
+  "desk-lamp": lamp(),
+  plant: plant(),
+  "laptop-stand": stand(),
+};
+await mkdir("public/models", { recursive: true });
+const manifest = {
+  schemaVersion: 1,
+  units: "meters",
+  upAxis: "Y",
+  origin: "bottom-center",
+  assets: {},
+};
+for (const [id, model] of Object.entries(models)) {
+  model.name = id;
+  const scene = new T.Scene();
+  scene.add(model);
+  scene.updateMatrixWorld(true);
+  const bytes = await new GLTFExporter().parseAsync(scene, { binary: true });
+  await writeFile(`public/models/${id}.glb`, Buffer.from(bytes));
+  const bounds = new T.Box3().setFromObject(model, true);
+  let triangles = 0;
+  model.traverse((o) => {
+    if (o.isMesh)
+      triangles +=
+        (o.geometry.index?.count ?? o.geometry.attributes.position.count) / 3;
+  });
+  manifest.assets[id] = {
+    path: `/models/${id}.glb`,
+    version: 1,
+    method: "parametric-original",
+    family: id.endsWith("-desk")
+      ? "desk"
+      : id.includes("chair")
+        ? "chair"
+        : id.includes("monitor")
+          ? "monitor"
+          : id,
+    bytes: bytes.byteLength,
+    triangles,
+    bounds: bounds.getSize(new T.Vector3()).toArray(),
+    review: "approved-stylized",
+  };
+  console.log(
+    `${id}: ${(bytes.byteLength / 1024).toFixed(0)} KB / ${triangles} triangles`,
+  );
+}
+await writeFile(
+  "public/models/manifest.json",
+  JSON.stringify(manifest, null, 2) + "\n",
+);

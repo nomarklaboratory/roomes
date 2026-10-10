@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "units": "meters",
+  "upAxis": "Y",
+  "origin": "bottom-center",
+  "assets": {
+    "electric-desk": {
+      "path": "/models/electric-desk.glb",
+      "version": 1,
+      "method": "parametric-original",
+      "family": "desk",
+      "bytes": 14028,
+      "triangles": 2700,
+      "bounds": [
+        1.2000000476837158,
+        0.730000000745058,
+        0.6000000238418579
+      ],
+      "review": "approved-stylized",
+      "compression": "meshopt"
+    },
+    "wooden-desk": {
+      "path": "/models/wooden-desk.glb",
+      "version": 1,
+      "method": "parametric-original",
+      "family": "desk",
+      "bytes": 15688,
+      "triangles": 2592,
+      "bounds": [
+        1.6180000111460686,
+        0.730000000745058,
+        0.800000011920929
+      ],
+      "review": "approved-stylized",
+      "compression": "meshopt"
+    },
+    "ergonomic-chair": {
+      "path": "/models/ergonomic-chair.glb",
+      "version": 1,
+      "method": "parametric-original",
+      "family": "chair",
+      "bytes": 23608,
+      "triangles": 4624,
+      "bounds": [
+        0.6049999976158142,
+        1.1430000014305115,
+        0.5966149252692932
+      ],
+      "review": "approved-stylized",
+      "compression": "meshopt"
+    },
+    "task-chair": {
+      "path": "/models/task-chair.glb",
+      "version": 1,
+      "method": "parametric-original",
+      "family": "chair",
+      "bytes": 16220,
+      "triangles": 2160,
+      "bounds": [
+        0.6049999976158142,
+        0.8817415067815142,
+        0.5966149252692932
+      ],
+      "review": "approved-stylized",
+      "compression": "meshopt"
+    },
+    "monitor-27": {
+      "path": "/models/monitor-27.glb",
+      "version": 1,
+      "method": "parametric-original",
+      "family": "monitor",
+      "bytes": 19248,
+      "triangles": 3600,
+      "bounds": [
+        0.6100000143051147,
+        0.43749999901652337,
+        0.17000000178813934
+      ],
+      "review": "approved-stylized",
+      "compression": "meshopt"
+    },
+    "monitor-34": {
+      "path": "/models/monitor-34.glb",
+      "version": 1,
+      "method": "parametric-original",
+      "family": "monitor",
+      "bytes": 19216,
+      "triangles": 3600,
+      "bounds": [
+        0.8100000023841858,
+        0.43749999901652337,
+        0.17000000178813934
+      ],
+      "review": "approved-stylized",
+      "compression": "meshopt"
+    },
+    "desk-lamp": {
+      "path": "/models/desk-lamp.glb",
+      "version": 1,
+      "method": "parametric-original",
+      "family": "desk-lamp",
+      "bytes": 6996,
+      "triangles": 320,
+      "bounds": [
+        0.24300000125169754,
+        0.46751899187543783,
+        0.17000000178813934
+      ],
+      "review": "approved-stylized",
+      "compression": "meshopt"
+    },
+    "plant": {
+      "path": "/models/plant.glb",
+      "version": 1,
+      "method": "parametric-original",
+      "family": "plant",
+      "bytes": 14964,
+      "triangles": 2592,
+      "bounds": [
+        0.27186958177798703,
+        0.369882398144786,
+        0.1689281499055889
+      ],
+      "review": "approved-stylized",
+      "compression": "meshopt"
+    },
+    "laptop-stand": {
+      "path": "/models/laptop-stand.glb",
+      "version": 1,
+      "method": "parametric-original",
+      "family": "laptop-stand",
+      "bytes": 8888,
+      "triangles": 1328,
+      "bounds": [
+        0.2800000011920929,
+        0.17625625306136322,
+        0.2428446578780979
+      ],
+      "review": "approved-stylized",
+      "compression": "meshopt"
+    }
+  }
+}

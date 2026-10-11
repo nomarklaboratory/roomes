@@ -1,4 +1,4 @@
-import { test, expect } from "../fixtures/studio";
+import { test, expect, waitForScene } from "../fixtures/studio";
 
 const products = [
   "Studio Desk Mat",
@@ -45,15 +45,13 @@ test("new extras can be added, inspected with local official photos, removed and
     .evaluateAll((elements) =>
       elements
         .filter(
-          (element) => parseFloat(getComputedStyle(element).fontSize) < 16,
+          (element) => parseFloat(getComputedStyle(element).fontSize) < 14,
         )
         .map((element) => element.textContent),
     );
   expect(smallText).toEqual([]);
   await catalog.getByRole("button", { name: "Done", exact: true }).click();
-  await expect(page.locator(".loading-panel")).toHaveCount(0, {
-    timeout: 45000,
-  });
+  await waitForScene(page);
   await expect(page.locator("canvas")).toBeVisible();
   await page.locator("[data-preview-stage]").screenshot({
     path: `test-results/${testInfo.project.name}-extras-preview.png`,

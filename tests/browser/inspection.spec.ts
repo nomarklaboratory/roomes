@@ -1,7 +1,18 @@
-import { test, expect } from "../fixtures/studio";
+import {
+  test,
+  expect,
+  openCatalog,
+  closeCatalog,
+  type Page,
+} from "../fixtures/studio";
 
-const inspector = (page: import("@playwright/test").Page) =>
+const inspector = (page: Page) =>
   page.getByRole("dialog", { name: "Real product inspection" });
+
+const inspectItem = (page: Page, name: string) =>
+  inspector(page)
+    .getByLabel("Inspect items in your setup")
+    .selectOption({ label: name });
 
 test("inspect centered real photos, zoom details, and follow finish/product changes", async ({
   page,
@@ -75,9 +86,11 @@ test("inspect centered real photos, zoom details, and follow finish/product chan
   ).toBe(saved);
 
   await page.keyboard.press("Escape");
-  await page
+  const desks = await openCatalog(page);
+  await desks
     .getByRole("button", { name: "Select Jarvis Laminate", exact: true })
     .click();
+  await closeCatalog(page);
   await page
     .getByRole("button", { name: "Inspect product", exact: true })
     .click();
@@ -88,9 +101,11 @@ test("inspect centered real photos, zoom details, and follow finish/product chan
     panel.getByRole("button", { name: "Zoom photo", exact: true }),
   ).toHaveAttribute("aria-pressed", "false");
   await page.keyboard.press("Escape");
-  await page
+  const finishes = await openCatalog(page);
+  await finishes
     .getByRole("button", { name: "Black laminate", exact: true })
     .click();
+  await closeCatalog(page);
   await page
     .getByRole("button", { name: "Inspect product", exact: true })
     .click();
@@ -100,14 +115,18 @@ test("inspect centered real photos, zoom details, and follow finish/product chan
   await expect(
     panel.getByRole("button", { name: /View White laminate tabletop/ }),
   ).toHaveCount(0);
-  await panel.getByRole("button", { name: "Aeron", exact: true }).click();
+  await inspectItem(page, "Aeron");
   await page.keyboard.press("Escape");
-  await page.getByRole("button", { name: "Chairs", exact: true }).click();
-  await page.getByRole("button", { name: "Select Sayl", exact: true }).click();
+  const chairs = await openCatalog(page);
+  await chairs.getByRole("button", { name: "Chairs", exact: true }).click();
+  await chairs
+    .getByRole("button", { name: "Select Sayl", exact: true })
+    .click();
+  await closeCatalog(page);
   await page
     .getByRole("button", { name: "Inspect product", exact: true })
     .click();
-  await panel.getByRole("button", { name: "Sayl", exact: true }).click();
+  await inspectItem(page, "Sayl");
   await expect(
     panel.getByRole("heading", { name: "Sayl", exact: true }),
   ).toBeVisible();
@@ -128,13 +147,6 @@ test("inspect centered real photos, zoom details, and follow finish/product chan
   await expect(
     page.getByRole("button", { name: "Inspect product", exact: true }),
   ).toBeFocused();
-  await page
-    .getByRole("button", { name: "Review my setup", exact: true })
-    .click();
-  await page
-    .getByRole("button", { name: "Inspect product", exact: true })
-    .click();
-  await expect(inspector(page)).toBeVisible();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth > innerWidth,
@@ -173,7 +185,7 @@ test("recorded films load only on Play and stop on product change or closing; in
     .click();
   const panel = inspector(page);
   await expect(panel).toBeFocused();
-  await panel.getByRole("button", { name: "Aeron", exact: true }).click();
+  await inspectItem(page, "Aeron");
   await panel
     .getByRole("button", {
       name: "View Aeron in motion · manufacturer film",
@@ -199,9 +211,7 @@ test("recorded films load only on Play and stop on product change or closing; in
     .toBeGreaterThanOrEqual(2);
   const player = (await page.locator("video").elementHandle())!;
   expect(movieRequests).toBeGreaterThan(0);
-  await panel
-    .getByRole("button", { name: "Jarvis Bamboo", exact: true })
-    .click();
+  await inspectItem(page, "Jarvis Bamboo");
   await expect(page.locator("video")).toHaveCount(0);
   expect(
     await player.evaluate(
@@ -209,7 +219,7 @@ test("recorded films load only on Play and stop on product change or closing; in
         video instanceof HTMLVideoElement && video.paused && !video.isConnected,
     ),
   ).toBe(true);
-  await panel.getByRole("button", { name: "Aeron", exact: true }).click();
+  await inspectItem(page, "Aeron");
   await panel
     .getByRole("button", {
       name: "View Aeron in motion · manufacturer film",
@@ -309,23 +319,25 @@ test("failed photos offer retry and removed items leave inspection in the 2D fal
     )
     .toBeGreaterThan(0);
   await page.keyboard.press("Escape");
-  await page.getByRole("button", { name: "Extras", exact: true }).click();
-  await page
+  const extras = await openCatalog(page);
+  await extras.getByRole("button", { name: "Extras", exact: true }).click();
+  await extras
     .getByRole("button", { name: "Add FEJKA Rosemary", exact: true })
     .click();
+  await closeCatalog(page);
   await page
     .getByRole("button", { name: "Inspect product", exact: true })
     .click();
-  await panel
-    .getByRole("button", { name: "FEJKA Rosemary", exact: true })
-    .click();
+  await inspectItem(page, "FEJKA Rosemary");
   await expect(
     panel.getByRole("heading", { name: "FEJKA Rosemary", exact: true }),
   ).toBeVisible();
   await page.keyboard.press("Escape");
-  await page
+  const removal = await openCatalog(page);
+  await removal
     .getByRole("button", { name: "Remove one FEJKA Rosemary", exact: true })
     .click();
+  await closeCatalog(page);
   await page
     .getByRole("button", { name: "Inspect product", exact: true })
     .click();
@@ -333,6 +345,6 @@ test("failed photos offer retry and removed items leave inspection in the 2D fal
     panel.getByRole("heading", { name: "Jarvis Bamboo", exact: true }),
   ).toBeVisible();
   await expect(
-    panel.getByRole("button", { name: "FEJKA Rosemary", exact: true }),
+    panel.getByRole("option", { name: "FEJKA Rosemary", exact: true }),
   ).toHaveCount(0);
 });

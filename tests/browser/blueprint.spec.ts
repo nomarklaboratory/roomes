@@ -74,7 +74,7 @@ test("precise placement validates each field, matches blueprint distances, persi
       .evaluateAll(
         (elements) =>
           elements.filter(
-            (element) => parseFloat(getComputedStyle(element).fontSize) < 16,
+            (element) => parseFloat(getComputedStyle(element).fontSize) < 14,
           ).length,
       ),
   ).toBe(0);

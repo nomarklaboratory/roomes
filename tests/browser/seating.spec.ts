@@ -1,4 +1,4 @@
-import { test, expect } from "../fixtures/studio";
+import { test, expect, waitForScene } from "../fixtures/studio";
 
 test("sit directly from the preview or the selected chair, then stand up", async ({
   page,
@@ -8,9 +8,7 @@ test("sit directly from the preview or the selected chair, then stand up", async
   page.on("pageerror", (error) => errors.push(error.message));
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(page.locator(".loading-panel")).toHaveCount(0, {
-    timeout: 45000,
-  });
+  await waitForScene(page);
   await expect(page.locator(".room-fallback")).toBeHidden();
   const saved = () =>
     page.evaluate(() => localStorage.getItem("roomes.workspace.v1"));

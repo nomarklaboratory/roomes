@@ -1,5 +1,13 @@
-import { test, expect, type Page } from "../fixtures/studio";
-import { PerspectiveCamera, Vector3 } from "three";
+import {
+  test,
+  expect,
+  chairPoint,
+  chooseHoldAction,
+  openCatalog,
+  press,
+  waitForScene,
+  type Page,
+} from "../fixtures/studio";
 import { presetSetup, quote } from "../../lib/workspace.ts";
 import { money } from "../../lib/catalog.ts";
 import type { Setup } from "../../types/workspace.ts";
@@ -8,11 +16,6 @@ const saved = (page: Page): Promise<Setup> =>
   page.evaluate(
     () => JSON.parse(localStorage.getItem("roomes.workspace.v1")!).setup,
   );
-
-async function openCatalog(page: Page) {
-  await page.getByRole("button", { name: /^Open product catalog/ }).click();
-  return page.getByRole("dialog", { name: "Make it yours." });
-}
 
 test("legacy saves hydrate, catalog and summary agree, and checkout details remain private", async ({
   page,
@@ -73,9 +76,7 @@ test("legacy saves hydrate, catalog and summary agree, and checkout details rema
   );
   await page.reload();
   await expect.poll(() => saved(page)).toEqual(configured);
-  await expect(page.locator(".loading-panel")).toHaveCount(0, {
-    timeout: 45000,
-  });
+  await waitForScene(page);
   await page
     .getByRole("link", { name: "Rent this setup", exact: true })
     .click();
@@ -112,67 +113,7 @@ test("legacy saves hydrate, catalog and summary agree, and checkout details rema
   expect(errors).toEqual([]);
 });
 
-async function chairPoint(page: Page) {
-  const canvas = page.locator("canvas");
-  await canvas.scrollIntoViewIfNeeded();
-  // Hydration mounts the preview later now. Wait for the drawing buffer to
-  // match its DOM viewport and render the chosen camera before projecting.
-  await expect
-    .poll(() =>
-      canvas.evaluate((element) => {
-        if (!(element instanceof HTMLCanvasElement)) return Infinity;
-        const box = element.getBoundingClientRect();
-        return Math.abs(
-          element.width / element.height - box.width / box.height,
-        );
-      }),
-    )
-    .toBeLessThan(0.002);
-  await canvas.screenshot();
-  const box = (await canvas.boundingBox())!;
-  const factor = await page.evaluate(() => (innerWidth <= 700 ? 1.2 : 1));
-  const camera = new PerspectiveCamera(37, box.width / box.height, 0.1, 1000);
-  camera.position.set(0.01 * factor, 6 * factor, 0.01 * factor);
-  camera.lookAt(0, 0.9, 0);
-  camera.updateMatrixWorld();
-  const point = new Vector3(0.16, 0.65, 0.35).project(camera);
-  return {
-    x: box.x + ((point.x + 1) * box.width) / 2,
-    y: box.y + ((1 - point.y) * box.height) / 2,
-  };
-}
-
-async function press(page: Page, mobile: boolean, x: number, y: number) {
-  if (mobile) {
-    const touch = await page.context().newCDPSession(page);
-    await touch.send("Input.dispatchTouchEvent", {
-      type: "touchStart",
-      touchPoints: [{ x, y, id: 0 }],
-    });
-    return {
-      move: (x: number, y: number) =>
-        touch.send("Input.dispatchTouchEvent", {
-          type: "touchMove",
-          touchPoints: [{ x, y, id: 0 }],
-        }),
-      release: async () => {
-        await touch.send("Input.dispatchTouchEvent", {
-          type: "touchEnd",
-          touchPoints: [],
-        });
-        await touch.detach();
-      },
-    };
-  }
-  await page.mouse.move(x, y);
-  await page.mouse.down();
-  return {
-    move: (x: number, y: number) => page.mouse.move(x, y, { steps: 5 }),
-    release: () => page.mouse.up(),
-  };
-}
-
-test("real mouse/touch move drafts cancel cleanly and commit one undoable placement", async ({
+test("real mouse/touch move drafts cancel cleanly, lock room size, and commit one undoable placement", async ({
   page,
 }, testInfo) => {
   test.setTimeout(60000);
@@ -180,27 +121,15 @@ test("real mouse/touch move drafts cancel cleanly and commit one undoable placem
   page.on("pageerror", (error) => errors.push(error.message));
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(page.locator(".loading-panel")).toHaveCount(0, {
-    timeout: 45000,
-  });
+  await waitForScene(page);
   await expect(page.locator(".room-fallback")).toBeHidden();
-  await expect(
-    page.getByRole("button", { name: "Sit in chair", exact: true }),
-  ).toBeVisible();
   await page.getByRole("button", { name: "Top", exact: true }).click();
   const mobile = testInfo.project.name === "mobile";
   const original = await saved(page);
 
   const startMove = async () => {
     const point = await chairPoint(page);
-    const hold = await press(page, mobile, point.x, point.y);
-    await expect(page.locator("[data-product-wheel]")).toBeVisible();
-    await hold.move(point.x - 95, point.y);
-    await expect(page.locator("[data-product-wheel]")).toHaveAttribute(
-      "data-action",
-      "move",
-    );
-    await hold.release();
+    await chooseHoldAction(page, mobile, point, "move");
     await expect(page.locator("[data-move-mode]")).toBeVisible();
     await expect(page.locator("canvas")).toHaveAttribute(
       "data-moving",
@@ -237,16 +166,16 @@ test("real mouse/touch move drafts cancel cleanly and commit one undoable placem
   await catalog.getByRole("button", { name: "Done", exact: true }).click();
   await startMove();
   await page.getByText(/^Room dimensions ·/).click();
-  await page.getByLabel("Room width (m)").fill("4.2");
-  await page
-    .getByRole("button", { name: "Apply room size", exact: true })
-    .click();
+  await expect(page.getByLabel("Room width (m)")).toBeDisabled();
+  await expect(
+    page.getByText(
+      "Place or cancel the moving item before changing room size.",
+    ),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
   await expect(page.locator("[data-move-mode]")).toHaveCount(0);
-  expect((await saved(page)).layout.chair).toEqual(original.layout.chair);
-  const roomCatalog = await openCatalog(page);
-  await roomCatalog.getByRole("button", { name: "Undo", exact: true }).click();
-  await expect.poll(() => saved(page)).toEqual(original);
-  await roomCatalog.getByRole("button", { name: "Done", exact: true }).click();
+  await expect(page.getByLabel("Room width (m)")).toBeEnabled();
+  expect(await saved(page)).toEqual(original);
   await page
     .getByRole("button", { name: "First-person view", exact: true })
     .click();

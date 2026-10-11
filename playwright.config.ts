@@ -5,7 +5,7 @@ export default defineConfig({
   workers: 2,
   retries: 0,
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: "http://localhost:3100",
     trace: "retain-on-failure",
     launchOptions: {
       args: [
@@ -25,10 +25,12 @@ export default defineConfig({
     },
     { name: "mobile", use: { ...devices["Pixel 7"] } },
   ],
+  // A production server has no development overlay to cover controls, and
+  // its own port leaves a running `pnpm dev` untouched.
   webServer: {
-    command: "pnpm dev --port 3000",
-    url: "http://localhost:3000",
-    timeout: 120000,
+    command: "pnpm build && pnpm start --port 3100",
+    url: "http://localhost:3100",
+    timeout: 180000,
     reuseExistingServer: !process.env.CI,
   },
 });

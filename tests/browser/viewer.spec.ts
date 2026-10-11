@@ -1,4 +1,4 @@
-import { test, expect } from "../fixtures/studio";
+import { test, expect, waitForScene } from "../fixtures/studio";
 
 test("zoom, fullscreen, and a 170 cm seated viewer work without changing the rental", async ({
   page,
@@ -8,17 +8,10 @@ test("zoom, fullscreen, and a 170 cm seated viewer work without changing the ren
   page.on("pageerror", (error) => errors.push(error.message));
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(page.locator(".loading-panel")).toHaveCount(0, {
-    timeout: 45000,
-  });
+  await waitForScene(page);
   await expect(page.locator(".room-fallback")).toBeHidden();
   const canvas = page.locator("canvas");
-  // The development toolbar overlaps the mobile canvas and has animated
-  // pixels. Exclude it when comparing the workspace's camera position.
-  const screenshot = () =>
-    canvas.screenshot({
-      style: "nextjs-portal { visibility: hidden; }",
-    });
+  const screenshot = () => canvas.screenshot();
   const stage = page.locator("[data-preview-stage]");
   await canvas.scrollIntoViewIfNeeded();
   const stored = await page.evaluate(() =>

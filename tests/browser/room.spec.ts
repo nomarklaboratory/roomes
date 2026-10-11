@@ -1,4 +1,13 @@
-import { test, expect, type Page } from "../fixtures/studio";
+import {
+  test,
+  expect,
+  openCatalog,
+  closeCatalog,
+  moveProduct,
+  undo,
+  waitForScene,
+  type Page,
+} from "../fixtures/studio";
 import { PerspectiveCamera, Vector3 } from "three";
 
 const saved = (page: Page) =>
@@ -14,9 +23,7 @@ test("custom room dimensions resize the scene, preserve scale, and persist a wal
   page.on("pageerror", (error) => errors.push(error.message));
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(page.locator(".loading-panel")).toHaveCount(0, {
-    timeout: 45000,
-  });
+  await waitForScene(page);
   await page.getByText(/^Room dimensions ·/).click();
   await page.getByLabel("Room width (m)").fill("5");
   await page.getByLabel("Room depth (m)").fill("4");
@@ -30,17 +37,19 @@ test("custom room dimensions resize the scene, preserve scale, and persist a wal
   await expect(
     page.getByText("20 m² floor area", { exact: true }),
   ).toBeVisible();
+  const catalog = await openCatalog(page);
   await expect(
-    page.getByRole("button", { name: "Select Jarvis Bamboo", exact: true }),
+    catalog.getByRole("button", { name: "Select Jarvis Bamboo", exact: true }),
   ).toContainText("120 × 80 × 75 cm");
-  await page.getByRole("button", { name: "Extras", exact: true }).click();
-  await page
+  await catalog.getByRole("button", { name: "Extras", exact: true }).click();
+  await catalog
     .getByRole("button", { name: "Add Torq Mod Fun Surfboard", exact: true })
     .click();
+  await closeCatalog(page);
   await page.getByRole("button", { name: "Front", exact: true }).click();
   const canvas = page.locator("canvas");
   await canvas.scrollIntoViewIfNeeded();
-  // Real mouse/touch drag on the board's vertical plane, with the fitted camera.
+  // Real mouse/touch move on the board's vertical plane, with the fitted camera.
   const board = (await saved(page)).items.find(
     (item: { productId: string }) => item.productId === "torq-mod-fun",
   );
@@ -61,28 +70,12 @@ test("custom room dimensions resize the scene, preserve scale, and persist a wal
   );
   const x = box.x + ((point.x + 1) * box.width) / 2;
   const y = box.y + ((1 - point.y) * box.height) / 2;
-  if (testInfo.project.name === "mobile") {
-    const touch = await page.context().newCDPSession(page);
-    await touch.send("Input.dispatchTouchEvent", {
-      type: "touchStart",
-      touchPoints: [{ x, y }],
-    });
-    for (let i = 1; i <= 8; i++)
-      await touch.send("Input.dispatchTouchEvent", {
-        type: "touchMove",
-        touchPoints: [{ x: x + i * 3, y: y + i * 2 }],
-      });
-    await touch.send("Input.dispatchTouchEvent", {
-      type: "touchEnd",
-      touchPoints: [],
-    });
-    await touch.detach();
-  } else {
-    await page.mouse.move(x, y);
-    await page.mouse.down();
-    await page.mouse.move(x + 24, y + 16, { steps: 8 });
-    await page.mouse.up();
-  }
+  await moveProduct(
+    page,
+    testInfo.project.name === "mobile",
+    { x, y },
+    { x: 65, y: 40 },
+  );
   await expect
     .poll(
       async () =>
@@ -118,19 +111,14 @@ test("custom room dimensions resize the scene, preserve scale, and persist a wal
   });
   const beforeReload = await saved(page);
   await page.reload();
-  await expect(page.locator(".loading-panel")).toHaveCount(0, {
-    timeout: 45000,
-  });
+  await waitForScene(page);
   expect(await saved(page)).toEqual(beforeReload);
-  await page
-    .getByRole("button", { name: "Review my setup", exact: true })
-    .click();
+  await page.getByRole("link", { name: "Rent this setup" }).click();
+  const summary = page.getByRole("complementary", { name: "Order summary" });
   await expect(
-    page.getByText("Room: 5 × 4 × 3 m", { exact: true }),
+    summary.getByText("Room: 5 × 4 × 3 m", { exact: true }),
   ).toBeVisible();
-  await expect(page.locator(".review-lines")).toContainText(
-    "Torq Mod Fun Surfboard",
-  );
+  await expect(summary).toContainText("Torq Mod Fun Surfboard");
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth > innerWidth,
@@ -147,9 +135,7 @@ test("room limits reject invalid input, reset discards a draft, and the smallest
   page.on("pageerror", (error) => errors.push(error.message));
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(page.locator(".loading-panel")).toHaveCount(0, {
-    timeout: 45000,
-  });
+  await waitForScene(page);
   await page.getByText(/^Room dimensions ·/).click();
   await page.getByLabel("Room width (m)").fill("0");
   await page
@@ -170,10 +156,12 @@ test("room limits reject invalid input, reset discards a draft, and the smallest
   await expect.poll(async () => (await saved(page)).room.height).toBe(2.2);
   const after = await page.locator("canvas").screenshot();
   expect(after.equals(before)).toBe(false);
-  await page.getByRole("button", { name: "Extras", exact: true }).click();
-  await page
+  const extras = await openCatalog(page);
+  await extras.getByRole("button", { name: "Extras", exact: true }).click();
+  await extras
     .getByRole("button", { name: "Add Torq Mod Fun Surfboard", exact: true })
     .click();
+  await closeCatalog(page);
   await page.getByRole("button", { name: "Room", exact: true }).click();
   await page.locator("[data-preview-stage]").screenshot({
     path: `test-results/${testInfo.project.name}-smallest-room.png`,
@@ -193,7 +181,7 @@ test("room limits reject invalid input, reset discards a draft, and the smallest
   await expect
     .poll(async () => (await saved(page)).room)
     .toEqual({ width: 3.6, depth: 3.1, height: 2.65 });
-  await page.getByRole("button", { name: "Undo", exact: true }).click();
+  await undo(page);
   await expect
     .poll(async () => (await saved(page)).room)
     .toEqual({ width: 2.4, depth: 2.4, height: 2.2 });

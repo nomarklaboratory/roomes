@@ -15,6 +15,7 @@
 
 # next.js
 /.next/
+/.next-stale/
 /out/
 
 # production
@@ -42,6 +43,7 @@ next-env.d.ts
 /lib/cn-tables.ts
 
 # Browser verification artifacts and unapproved AI candidates
+/.plan/
 /test-results/
 /playwright-report/
 /.asset-pilot/

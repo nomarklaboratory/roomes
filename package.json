@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "pretypecheck": "cn build --content \"{app,components,hooks,lib,types}/**/*.{ts,tsx}\" --out lib/cn-tables.ts",
+    "pretypecheck": "cn build --content \"{app,components,hooks,lib,types}/**/*.{ts,tsx}\" --out lib/cn-tables.ts && next typegen",
     "typecheck": "tsc --noEmit",
     "test": "node --experimental-strip-types --test tests/*.test.ts && node scripts/verify-assets.mjs",
     "test:e2e": "playwright test",
@@ -15,8 +15,8 @@
     "assets:thumbnails": "/Applications/Blender.app/Contents/MacOS/Blender --background --python scripts/render-thumbnails.py",
     "assets:ai": "node scripts/meshy-pilot.mjs",
     "assets:optimize": "node scripts/optimize-assets.mjs && node scripts/verify-assets.mjs",
-    "format": "prettier --write app components hooks lib scripts tests types playwright.config.ts README.md docs .plan",
-    "format:check": "prettier --check app components hooks lib scripts tests types playwright.config.ts README.md docs .plan",
+    "format": "prettier --write app components hooks lib scripts tests types playwright.config.ts README.md docs",
+    "format:check": "prettier --check app components hooks lib scripts tests types playwright.config.ts README.md docs",
     "assets:media": "node scripts/import-product-media.mjs"
   },
   "dependencies": {

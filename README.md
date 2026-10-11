@@ -61,7 +61,7 @@ Store tests cover independent studio instances, compatible v1/v2/v3 hydration, u
 
 The real-product catalog uses original parametric models with product-specific silhouettes and runtime desk finishes. Blender renders development thumbnails; customer-facing catalog and review images use curated official product media, optimized locally. Recorded films use official supplier URLs and never preload on opening the dialog. A manifest records bounds, versions, provenance, and budgets. The optional, bounded Meshy pilot was skipped because no credentials were configured; no credits were spent. AI generation happens offline, followed by optimization, dimension calibration, and human approval.
 
-See [asset workflow and pilot](docs/assets.md) for reproducible commands and the production pipeline. The agreed epics and scaling roadmap are in [.plan/epics.md](.plan/epics.md).
+See [asset workflow and pilot](docs/assets.md) for reproducible commands and the production pipeline.
 
 See [viewer calibration](docs/viewer.md) for human proportions, seated positioning, and floor/rug geometry. The eye-height assumptions are representative preview measurements; exact product fit requires validated client dimensions.
 

@@ -55,11 +55,9 @@ test("new extras can be added, inspected with local official photos, removed and
     timeout: 45000,
   });
   await expect(page.locator("canvas")).toBeVisible();
-  await page
-    .locator("[data-preview-stage]")
-    .screenshot({
-      path: `test-results/${testInfo.project.name}-extras-preview.png`,
-    });
+  await page.locator("[data-preview-stage]").screenshot({
+    path: `test-results/${testInfo.project.name}-extras-preview.png`,
+  });
   await page.getByRole("button", { name: "MX Keys Mini", exact: true }).click();
   await page
     .getByRole("button", { name: "Inspect product", exact: true })

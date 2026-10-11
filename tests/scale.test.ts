@@ -24,14 +24,15 @@ test("published dimensions have dated sources and chosen adjustment heights stay
         product.seatHeight! >= seatRange[0] &&
           product.seatHeight! <= seatRange[1],
       );
-    if (product.concept) assert.equal(product.scale.status, "concept");
   }
-  assert.equal(catalog["laptop-stand"].scale.status, "estimated");
+  assert.equal(catalog["ikea-fejka"].scale.status, "estimated");
 });
 
 test("every accessory envelope fits the tabletop in default, quick, and migrated positions", () => {
-  for (const deskId of ["electric-desk", "wooden-desk"]) {
-    for (const product of products.filter((p) => p.category === "accessory")) {
+  for (const deskId of ["jarvis-bamboo", "jarvis-laminate"]) {
+    for (const product of products.filter(
+      (p) => p.category === "accessory" && !p.mount,
+    )) {
       for (const slot of [
         "rear-left",
         "rear-center",

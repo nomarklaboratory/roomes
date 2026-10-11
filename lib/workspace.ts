@@ -2,41 +2,24 @@ import {
   catalog,
   durations,
   finishes,
+  normalizeFinish,
   presets,
-  type Finish,
   type PresetId,
-  type Weeks,
 } from "./catalog.ts";
+import { migrateFinish, migrateProductId } from "./catalog-migration.ts";
 import {
   clampPosition,
   defaultLayout,
   isPoint,
-  type Layout,
-  type Point,
+  positionOf,
+  slotPosition,
 } from "./placement.ts";
+import { defaultRoom, normalizeRoom, validRoom } from "./room.ts";
+import { accessorySlot } from "./accessory-placement.ts";
+import { duplicatePlacement, MAX_ACCESSORIES } from "./product-duplication.ts";
 
-export type Slot =
-  | "rear-left"
-  | "rear-center"
-  | "rear-right"
-  | "front-left"
-  | "front-center"
-  | "front-right";
-export type Item = {
-  id: string;
-  productId: string;
-  slot: Slot;
-  position?: Point;
-};
-export type Setup = {
-  presetId: PresetId;
-  deskId: string;
-  chairId: string;
-  finish: Finish;
-  weeks: Weeks;
-  items: Item[];
-  layout: Layout;
-};
+import type { Slot, Item, Setup, Action, History } from "../types/workspace.ts";
+export type { Slot, Item, Setup, Action, History } from "../types/workspace.ts";
 const front: Slot[] = ["front-left", "front-right", "front-center"];
 const rear: Slot[] = ["rear-center", "rear-left", "rear-right"];
 export function presetSetup(id: PresetId): Setup {
@@ -48,6 +31,7 @@ export function presetSetup(id: PresetId): Setup {
     finish: preset.finish,
     weeks: 4,
     layout: defaultLayout(),
+    room: defaultRoom(),
     items: preset.extras.map((productId, i) => ({
       id: `preset-${i}`,
       productId,
@@ -74,7 +58,8 @@ export function monitorFits(setup: Setup, productId: string) {
 }
 export function canAdd(setup: Setup, productId: string) {
   const p = catalog[productId];
-  if (!p || p.category !== "accessory") return false;
+  if (!p || p.category !== "accessory" || setup.items.length >= MAX_ACCESSORIES)
+    return false;
   return p.kind === "monitor"
     ? monitorFits(setup, productId)
     : !setup.items.some((i) => catalog[i.productId]?.kind === p.kind);
@@ -83,7 +68,17 @@ export function normalize(setup: Setup): Setup {
   const items: Item[] = [];
   const ids = new Set<string>();
   for (const item of setup.items) {
-    if (ids.has(item.id) || !canAdd({ ...setup, items }, item.productId))
+    const current = { ...setup, items };
+    const positionedCopy =
+      isPoint(item.position) &&
+      catalog[item.productId]?.category === "accessory" &&
+      catalog[item.productId].kind !== "monitor" &&
+      items.some((other) => other.productId === item.productId);
+    if (
+      items.length >= MAX_ACCESSORIES ||
+      ids.has(item.id) ||
+      (!canAdd(current, item.productId) && !positionedCopy)
+    )
       continue;
     ids.add(item.id);
     items.push({ ...item });
@@ -95,14 +90,33 @@ export function normalize(setup: Setup): Setup {
   } else if (monitors.length === 1 && !rear.includes(monitors[0].slot))
     monitors[0].slot = "rear-center";
   const occupied = new Set<Slot>();
+  for (const item of items) {
+    const slot = accessorySlot(catalog[item.productId]);
+    if (slot) item.slot = slot;
+  }
   for (const item of items.filter(
-    (i) => catalog[i.productId].kind !== "monitor",
+    (i) =>
+      catalog[i.productId].kind !== "monitor" &&
+      !catalog[i.productId].mount &&
+      !accessorySlot(catalog[i.productId]),
   )) {
+    if (item.position) {
+      if (!front.includes(item.slot)) item.slot = "front-center";
+      occupied.add(item.slot);
+      continue;
+    }
     if (!front.includes(item.slot) || occupied.has(item.slot))
-      item.slot = front.find((s) => !occupied.has(s))!;
+      item.slot = front.find((s) => !occupied.has(s)) ?? "front-center";
     occupied.add(item.slot);
   }
-  const next = { ...setup, items };
+  for (const item of items.filter((i) => catalog[i.productId].mount))
+    item.slot = "wall-center";
+  const next = {
+    ...setup,
+    finish: normalizeFinish(setup.deskId, setup.finish),
+    items,
+    room: normalizeRoom(setup.room),
+  };
   return {
     ...next,
     layout: {
@@ -120,6 +134,8 @@ export function normalize(setup: Setup): Setup {
   };
 }
 export function allowedSlots(setup: Setup, item: Item): Slot[] {
+  if (catalog[item.productId].mount || accessorySlot(catalog[item.productId]))
+    return [];
   const monitor = catalog[item.productId].kind === "monitor";
   if (
     monitor &&
@@ -131,25 +147,33 @@ export function allowedSlots(setup: Setup, item: Item): Slot[] {
     (slot) => !setup.items.some((i) => i.id !== item.id && i.slot === slot),
   );
 }
-export type Action =
-  | { type: "preset"; id: PresetId }
-  | { type: "desk" | "chair"; id: string }
-  | { type: "finish"; value: Finish }
-  | { type: "weeks"; value: Weeks }
-  | { type: "add"; productId: string; id: string }
-  | { type: "remove"; id: string }
-  | { type: "move"; id: string; slot: Slot }
-  | { type: "place"; id: string; position: Point }
-  | { type: "reset-position"; id: string }
-  | { type: "reset" }
-  | { type: "undo" }
-  | { type: "hydrate"; setup: Setup };
-export type History = { present: Setup; past: Setup[]; notice: string };
 export const initialHistory = (): History => ({
   present: presetSetup("developer"),
   past: [],
   notice: "",
 });
+function hasAccessoryCopies(setup: Setup, item: Item) {
+  return (
+    catalog[item.productId].kind !== "monitor" &&
+    setup.items.some(
+      (other) => other.id !== item.id && other.productId === item.productId,
+    )
+  );
+}
+function resetAccessoryPosition(setup: Setup, item: Item) {
+  if (!hasAccessoryCopies(setup, item)) return undefined;
+  const others = {
+    ...setup,
+    items: setup.items.filter((other) => other.id !== item.id),
+  };
+  const sibling = others.items.find(
+    (other) => other.productId === item.productId,
+  )!;
+  return (
+    duplicatePlacement(others, sibling.id, slotPosition(setup, item)) ??
+    positionOf(setup, item.id)
+  );
+}
 export function reducer(state: History, action: Action): History {
   const s = state.present;
   if (action.type === "hydrate")
@@ -169,8 +193,17 @@ export function reducer(state: History, action: Action): History {
   let next = s;
   let notice = "";
   switch (action.type) {
+    case "apply-brief":
+      next = normalize(action.setup);
+      notice =
+        "Your suggested setup is ready. Undo to restore the previous workspace.";
+      break;
     case "preset":
-      next = { ...presetSetup(action.id), weeks: s.weeks };
+      next = normalize({
+        ...presetSetup(action.id),
+        weeks: s.weeks,
+        room: s.room,
+      });
       notice = "Room preset applied.";
       break;
     case "reset":
@@ -193,11 +226,18 @@ export function reducer(state: History, action: Action): History {
       }
       break;
     case "finish":
-      next = { ...s, finish: action.value };
+      if (catalog[s.deskId].finishes?.includes(action.value))
+        next = { ...s, finish: action.value };
       notice = "Finish updated.";
       break;
     case "weeks":
       next = { ...s, weeks: action.value };
+      break;
+    case "room":
+      if (validRoom(action.dimensions)) {
+        next = normalize({ ...s, room: action.dimensions });
+        notice = "Room dimensions updated. Furniture stays at its real size.";
+      }
       break;
     case "add":
       if (canAdd(s, action.productId)) {
@@ -222,6 +262,36 @@ export function reducer(state: History, action: Action): History {
       });
       notice = "Item removed.";
       break;
+    case "duplicate": {
+      const source = s.items.find((item) => item.id === action.id);
+      const position = duplicatePlacement(s, action.id);
+      if (
+        !source ||
+        !position ||
+        !action.newId ||
+        ["desk", "chair"].includes(action.newId) ||
+        s.items.some((item) => item.id === action.newId)
+      )
+        break;
+      const monitor = catalog[source.productId].kind === "monitor";
+      next = normalize({
+        ...s,
+        items: [
+          ...s.items.map((item) =>
+            monitor && item.productId === source.productId
+              ? { ...item, position: undefined }
+              : item,
+          ),
+          {
+            ...source,
+            id: action.newId,
+            position: monitor ? undefined : position,
+          },
+        ],
+      });
+      notice = `Another ${catalog[source.productId].name} added. Undo to remove the copy.`;
+      break;
+    }
     case "move": {
       const item = s.items.find((i) => i.id === action.id);
       if (item && allowedSlots(s, item).includes(action.slot)) {
@@ -229,7 +299,17 @@ export function reducer(state: History, action: Action): History {
           ...s,
           items: s.items.map((i) =>
             i.id === item.id
-              ? { ...i, slot: action.slot, position: undefined }
+              ? {
+                  ...i,
+                  slot: action.slot,
+                  position: hasAccessoryCopies(s, i)
+                    ? clampPosition(
+                        s,
+                        i.id,
+                        slotPosition(s, { ...i, slot: action.slot }),
+                      )
+                    : undefined,
+                }
               : i,
           ),
         };
@@ -264,13 +344,25 @@ export function reducer(state: History, action: Action): History {
       if (action.id === "desk" || action.id === "chair") {
         next = {
           ...s,
-          layout: { ...s.layout, [action.id]: defaultLayout()[action.id] },
+          layout: {
+            ...s.layout,
+            [action.id]: clampPosition(
+              s,
+              action.id,
+              defaultLayout()[action.id],
+            ),
+          },
         };
       } else {
         next = {
           ...s,
           items: s.items.map((i) =>
-            i.id === action.id ? { ...i, position: undefined } : i,
+            i.id === action.id
+              ? {
+                  ...i,
+                  position: resetAccessoryPosition(s, i),
+                }
+              : i,
           ),
         };
       }
@@ -304,12 +396,28 @@ export function quote(setup: Setup) {
   };
 }
 export const STORAGE_KEY = "roomes.workspace.v1";
+export const STORAGE_VERSION = 3;
 export function decodeSaved(raw: string | null): Setup | null {
   try {
     const value = JSON.parse(raw ?? "null");
-    const s = value?.setup;
+    const saved = value?.setup;
     if (
-      value?.version !== 1 ||
+      !saved ||
+      ![1, 2, STORAGE_VERSION].includes(value.version) ||
+      !Array.isArray(saved.items)
+    )
+      return null;
+    const s = {
+      ...saved,
+      deskId: migrateProductId(saved.deskId),
+      chairId: migrateProductId(saved.chairId),
+      finish: migrateFinish(saved.finish),
+      items: saved.items.map((item: Item) => ({
+        ...item,
+        productId: migrateProductId(item?.productId),
+      })),
+    };
+    if (
       !s ||
       catalog[s.deskId]?.category !== "desk" ||
       catalog[s.chairId]?.category !== "chair" ||
@@ -336,6 +444,7 @@ export function decodeSaved(raw: string | null): Setup | null {
       chairId: s.chairId,
       finish: s.finish,
       weeks: s.weeks,
+      room: normalizeRoom(s.room),
       layout: {
         desk: isPoint(s.layout?.desk)
           ? { x: s.layout.desk.x, z: s.layout.desk.z }
@@ -349,7 +458,13 @@ export function decodeSaved(raw: string | null): Setup | null {
         productId: i.productId,
         slot: i.slot,
         ...(isPoint(i.position)
-          ? { position: { x: i.position.x, z: i.position.z } }
+          ? {
+              position: {
+                x: i.position.x,
+                z: i.position.z,
+                ...(i.position.y === undefined ? {} : { y: i.position.y }),
+              },
+            }
           : {}),
       })),
     });

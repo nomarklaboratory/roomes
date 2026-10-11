@@ -1,11 +1,15 @@
 "use client";
 import dynamic from "next/dynamic";
-import { Component, type ReactNode } from "react";
+import { Component, memo, type ReactNode } from "react";
 import { RoomFallback } from "./room-fallback";
-import type { SceneProps } from "@/types/viewer";
+import type { InspectableSceneProps } from "@/types/viewer";
 const Scene = dynamic(() => import("./room-scene"), {
   ssr: false,
-  loading: () => <div className="loading-panel">Opening your little room…</div>,
+  loading: () => (
+    <div className="loading-panel h-full flex items-center justify-center text-base text-[#6d7b5b]">
+      Opening your little room…
+    </div>
+  ),
 });
 class SceneBoundary extends Component<
   { children: ReactNode; fallback: ReactNode },
@@ -19,10 +23,12 @@ class SceneBoundary extends Component<
     return this.state.failed ? this.props.fallback : this.props.children;
   }
 }
-export function RoomPreview(props: SceneProps) {
+export const RoomPreview = memo(function RoomPreview(
+  props: InspectableSceneProps,
+) {
   return (
     <SceneBoundary fallback={<RoomFallback setup={props.setup} />}>
       <Scene {...props} />
     </SceneBoundary>
   );
-}
+});

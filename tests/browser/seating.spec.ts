@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../fixtures/studio";
 
 test("sit directly from the preview or the selected chair, then stand up", async ({
   page,
@@ -19,11 +19,9 @@ test("sit directly from the preview or the selected chair, then stand up", async
   // The visible overview action enters seated first person in one click.
   await page.getByRole("button", { name: "Sit in chair", exact: true }).click();
   await expect(page.locator(".walk-caption")).toContainText(
-    "Seated eyes 127 cm",
+    "Seated eyes 123 cm",
   );
-  await expect(page.locator(".walk-caption")).toContainText(
-    "In Ergonomic chair",
-  );
+  await expect(page.locator(".walk-caption")).toContainText("In Aeron");
   await expect(
     page.getByRole("button", { name: "Stand up", exact: true }),
   ).toBeVisible();
@@ -38,13 +36,13 @@ test("sit directly from the preview or the selected chair, then stand up", async
   await page.getByRole("button", { name: "Exit view", exact: true }).click();
 
   // The chair context action uses the current product and moved chair position.
+  await page.getByRole("button", { name: /^Open product catalog/ }).click();
   await page.getByRole("button", { name: "Chairs", exact: true }).click();
-  await page
-    .getByRole("button", { name: "Select Everyday chair", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Select Sayl", exact: true }).click();
+  await page.getByRole("button", { name: "Done", exact: true }).click();
   await page.getByRole("button", { name: "Chair", exact: true }).click();
   await page
-    .getByRole("button", { name: "Move Everyday chair left", exact: true })
+    .getByRole("button", { name: "Move Sayl left", exact: true })
     .click();
   const moved = await saved();
   await page
@@ -56,14 +54,12 @@ test("sit directly from the preview or the selected chair, then stand up", async
   await page
     .getByRole("button", { name: "Sit in this chair", exact: true })
     .click();
+  await expect(page.locator(".walk-caption")).toContainText("In Sayl");
   await expect(page.locator(".walk-caption")).toContainText(
-    "In Everyday chair",
-  );
-  await expect(page.locator(".walk-caption")).toContainText(
-    "Seated eyes 124 cm",
+    "Seated eyes 120 cm",
   );
   await expect(page.locator(".placement-panel")).toHaveCount(0);
-  await page.locator(".preview-stage").screenshot({
+  await page.locator("[data-preview-stage]").screenshot({
     path: `test-results/${testInfo.project.name}-direct-seating.png`,
   });
   expect(await saved()).toBe(moved);

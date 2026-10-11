@@ -1,838 +1,127 @@
 "use client";
-import { useEffect, useReducer, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import {
-  catalog,
-  products,
-  presets,
-  finishes,
-  durations,
-  money,
-  type Category,
-  type Product,
-} from "@/lib/catalog";
-import {
-  baliToday,
-  canAdd,
-  decodeSaved,
-  initialHistory,
-  quote,
-  reducer,
-  STORAGE_KEY,
-  validDeliveryDate,
-  type Action,
-} from "@/lib/workspace";
-import { RoomPreview } from "./room-preview";
-import type { CameraView, Posture } from "@/types/viewer";
+import { useStudioFlow } from "@/hooks/use-studio-flow";
 import { Icon } from "./icon";
-import { PlacementControls } from "./placement-controls";
-import { ProductDimensions } from "./product-dimensions";
+import { StudioWorkspace } from "./studio-workspace";
+import { RentalBar, StudioStatus } from "./studio-panels";
+import { RentalBrief } from "./rental-brief";
 
-type Step = "design" | "review" | "done";
-function PresetArt({ index }: { index: number }) {
-  return (
-    <svg viewBox="0 0 90 72" aria-hidden="true">
-      <path
-        fill={["#e0d6ba", "#b8c7a7", "#d6b69b"][index]}
-        d="M10 42V9l37-5 33 16v28L43 63z"
-      />
-      <path fill="#ece4d2" d="m10 42 33-18 37 24-37 19z" />
-      <path
-        fill={["#c6a780", "#b99973", "#82553d"][index]}
-        d="m24 35 24-12 24 11-24 13z"
-      />
-      <path stroke="#767e6a" strokeWidth="3" d="M27 38v15m40-15v14" />
-      {index > 0 && <path fill="#344d3e" d="m43 19 16 6v12l-16-6z" />}
-      <path
-        fill={index === 1 ? "#485743" : "#8c9c7e"}
-        d="M40 40q-6-12 4-14 12 3 7 17l-11 5z"
-      />
-      <path stroke="#54624d" strokeWidth="2" d="m44 45 1 12-7 3m7-3 9 3" />
-      <path fill="#bfd2c9" d="m14 14 14-3v17l-14 6z" />
-      {index === 2 && (
-        <path fill="#5f7851" d="M66 31v-6l-5-4 2-3 5 4 3-5 3 3-5 6v7z" />
-      )}
-    </svg>
-  );
-}
-function ProductPhoto({
-  product,
-  compact = false,
-}: {
-  product: Product;
-  compact?: boolean;
-}) {
-  return (
-    <div className={`product-photo ${compact ? "compact" : ""}`}>
-      <Image
-        src={`/thumbnails/${product.id}.png?v=${product.assetVersion ?? 1}`}
-        alt=""
-        width={480}
-        height={360}
-        sizes={compact ? "90px" : "240px"}
-      />
-    </div>
-  );
-}
 export default function Studio() {
-  const [history, dispatch] = useReducer(reducer, undefined, initialHistory);
-  const setup = history.present;
-  const rental = quote(setup);
-  const [category, setCategory] = useState<Category>("desk");
-  const [view, setView] = useState<CameraView>("room");
-  const [posture, setPosture] = useState<Posture>("standing");
-  const [previewExpanded, setPreviewExpanded] = useState(false);
-  const [selected, setSelected] = useState<string | null>(null);
-  const sitInChair = () => {
-    setPosture("seated");
-    setView("walk");
-    setSelected(null);
-  };
-  const [step, setStep] = useState<Step>("design");
-  const [loaded, setLoaded] = useState(false);
-  const [storageWarning, setStorageWarning] = useState(false);
-  const [help, setHelp] = useState(false);
-  const helpRef = useRef<HTMLDialogElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const [futureMinimum, setFutureMinimum] = useState("");
-  const [name, setName] = useState("");
-  const [area, setArea] = useState("");
-  const [date, setDate] = useState("");
-  const [formError, setFormError] = useState("");
-  useEffect(() => {
-    queueMicrotask(() => {
-      try {
-        const saved = decodeSaved(localStorage.getItem(STORAGE_KEY));
-        if (saved) dispatch({ type: "hydrate", setup: saved });
-      } catch {
-        setStorageWarning(true);
-      }
-      setLoaded(true);
-    });
-  }, []);
-  useEffect(() => {
-    if (loaded) {
-      try {
-        localStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify({ version: 1, setup }),
-        );
-      } catch {
-        queueMicrotask(() => setStorageWarning(true));
-      }
-    }
-  }, [setup, loaded]);
-  useEffect(() => {
-    if (help) helpRef.current?.showModal();
-    else helpRef.current?.close();
-  }, [help]);
-  const change = (action: Action) => {
-    dispatch(action);
-  };
-  const go = (next: Step) => {
-    if (next === "review") {
-      const tomorrow = new Date(`${baliToday()}T00:00:00Z`);
-      tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
-      setFutureMinimum(tomorrow.toISOString().slice(0, 10));
-    }
-    setStep(next);
-    setSelected(null);
-    setFormError("");
-    requestAnimationFrame(() => {
-      headingRef.current?.focus();
-      window.scrollTo({
-        top: 0,
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "instant"
-          : "smooth",
-      });
-    });
-  };
-  const selectInScene = (id: string) => {
-    if (step !== "design") return;
-    if (id === "desk" || id === "chair") {
-      setCategory(id);
-    } else {
-      setCategory("accessory");
-    }
-    setSelected(id);
-  };
-  const confirm = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!name.trim()) {
-      setFormError("Please enter your name.");
-      return;
-    }
-    if (!validDeliveryDate(date)) {
-      setFormError("Choose a future date in Bali (UTC+8).");
-      return;
-    }
-    go("done");
-    setName("");
-    setArea("");
-    setDate("");
-  };
+  const {
+    step,
+    returning,
+    ready,
+    openBrief,
+    applyBrief,
+    skipBrief,
+    headingRef,
+    setHelp,
+    helpRef,
+  } = useStudioFlow();
   return (
-    <div className="site-shell">
-      <header className="site-header">
+    <div className="site-shell w-full max-w-378 m-auto py-0 px-12 max-[1150px]:py-0 max-[1150px]:px-7 max-[900px]:py-0 max-[900px]:px-[22px] max-[700px]:py-0 max-[700px]:px-[17px]">
+      <header className="site-header flex items-center justify-between h-[94px] border-b border-b-[#e4e6dc] max-[900px]:h-19 max-[700px]:h-18 max-[700px]:[&_.text-button]:text-base min-[701px]:h-[82px]">
         <Link
           href="/"
-          className="brand"
+          className="brand flex items-baseline font-extrabold text-[35px] tracking-[-2px] max-[700px]:text-[31px]"
           aria-label="monis.rent workspace studio"
         >
-          monis<span className="brand-dot">.</span>
-          <span className="brand-rent">rent</span>
+          monis<span className="brand-dot text-[#6f8b48]">.</span>
+          <span className="brand-rent text-[22px] font-[450] tracking-[-1px] ml-[1px] max-[700px]:text-[19px]">
+            rent
+          </span>
         </Link>
-        <div className="header-center">
-          <span className="tiny-dot" /> WORKSPACE STUDIO
-        </div>
-        <button className="text-button" onClick={() => setHelp(true)}>
+        <button
+          className="text-button inline-flex items-center justify-center gap-2 min-h-11 bg-transparent border-0 py-0 px-1 text-base font-medium hover:text-[#719044]"
+          onClick={() => setHelp(true)}
+        >
           How it works <Icon name="info" size={17} />
         </button>
       </header>
       <main>
-        <div className="hero-row">
+        <div className="hero-row flex items-center justify-between pt-[34px] pr-0 pb-[30px] pl-0 gap-6 max-[900px]:py-[27px] max-[900px]:px-0 max-[700px]:items-start max-[700px]:pt-[25px] max-[700px]:pr-0 max-[700px]:pb-[22px] max-[700px]:pl-0 max-[700px]:gap-0 max-[700px]:flex-col min-[701px]:py-[25px] min-[701px]:px-0">
           <div>
-            <div className="eyebrow">
-              <span className="bali-tag">
-                <Icon name="sun" size={14} /> MADE FOR YOUR BALI CHAPTER
-              </span>
-            </div>
-            <h1 ref={headingRef} tabIndex={-1}>
-              {step === "design" ? (
+            <h1
+              className="focus:outline-none text-[clamp(42px,_4.1vw,_63px)] font-[450] leading-[1.13] tracking-[-2.8px] mt-[10px] mr-0 mb-[10px] ml-0 [&_em]:font-serif [&_em]:font-normal [&_em]:text-[#627746] max-[700px]:text-[45px] max-[700px]:tracking-[-2px] max-[700px]:my-[10px] max-[700px]:mx-0 min-[701px]:text-[clamp(42px,_4vw,_57px)]"
+              tabIndex={-1}
+              ref={headingRef}
+            >
+              {ready && step === "brief" ? (
                 <>
-                  Find your <em>flow.</em>
-                </>
-              ) : step === "review" ? (
-                <>
-                  Looks like <em>you.</em>
+                  Land in Bali. <em>Get to work.</em>
                 </>
               ) : (
                 <>
-                  You’re all <em>set.</em>
+                  Find your <em>flow.</em>
                 </>
               )}
             </h1>
-            <p className="hero-copy">
-              {step === "design"
-                ? "A good workspace changes everything. Let’s make yours."
-                : step === "review"
-                  ? "One last look at your little corner of possibility."
-                  : "Your dream workspace, brought together. Nice work."}
+            <p className="hero-copy text-[#69715f] text-base m-0 tracking-[0.05px] max-[700px]:text-base max-[700px]:leading-[1.6]">
+              {ready && step === "brief"
+                ? "Tell us a little about your stay. We’ll give your workspace a head start."
+                : "Design your workspace. Make it yours."}
             </p>
           </div>
-          <nav className="steps" aria-label="Design progress">
-            {(["design", "review", "done"] as Step[]).map((s, i) => (
-              <span
-                key={s}
-                className={`step ${step === s ? "current" : ""}`}
-                aria-current={step === s ? "step" : undefined}
-              >
-                <b>
-                  {s === "design" && step !== "design" ? (
-                    <Icon name="check" size={14} />
-                  ) : (
-                    String(i + 1).padStart(2, "0")
-                  )}
-                </b>
-                {["Design", "Review", "Ready"][i]}
-              </span>
-            ))}
-          </nav>
-        </div>
-        <div className="studio-layout">
-          <section className="visual-column" aria-label="Your workspace">
-            {step === "design" && (
-              <div className="preset-section">
-                <div className="section-label">
-                  START WITH A FEELING <span>Then make it your own</span>
-                </div>
-                <div className="presets">
-                  {presets.map((preset, i) => (
-                    <button
-                      key={preset.id}
-                      className={`preset ${setup.presetId === preset.id ? "active" : ""}`}
-                      aria-pressed={setup.presetId === preset.id}
-                      onClick={() => {
-                        change({ type: "preset", id: preset.id });
-                        setSelected(null);
-                      }}
-                    >
-                      <PresetArt index={i} />
-                      <span>
-                        <strong>{preset.name}</strong>
-                        <small>{preset.description}</small>
-                      </span>
-                      <span className="preset-check">
-                        {setup.presetId === preset.id ? (
-                          <Icon name="check" size={12} />
-                        ) : null}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            <div
-              className={`preview-stage ${view === "walk" ? "walking-stage" : ""} ${previewExpanded ? "fixed! inset-0 z-[100] h-dvh! w-screen! max-w-none! rounded-none! border-0!" : ""}`}
+          {ready && step === "design" && (
+            <button
+              type="button"
+              onClick={openBrief}
+              className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#dce1d2] px-4 text-base font-medium text-[#55694b] hover:bg-[#eef2e5]"
             >
-              <div className="stage-top">
-                <span className="scene-label">
-                  <span className="tiny-dot" />{" "}
-                  {presets
-                    .find((p) => p.id === setup.presetId)!
-                    .name.toUpperCase()}
-                  <small> / YOUR SPACE</small>
-                </span>
-                <div className="camera-options" aria-label="Camera angle">
-                  {(["room", "front", "top"] as CameraView[]).map((v) => (
-                    <button
-                      key={v}
-                      aria-pressed={view === v}
-                      onClick={() => setView(v)}
-                    >
-                      {v[0].toUpperCase() + v.slice(1)}
-                    </button>
-                  ))}
-                  <button
-                    className="inside-button"
-                    aria-label="First-person view"
-                    aria-pressed={view === "walk"}
-                    onClick={() => {
-                      setPosture("standing");
-                      setView("walk");
-                      setSelected(null);
-                    }}
-                  >
-                    <Icon name="eye" size={13} /> Inside
-                  </button>
-                </div>
-              </div>
-              <div
-                className={`scene-container ${previewExpanded ? "inset-0!" : ""}`}
-              >
-                <RoomPreview
-                  setup={setup}
-                  view={view}
-                  posture={posture}
-                  onPostureChange={setPosture}
-                  onSit={sitInChair}
-                  onSelect={selectInScene}
-                  selected={selected}
-                  editable={step === "design"}
-                  onMove={(id, position) =>
-                    change({ type: "place", id, position })
-                  }
-                  onExitWalk={() => setView("room")}
-                  previewExpanded={previewExpanded}
-                  onPreviewExpandedChange={setPreviewExpanded}
-                />
-              </div>
-              <div className="stage-bottom">
-                <span>
-                  <Icon name="move" size={15} />{" "}
-                  {step === "design"
-                    ? "Drag items to move · Empty space to orbit"
-                    : "Drag to explore · Scroll to zoom"}
-                </span>
-                <span className="preview-note">STYLIZED 3D PREVIEW</span>
-              </div>
-              <span className="room-dimension">BALI, IN A LITTLE ROOM.</span>
-            </div>
-            {step === "design" && (
-              <div className="setup-strip">
-                <span className="strip-label">IN YOUR SETUP</span>
-                <div className="item-chips">
-                  <button
-                    aria-pressed={selected === "desk"}
-                    onClick={() => {
-                      setCategory("desk");
-                      setSelected(selected === "desk" ? null : "desk");
-                    }}
-                  >
-                    <Icon name="desk" size={14} />
-                    Desk
-                  </button>
-                  <button
-                    aria-pressed={selected === "chair"}
-                    onClick={() => {
-                      setCategory("chair");
-                      setSelected(selected === "chair" ? null : "chair");
-                    }}
-                  >
-                    <Icon name="chair" size={14} />
-                    Chair
-                  </button>
-                  {setup.items.map((item) => (
-                    <button
-                      key={item.id}
-                      aria-pressed={selected === item.id}
-                      onClick={() => {
-                        setCategory("accessory");
-                        setSelected(selected === item.id ? null : item.id);
-                      }}
-                    >
-                      {catalog[item.productId].kind === "monitor" ? (
-                        <Icon name="monitor" size={14} />
-                      ) : (
-                        <Icon
-                          name={
-                            catalog[item.productId].kind === "plant"
-                              ? "leaf"
-                              : "extras"
-                          }
-                          size={14}
-                        />
-                      )}{" "}
-                      {catalog[item.productId].name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            {step === "design" && selected && view !== "walk" && (
-              <PlacementControls
-                setup={setup}
-                selected={selected}
-                onChange={change}
-                onClose={() => setSelected(null)}
-                onSit={sitInChair}
-              />
-            )}
-            <div className="below-scene">
-              <span>
-                <Icon name="leaf" size={16} /> More living. Less owning.
-              </span>
-              <span>Life-size preview · Estimates labeled in the catalog</span>
-            </div>
-          </section>
-          {step === "design" ? (
-            <aside
-              className="product-panel"
-              aria-label="Personalize your workspace"
+              Edit rental brief <Icon name="arrow" size={17} />
+            </button>
+          )}
+          {ready && step === "brief" && (
+            <button
+              type="button"
+              onClick={skipBrief}
+              className="mt-4 inline-flex min-h-11 items-center gap-2 text-base font-medium text-[#55694b] underline underline-offset-4"
             >
-              <div className="panel-heading">
-                <div>
-                  <div className="eyebrow">THE GOOD STUFF</div>
-                  <h2>Make it yours.</h2>
-                </div>
-                <span className="item-count">{rental.count} items</span>
-              </div>
-              <div className="category-tabs" aria-label="Product categories">
-                {(["desk", "chair", "accessory"] as Category[]).map((c, i) => (
-                  <button
-                    key={c}
-                    aria-pressed={category === c}
-                    onClick={() => {
-                      setCategory(c);
-                      setSelected(null);
-                    }}
-                  >
-                    <Icon name={c === "accessory" ? "extras" : c} size={17} />
-                    {["Desks", "Chairs", "Extras"][i]}
-                  </button>
-                ))}
-              </div>
-              <div className="catalog-scroll">
-                <p className="category-copy">
-                  {category === "desk"
-                    ? "Big ideas need a good foundation."
-                    : category === "chair"
-                      ? "Get comfortable. Stay a while."
-                      : "Little things. A big difference."}
-                </p>
-                <div
-                  className={`product-list ${category === "accessory" ? "extras-list" : ""}`}
-                >
-                  {products
-                    .filter((p) => p.category === category)
-                    .map((p) => {
-                      const active =
-                        setup.deskId === p.id || setup.chairId === p.id;
-                      const added = setup.items.filter(
-                        (i) => i.productId === p.id,
-                      );
-                      const available = canAdd(setup, p.id);
-                      if (category !== "accessory")
-                        return (
-                          <button
-                            key={p.id}
-                            className={`product-card ${active ? "active" : ""}`}
-                            aria-label={`Select ${p.name}`}
-                            aria-pressed={active}
-                            onClick={() => change({ type: category, id: p.id })}
-                          >
-                            <ProductPhoto product={p} />
-                            <div className="product-description">
-                              <span className="product-title">
-                                {p.name}{" "}
-                                {p.concept && (
-                                  <small className="concept">CONCEPT</small>
-                                )}
-                              </span>
-                              <span className="product-subtitle">
-                                {p.subtitle}
-                              </span>
-                              <ProductDimensions product={p} />
-                              <span className="product-price">
-                                {money(p.weeklyCents)}
-                                <small> / week</small>
-                              </span>
-                            </div>
-                            <span className="product-check">
-                              {active ? <Icon name="check" size={13} /> : null}
-                            </span>
-                          </button>
-                        );
-                      return (
-                        <div
-                          key={p.id}
-                          className={`extra-card ${added.length ? "added" : ""}`}
-                        >
-                          <ProductPhoto product={p} compact />
-                          <div className="extra-description">
-                            <strong>
-                              {p.name}
-                              {p.concept && (
-                                <small className="concept">CONCEPT</small>
-                              )}
-                            </strong>
-                            <ProductDimensions product={p} />
-                            <span>
-                              {money(p.weeklyCents)}
-                              <small> / week</small>
-                            </span>
-                            {!available &&
-                              !added.length &&
-                              p.kind === "monitor" && (
-                                <small className="fit-note">
-                                  Choose a wider desk to add
-                                </small>
-                              )}
-                          </div>
-                          <div className="quantity-controls">
-                            {added.length > 0 && (
-                              <>
-                                <button
-                                  className="icon-button"
-                                  aria-label={`Remove one ${p.name}`}
-                                  onClick={() =>
-                                    change({
-                                      type: "remove",
-                                      id: added.at(-1)!.id,
-                                    })
-                                  }
-                                >
-                                  <Icon name="minus" size={14} />
-                                </button>
-                                <span aria-label={`${added.length} added`}>
-                                  {added.length}
-                                </span>
-                              </>
-                            )}
-                            <button
-                              className="icon-button add-button"
-                              disabled={!available}
-                              aria-label={`Add ${p.name}`}
-                              onClick={() =>
-                                change({
-                                  type: "add",
-                                  productId: p.id,
-                                  id: crypto.randomUUID(),
-                                })
-                              }
-                            >
-                              <Icon name="plus" size={17} />
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                </div>
-                {category === "desk" && (
-                  <div className="finish-section">
-                    <div className="section-label">
-                      A FINISH THAT FEELS RIGHT
-                    </div>
-                    <div className="finish-options">
-                      {finishes.map((f) => (
-                        <button
-                          key={f.id}
-                          className={setup.finish === f.id ? "active" : ""}
-                          onClick={() =>
-                            change({ type: "finish", value: f.id })
-                          }
-                          aria-pressed={setup.finish === f.id}
-                        >
-                          <span style={{ background: f.color }}>
-                            {setup.finish === f.id && (
-                              <Icon name="check" size={13} />
-                            )}
-                          </span>
-                          {f.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {category === "accessory" && (
-                  <p className="small-note">
-                    Up to 2 monitors that fit your desk, and one of each extra.
-                    Tap an item below the room to reposition it.
-                  </p>
-                )}
-              </div>
-              <div className="panel-footer">
-                <button
-                  className="text-button"
-                  disabled={!history.past.length}
-                  onClick={() => {
-                    change({ type: "undo" });
-                    setSelected(null);
-                  }}
-                >
-                  <Icon name="undo" size={15} />
-                  Undo
-                </button>
-                <button
-                  className="text-button"
-                  onClick={() => {
-                    change({ type: "reset" });
-                    setSelected(null);
-                  }}
-                >
-                  <Icon name="reset" size={15} />
-                  Reset setup
-                </button>
-              </div>
-            </aside>
-          ) : step === "review" ? (
-            <aside className="review-panel" aria-label="Rental summary">
-              <div className="eyebrow">YOUR LITTLE CORNER</div>
-              <h2>A good setup.</h2>
-              <p className="review-intro">
-                {setup.weeks} weeks of making things happen.
-              </p>
-              <div className="review-lines">
-                {rental.lines.map((line) => (
-                  <div key={line.product.id}>
-                    <Image
-                      src={`/thumbnails/${line.product.id}.png?v=${line.product.assetVersion ?? 1}`}
-                      width={64}
-                      height={48}
-                      alt=""
-                    />
-                    <span>
-                      <strong>
-                        {line.product.name}
-                        {line.quantity > 1 ? ` × ${line.quantity}` : ""}
-                      </strong>
-                      <small>
-                        <ProductDimensions product={line.product} />
-                      </small>
-                    </span>
-                    <b>
-                      {money(line.weeklyCents)}
-                      <small>/wk</small>
-                    </b>
-                  </div>
-                ))}
-              </div>
-              <div className="review-total">
-                <span>
-                  Total for {setup.weeks} weeks
-                  <small>{money(rental.weeklyCents)} / week · USD</small>
-                </span>
-                <strong>{money(rental.totalCents)}</strong>
-              </div>
-              <p className="demo-label">
-                <Icon name="info" size={15} />
-                Demo prices. No payment or reservation.
-              </p>
-              <form onSubmit={confirm} className="checkout-form">
-                <h3>Where would it feel like home?</h3>
-                <label>
-                  Your name
-                  <input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    autoComplete="off"
-                    maxLength={80}
-                    placeholder="Alex"
-                    required
-                  />
-                </label>
-                <div className="form-row">
-                  <label>
-                    Bali area
-                    <select
-                      required
-                      value={area}
-                      onChange={(e) => setArea(e.target.value)}
-                    >
-                      <option value="">Choose area</option>
-                      {[
-                        "Canggu",
-                        "Ubud",
-                        "Seminyak",
-                        "Uluwatu",
-                        "Sanur",
-                        "Denpasar",
-                        "Other Bali area",
-                      ].map((a) => (
-                        <option key={a}>{a}</option>
-                      ))}
-                    </select>
-                  </label>
-                  <label>
-                    Preferred date
-                    <input
-                      type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      min={futureMinimum}
-                      required
-                      aria-describedby={formError ? "form-error" : undefined}
-                    />
-                  </label>
-                </div>
-                {formError && (
-                  <p role="alert" id="form-error" className="form-error">
-                    {formError}
-                  </p>
-                )}
-                <button className="primary-button" type="submit">
-                  Rent this setup <Icon name="arrow" />
-                </button>
-                <p className="privacy-note">
-                  A simulated request. Your details stay in this tab and are
-                  cleared after confirmation.
-                </p>
-              </form>
-              <button
-                className="text-button back-design"
-                onClick={() => go("design")}
-              >
-                <Icon name="back" size={16} />
-                Back to designing
-              </button>
-            </aside>
-          ) : (
-            <aside className="confirmation-panel">
-              <div className="confirmation-icon">
-                <Icon name="check" size={34} />
-              </div>
-              <div className="eyebrow">GREAT SPACE. GOOD DAYS.</div>
-              <h2>
-                Your next chapter
-                <br />
-                looks good.
-              </h2>
-              <p>
-                You’ve put together {rental.count} items for {setup.weeks}{" "}
-                weeks. Your workspace is{" "}
-                {storageWarning
-                  ? "available in this tab"
-                  : "saved on this device"}
-                .
-              </p>
-              <div className="receipt-total">
-                <span>Your demo setup</span>
-                <strong>{money(rental.totalCents)}</strong>
-                <small>
-                  {money(rental.weeklyCents)} / week · {setup.weeks} weeks
-                </small>
-              </div>
-              <div className="demo-confirmation">
-                <Icon name="info" size={19} />
-                <p>
-                  This is a demo confirmation. No booking was sent, no stock
-                  reserved, and no payment taken.
-                </p>
-              </div>
-              <button className="primary-button" onClick={() => go("design")}>
-                Keep designing <Icon name="arrow" />
-              </button>
-              <a
-                className="text-button visit-monis"
-                href="https://www.monis.rent/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Explore real rentals at monis.rent{" "}
-                <Icon name="arrow" size={15} />
-              </a>
-            </aside>
+              {returning ? "Keep my current setup" : "Skip rental brief"}
+              <Icon name="arrow" size={17} />
+            </button>
           )}
         </div>
-        {step === "design" && (
-          <div className="rental-bar">
-            <div className="duration-control">
-              <span className="section-label">HOW LONG IS YOUR CHAPTER?</span>
-              <div className="duration-options" aria-label="Rental duration">
-                {durations.map((weeks) => (
-                  <button
-                    key={weeks}
-                    aria-pressed={setup.weeks === weeks}
-                    onClick={() => change({ type: "weeks", value: weeks })}
-                  >
-                    {weeks} {weeks === 1 ? "week" : "weeks"}
-                  </button>
-                ))}
-              </div>
+        {!ready ? (
+          <p
+            role="status"
+            className="rounded-3xl border border-[#e1e4da] p-8 text-base text-[#727c67]"
+          >
+            Loading your workspace…
+          </p>
+        ) : step === "brief" ? (
+          <RentalBrief onApply={applyBrief} onSkip={skipBrief} />
+        ) : (
+          <>
+            <div className="studio-layout grid grid-cols-1 items-start gap-6">
+              <StudioWorkspace editable />
             </div>
-            <div className="rental-price">
-              <span>
-                {money(rental.totalCents)}
-                <small> / {setup.weeks} weeks</small>
-              </span>
-              <small>
-                {money(rental.weeklyCents)} per week · USD · Demo prices
-              </small>
-            </div>
-            <button className="primary-button" onClick={() => go("review")}>
-              Review my setup <Icon name="arrow" />
-            </button>
-          </div>
+            <RentalBar />
+          </>
         )}
-        <div className="status-row">
-          <span role="status" aria-live="polite">
-            {history.notice}
-          </span>
-          <span>
-            {storageWarning
-              ? "Device storage unavailable. Changes will last for this tab."
-              : loaded
-                ? "Your setup saves as you go"
-                : "Loading your workspace…"}
-          </span>
-        </div>
+        {ready && <StudioStatus />}
       </main>
-      <footer className="site-footer">
-        <span>A little space to do great things.</span>
-        <div>
-          <span>Built for Bali</span>
-          <span className="footer-dot">·</span>
-          <span>Challenge concept for monis.rent</span>
-        </div>
-      </footer>
       <dialog
         ref={helpRef}
-        className="help-dialog"
+        className="help-dialog text-[#293329] border border-[#dce2cd] rounded-[18px] p-[35px] bg-[#fafbf3] w-[min(470px,_90vw)] fixed [inset:0] m-auto [&::backdrop]:bg-[#27382360] [&::backdrop]:[backdrop-filter:blur(5px)] [&_h2]:text-[28px] [&_h2]:mt-4 [&_h2]:mr-0 [&_h2]:mb-[25px] [&_h2]:ml-0 [&_ol]:[list-style:none] [&_ol]:p-0 [&_ol]:m-0 [&_li]:flex [&_li]:gap-4 [&_li]:mb-5 [&_li]:text-base [&_li]:text-[#7b896c] [&_li]:leading-[1.7] [&_li_b]:text-[#68834b] [&_li_b]:text-base [&_li_strong]:block [&_li_strong]:text-[#3e5630] [&_li_strong]:font-medium [&_li_strong]:mb-[3px] [&_.primary-button]:w-full [&_.primary-button]:mt-[22px]"
         onCancel={() => setHelp(false)}
         onClose={() => setHelp(false)}
         aria-labelledby="help-title"
       >
         <button
-          className="icon-button dialog-close"
+          className="icon-button inline-flex items-center justify-center border border-[#dee2d4] bg-transparent w-8 h-8 rounded-[7px] p-0 max-[700px]:min-h-9 max-[700px]:min-w-9 dialog-close absolute top-[14px] right-[14px]"
           aria-label="Close how it works"
           onClick={() => setHelp(false)}
         >
           <Icon name="close" />
         </button>
-        <div className="eyebrow">IT STARTS WITH YOUR SPACE</div>
-        <h2 id="help-title">
+        <div className="eyebrow text-base font-semibold tracking-[1.7px] text-[#728163]">
+          IT STARTS WITH YOUR SPACE
+        </div>
+        <h2
+          className="text-[24px] font-[450] tracking-[-0.9px] leading-[1.2] mt-[7px] mr-0 mb-0 ml-0"
+          id="help-title"
+        >
           Work from somewhere
           <br />
           that feels like you.
@@ -841,8 +130,8 @@ export default function Studio() {
           <li>
             <b>01</b>
             <span>
-              <strong>Pick your starting point</strong>Choose a room that
-              matches your mood.
+              <strong>Tell us about your stay</strong>Use the rental brief for a
+              suggested setup, or skip straight to designing.
             </span>
           </li>
           <li>
@@ -857,19 +146,16 @@ export default function Studio() {
           <li>
             <b>03</b>
             <span>
-              <strong>Take a closer look</strong>Review your setup and try the
-              simulated rental flow.
+              <strong>Take a closer look</strong>Choose your rental duration,
+              then open checkout to add your delivery details.
             </span>
           </li>
         </ol>
-        <p className="small-note">
-          This challenge demo uses illustrative USD prices and original stylized
-          models scaled to the catalog. Published dimensions, estimates, and
-          concepts are labeled. Adjustable desks are shown at 75 cm; the
-          ergonomic chair uses a 49 cm seat. The real monis.rent team can
-          confirm availability, colors, delivery, and rental rates.
-        </p>
-        <button className="primary-button" onClick={() => setHelp(false)}>
+
+        <button
+          className="primary-button flex items-center justify-between bg-[#d5ed97] text-[#354726] border border-[#cce18f] min-h-[47px] py-0 px-[21px] rounded-[7px] gap-7 text-base font-[550] hover:bg-[#c6e481]"
+          onClick={() => setHelp(false)}
+        >
           Let’s make some space <Icon name="arrow" />
         </button>
       </dialog>

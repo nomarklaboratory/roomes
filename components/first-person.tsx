@@ -1,40 +1,17 @@
 "use client";
-import { useEffect, useRef, type RefObject } from "react";
-import { useFrame } from "@react-three/fiber";
+import type { RefObject } from "react";
 import { PerspectiveCamera } from "@react-three/drei";
-import type { PerspectiveCamera as ThreeCamera } from "three";
-import { walkBlocked, walkStart, walkStep } from "@/lib/placement";
-import {
-  eyeHeight,
-  person,
-  seatedPosition,
-  standUpPosition,
-} from "@/lib/viewer";
+import { eyeHeight, person } from "@/lib/viewer";
 import { catalog } from "@/lib/catalog";
 import type { Setup } from "@/lib/workspace";
 import type { Posture } from "@/types/viewer";
+import { useFirstPersonCamera } from "@/hooks/use-first-person-camera";
+import type { WalkInput } from "@/lib/walk-input";
+import { cn } from "@/lib/cn";
 import { Icon } from "./icon";
 
-// An imperative input controller keeps high-frequency look/walk events out of
-// React state. It belongs to the scene and is never part of saved setup data.
-export class WalkInput {
-  keys = new Set<string>();
-  yaw = 0;
-  pitch = 0;
-  reset = 0;
-  recenter() {
-    this.reset++;
-  }
-  resetPose(yaw: number, pitch = -0.24) {
-    this.yaw = yaw;
-    this.pitch = pitch;
-  }
-  look(x: number, y: number) {
-    this.yaw -= x * 0.005;
-    this.pitch = Math.max(-1.1, Math.min(1.1, this.pitch - y * 0.004));
-  }
-}
-export const newWalkInput = () => new WalkInput();
+export { newWalkInput, WalkInput, walkKey } from "@/lib/walk-input";
+
 export function FirstPersonCamera({
   setup,
   input,
@@ -46,68 +23,34 @@ export function FirstPersonCamera({
   posture: Posture;
   fov: number;
 }) {
-  const camera = useRef<ThreeCamera>(null);
-  const position = useRef(walkStart(setup));
-  const lastReset = useRef(-1);
-  const lastPosture = useRef<Posture | null>(null);
-  useEffect(() => {
-    const state = input.current;
-    return () => {
-      state.keys.clear();
-    };
-  }, [input]);
-  useFrame((_, dt) => {
-    const state = input.current;
-    const height = eyeHeight(setup, posture);
-    if (lastReset.current !== state.reset || lastPosture.current !== posture) {
-      position.current =
-        posture === "seated"
-          ? seatedPosition(setup)
-          : lastPosture.current === "seated"
-            ? standUpPosition(setup)
-            : walkStart(setup);
-      const dx = setup.layout.desk.x - position.current.x;
-      const dz = setup.layout.desk.z - position.current.z;
-      state.resetPose(
-        Math.atan2(-dx, -dz),
-        Math.atan2(1.02 - height, Math.hypot(dx, dz)),
-      );
-      lastReset.current = state.reset;
-      lastPosture.current = posture;
-    }
-    if (posture === "seated") {
-      position.current = seatedPosition(setup);
-    } else {
-      if (walkBlocked(setup, position.current))
-        position.current = walkStart(setup);
-      const forward =
-        Number(state.keys.has("forward")) - Number(state.keys.has("backward"));
-      const side =
-        Number(state.keys.has("right")) - Number(state.keys.has("left"));
-      const length = Math.hypot(forward, side) || 1;
-      const speed = (Math.min(dt, 0.05) * 1.1) / length;
-      position.current = walkStep(setup, position.current, {
-        x:
-          (-Math.sin(state.yaw) * forward + Math.cos(state.yaw) * side) * speed,
-        z:
-          (-Math.cos(state.yaw) * forward - Math.sin(state.yaw) * side) * speed,
-      });
-    }
-    // Also recover safely if furniture is changed while the visitor is inside.
-    camera.current?.position.set(
-      position.current.x,
-      height,
-      position.current.z,
-    );
-    camera.current?.rotation.set(state.pitch, state.yaw, 0, "YXZ");
-  });
+  const camera = useFirstPersonCamera({ setup, input, posture });
   return <PerspectiveCamera ref={camera} makeDefault fov={fov} near={0.05} />;
 }
 const directions = [
-  { id: "forward", icon: "up", label: "Walk forward" },
-  { id: "left", icon: "back", label: "Walk left" },
-  { id: "backward", icon: "down", label: "Walk backward" },
-  { id: "right", icon: "arrow", label: "Walk right" },
+  {
+    id: "forward",
+    icon: "up",
+    label: "Walk forward",
+    className: "col-start-2",
+  },
+  {
+    id: "left",
+    icon: "back",
+    label: "Walk left",
+    className: "col-start-1 row-start-2",
+  },
+  {
+    id: "backward",
+    icon: "down",
+    label: "Walk backward",
+    className: "col-start-2 row-start-2",
+  },
+  {
+    id: "right",
+    icon: "arrow",
+    label: "Walk right",
+    className: "col-start-3 row-start-2",
+  },
 ] as const;
 export function WalkControls({
   input,
@@ -123,25 +66,28 @@ export function WalkControls({
   onPostureChange: (posture: Posture) => void;
 }) {
   return (
-    <div className="walk-hud">
-      <div className="walk-caption">
-        <span>
+    <div className="absolute inset-0 pointer-events-none">
+      <div className="walk-caption absolute left-5 top-6 rounded-xl border border-white/50 bg-[#f6f6edeb] px-3 py-2 text-[#354a30] max-[700px]:left-4">
+        <span className="flex items-center gap-2 text-base font-semibold">
           <Icon name="eye" size={16} /> Inside your space
         </span>
-        <span className="block! mt-1.5! text-[9px]! font-normal!">
+        <span className="mt-1.5 block text-base">
           {Math.round(person.height * 100)} cm person ·{" "}
           {posture === "standing" ? "Standing" : "Seated"} eyes{" "}
           {Math.round(eyeHeight(setup, posture) * 100)} cm
         </span>
-        <small>
+        <small className="mt-1 block text-base text-[#647457]">
           {posture === "seated"
             ? `In ${catalog[setup.chairId].name} · Drag to look`
             : "Drag to look · WASD / arrows to walk"}
         </small>
+        <small className="mt-1 block text-base text-[#647457]">
+          Hold a product and slide to choose an action
+        </small>
       </div>
-      <div className="walk-actions">
+      <div className="absolute bottom-5 left-5 flex gap-2 pointer-events-auto max-[700px]:left-4 max-[700px]:bottom-4 max-[700px]:flex-col">
         <button
-          className="flex! min-h-11! items-center! justify-center! gap-1.5! rounded-lg! border! px-3! text-[10px]! text-[#395334]! border-[#c1d999]! bg-[#d9efad]!"
+          className="flex min-h-11 items-center justify-center gap-1.5 rounded-lg border border-[#c1d999] bg-[#d9efad] px-3 text-base text-[#395334]"
           onClick={() =>
             onPostureChange(posture === "standing" ? "seated" : "standing")
           }
@@ -149,19 +95,31 @@ export function WalkControls({
           <Icon name="chair" size={15} />{" "}
           {posture === "standing" ? "Sit in chair" : "Stand up"}
         </button>
-        <button className="walk-reset" onClick={() => input.current.recenter()}>
+        <button
+          className="flex min-h-11 items-center justify-center gap-1.5 rounded-lg border border-[#cfd9c1] bg-[#f7f7eeef] px-3 text-base text-[#395334]"
+          onClick={() => input.current.recenter()}
+        >
           <Icon name="reset" size={15} /> Recenter
         </button>
-        <button className="walk-exit" onClick={onExit}>
+        <button
+          className="flex min-h-11 items-center justify-center gap-1.5 rounded-lg border border-[#344c32] bg-[#344c32] px-3 text-base text-white"
+          onClick={onExit}
+        >
           <Icon name="back" size={15} /> Exit view
         </button>
       </div>
       {posture === "standing" && (
-        <div className="walk-pad" aria-label="Walk through your workspace">
-          {directions.map(({ id, icon, label }) => (
+        <div
+          className="absolute bottom-5 right-5 grid grid-cols-[repeat(3,44px)] grid-rows-[repeat(2,44px)] gap-1 pointer-events-auto max-[700px]:right-4 max-[700px]:bottom-4"
+          aria-label="Walk through your workspace"
+        >
+          {directions.map(({ id, icon, label, className }) => (
             <button
               key={id}
-              className={`walk-${id}`}
+              className={cn(
+                "flex items-center justify-center rounded-lg border border-[#cfd9c1] bg-[#f7f7eeef] text-[#395334] select-none touch-none active:bg-[#c6e790]",
+                className,
+              )}
               aria-label={label}
               onPointerDown={(e) => {
                 e.preventDefault();
@@ -191,15 +149,3 @@ export function WalkControls({
     </div>
   );
 }
-const keyDirections: Record<string, string> = {
-  w: "forward",
-  ArrowUp: "forward",
-  s: "backward",
-  ArrowDown: "backward",
-  a: "left",
-  ArrowLeft: "left",
-  d: "right",
-  ArrowRight: "right",
-};
-export const walkKey = (key: string) =>
-  keyDirections[key.length === 1 ? key.toLowerCase() : key];

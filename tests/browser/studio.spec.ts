@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../fixtures/studio";
 
 test("design, persist, undo and complete an explicitly simulated rental", async ({
   page,
@@ -9,21 +9,21 @@ test("design, persist, undo and complete an explicitly simulated rental", async 
   await expect(
     page.getByRole("heading", { name: "Find your flow." }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Select Wooden desk" }).click();
+  await page.getByRole("button", { name: "Select Jarvis Laminate" }).click();
   await page.getByRole("button", { name: "Chairs", exact: true }).click();
-  await page.getByRole("button", { name: "Select Everyday chair" }).click();
+  await page.getByRole("button", { name: "Select Sayl" }).click();
   await page.getByRole("button", { name: "Extras", exact: true }).click();
-  await page.getByRole("button", { name: "Add 27″ monitor" }).click();
+  await page.getByRole("button", { name: "Add Dell UltraSharp 27" }).click();
   await expect(
-    page.getByRole("button", { name: "Add 27″ monitor" }),
+    page.getByRole("button", { name: "Add Dell UltraSharp 27" }),
   ).toBeDisabled();
-  await page.getByRole("button", { name: "Add Little green friend" }).click();
+  await page.getByRole("button", { name: "Add FEJKA Rosemary" }).click();
   await page.getByRole("button", { name: "8 weeks", exact: true }).click();
   await expect(page.locator(".rental-price")).toContainText("$336");
   await page.reload();
   await expect(page.locator(".rental-price")).toContainText("$336");
   await page.getByRole("button", { name: "Desks", exact: true }).click();
-  await page.getByRole("button", { name: "Select Electric desk" }).click();
+  await page.getByRole("button", { name: "Select Jarvis Bamboo" }).click();
   await expect(page.getByRole("status")).toContainText("removed to fit");
   await page.getByRole("button", { name: "Undo", exact: true }).click();
   await expect(page.locator(".rental-price")).toContainText("$336");
@@ -72,9 +72,9 @@ test("all presets and finish variants work, with an accessible help dialog", asy
   await page.goto("/");
   await page.getByRole("button", { name: /Room to create Spread/ }).click();
   await expect(page.locator(".rental-price")).toContainText("$136");
-  await page.getByRole("button", { name: "Soft white" }).click();
+  await page.getByRole("button", { name: "White laminate" }).click();
   await expect(
-    page.getByRole("button", { name: "Soft white" }),
+    page.getByRole("button", { name: "White laminate" }),
   ).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "How it works" }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
@@ -108,9 +108,9 @@ test("a device without WebGL can still configure and review its workspace", asyn
   await expect(
     page.getByText("2D preview · 3D is unavailable on this device"),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Select Wooden desk" }).click();
+  await page.getByRole("button", { name: "Select Jarvis Laminate" }).click();
   await expect(
-    page.getByRole("img", { name: /Wooden desk, Ergonomic chair/ }),
+    page.getByRole("img", { name: /Jarvis Laminate, Aeron/ }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Review my setup" }).click();
   await expect(

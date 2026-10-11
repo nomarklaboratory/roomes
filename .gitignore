@@ -39,6 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/lib/cn-tables.ts
 
 # Browser verification artifacts and unapproved AI candidates
 /test-results/

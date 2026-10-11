@@ -22,7 +22,7 @@ test("free placement stays on its surface, moves desk contents together, and und
   let state = initialHistory();
   const original = structuredClone(state.present);
   const monitor = state.present.items.find(
-    (i) => i.productId === "monitor-27",
+    (i) => i.productId === "dell-u2725qe",
   )!;
   const local = positionOf(state.present, monitor.id);
   state = reducer(state, {
@@ -42,13 +42,13 @@ test("free placement stays on its surface, moves desk contents together, and und
   });
   const position = positionOf(state.present, monitor.id);
   assert.equal(position.x, 0.279);
-  assert.equal(position.z, -0.185);
+  assert.equal(position.z, -0.291);
   state = reducer(state, {
     type: "place",
     id: "chair",
     position: { x: -20, z: 20 },
   });
-  assert.deepEqual(state.present.layout.chair, { x: -1.34, z: 1.085 });
+  assert.deepEqual(state.present.layout.chair, { x: -1.306, z: 1.066 });
   const invalid = reducer(state, {
     type: "place",
     id: "desk",
@@ -58,8 +58,8 @@ test("free placement stays on its surface, moves desk contents together, and und
 });
 test("layouts persist safely, older saved setups migrate, and desk changes clamp custom positions", () => {
   let state = initialHistory();
-  state = reducer(state, { type: "desk", id: "wooden-desk" });
-  const lamp = state.present.items.find((i) => i.productId === "desk-lamp")!;
+  state = reducer(state, { type: "desk", id: "jarvis-laminate" });
+  const lamp = state.present.items.find((i) => i.productId === "benq-wit")!;
   state = reducer(state, {
     type: "place",
     id: lamp.id,
@@ -74,8 +74,8 @@ test("layouts persist safely, older saved setups migrate, and desk changes clamp
     decodeSaved(JSON.stringify({ version: 1, setup: state.present })),
     state.present,
   );
-  state = reducer(state, { type: "desk", id: "electric-desk" });
-  assert.deepEqual(positionOf(state.present, lamp.id), { x: 0.51, z: 0.065 });
+  state = reducer(state, { type: "desk", id: "jarvis-bamboo" });
+  assert.deepEqual(positionOf(state.present, lamp.id), { x: 0.29, z: 0.275 });
   const legacy = { ...presetSetup("developer"), layout: undefined };
   assert.deepEqual(
     decodeSaved(JSON.stringify({ version: 1, setup: legacy }))?.layout,
@@ -106,21 +106,21 @@ test("first-person walking is bounded and cannot cross furniture, with safe star
 
 test("a narrower desk removes the incompatible monitor and undo restores the whole configuration", () => {
   let state = initialHistory();
-  state = reducer(state, { type: "desk", id: "wooden-desk" });
+  state = reducer(state, { type: "desk", id: "jarvis-laminate" });
   state = reducer(state, {
     type: "add",
-    productId: "monitor-27",
+    productId: "dell-u2725qe",
     id: "second-monitor",
   });
   assert.equal(
-    state.present.items.filter((i) => i.productId === "monitor-27").length,
+    state.present.items.filter((i) => i.productId === "dell-u2725qe").length,
     2,
   );
   const wide = structuredClone(state.present);
-  assert.equal(canAdd(wide, "monitor-27"), false);
-  state = reducer(state, { type: "desk", id: "electric-desk" });
+  assert.equal(canAdd(wide, "dell-u2725qe"), false);
+  state = reducer(state, { type: "desk", id: "jarvis-bamboo" });
   assert.equal(
-    state.present.items.filter((i) => i.productId === "monitor-27").length,
+    state.present.items.filter((i) => i.productId === "dell-u2725qe").length,
     1,
   );
   assert.match(state.notice, /removed to fit/);
@@ -129,14 +129,18 @@ test("a narrower desk removes the incompatible monitor and undo restores the who
 });
 test("accessory quantities and occupied placement slots cannot be bypassed", () => {
   let state = initialHistory();
-  state = reducer(state, { type: "add", productId: "plant", id: "green" });
-  state = reducer(state, { type: "add", productId: "plant", id: "duplicate" });
+  state = reducer(state, { type: "add", productId: "ikea-fejka", id: "green" });
+  state = reducer(state, {
+    type: "add",
+    productId: "ikea-fejka",
+    id: "duplicate",
+  });
   assert.equal(
-    state.present.items.filter((i) => i.productId === "plant").length,
+    state.present.items.filter((i) => i.productId === "ikea-fejka").length,
     1,
   );
   const plant = state.present.items.find((i) => i.id === "green")!;
-  const lamp = state.present.items.find((i) => i.productId === "desk-lamp")!;
+  const lamp = state.present.items.find((i) => i.productId === "benq-wit")!;
   assert.ok(!allowedSlots(state.present, plant).includes(lamp.slot));
   const previous = state;
   state = reducer(state, { type: "move", id: "green", slot: lamp.slot });
@@ -144,16 +148,16 @@ test("accessory quantities and occupied placement slots cannot be bypassed", () 
 });
 test("quotes group quantities and calculate weekly and term totals in integer cents", () => {
   let state = initialHistory();
-  state = reducer(state, { type: "desk", id: "wooden-desk" });
+  state = reducer(state, { type: "desk", id: "jarvis-laminate" });
   state = reducer(state, {
     type: "add",
-    productId: "monitor-27",
+    productId: "dell-u2725qe",
     id: "second",
   });
   state = reducer(state, { type: "weeks", value: 8 });
   const total = quote(state.present);
   assert.equal(
-    total.lines.find((l) => l.product.id === "monitor-27")!.quantity,
+    total.lines.find((l) => l.product.id === "dell-u2725qe")!.quantity,
     2,
   );
   assert.equal(total.weeklyCents, 4200);

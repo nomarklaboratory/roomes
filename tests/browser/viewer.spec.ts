@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../fixtures/studio";
 
 test("zoom, fullscreen, and a 170 cm seated viewer work without changing the rental", async ({
   page,
@@ -13,16 +13,22 @@ test("zoom, fullscreen, and a 170 cm seated viewer work without changing the ren
   });
   await expect(page.locator(".room-fallback")).toBeHidden();
   const canvas = page.locator("canvas");
-  const stage = page.locator(".preview-stage");
+  // The development toolbar overlaps the mobile canvas and has animated
+  // pixels. Exclude it when comparing the workspace's camera position.
+  const screenshot = () =>
+    canvas.screenshot({
+      style: "nextjs-portal { visibility: hidden; }",
+    });
+  const stage = page.locator("[data-preview-stage]");
   await canvas.scrollIntoViewIfNeeded();
   const stored = await page.evaluate(() =>
     localStorage.getItem("roomes.workspace.v1"),
   );
-  const overview = await canvas.screenshot();
+  const overview = await screenshot();
   await page
     .getByRole("button", { name: "Zoom in preview", exact: true })
     .click();
-  expect((await canvas.screenshot()).equals(overview)).toBe(false);
+  expect((await screenshot()).equals(overview)).toBe(false);
   await page
     .getByRole("button", { name: "Zoom out preview", exact: true })
     .click();
@@ -61,10 +67,10 @@ test("zoom, fullscreen, and a 170 cm seated viewer work without changing the ren
   await expect(page.locator(".walk-caption")).toContainText(
     "170 cm person · Standing eyes 159 cm",
   );
-  const standing = await canvas.screenshot();
+  const standing = await screenshot();
   await page.getByRole("button", { name: "Sit in chair", exact: true }).click();
   await expect(page.locator(".walk-caption")).toContainText(
-    "Seated eyes 127 cm",
+    "Seated eyes 123 cm",
   );
   await expect(
     page.getByRole("button", { name: "Walk forward", exact: true }),
@@ -72,18 +78,18 @@ test("zoom, fullscreen, and a 170 cm seated viewer work without changing the ren
   const region = page.getByRole("region", { name: /^First-person workspace/ });
   // Keep the keyboard focus ring consistent across pixel comparisons.
   await region.press("Shift");
-  const seated = await canvas.screenshot();
+  const seated = await screenshot();
   expect(seated.equals(standing)).toBe(false);
   // Walking input cannot move the camera out of its chair while seated.
   await page.keyboard.down("w");
   await page.waitForTimeout(250);
   await page.keyboard.up("w");
-  expect((await canvas.screenshot()).equals(seated)).toBe(true);
+  expect((await screenshot()).equals(seated)).toBe(true);
   await page
     .getByRole("button", { name: "Zoom in preview", exact: true })
     .click();
   await region.press("Shift");
-  expect((await canvas.screenshot()).equals(seated)).toBe(false);
+  expect((await screenshot()).equals(seated)).toBe(false);
   await stage.screenshot({
     path: `test-results/${testInfo.project.name}-seated.png`,
   });
@@ -121,7 +127,7 @@ test("fullscreen expands when the browser API is unavailable and Escape restores
   ).toBeVisible();
   expect(await page.evaluate(() => document.fullscreenElement)).toBe(null);
   await expect(page.locator("body")).toHaveClass(/overflow-hidden/);
-  const box = (await page.locator(".preview-stage").boundingBox())!;
+  const box = (await page.locator("[data-preview-stage]").boundingBox())!;
   expect(box.x).toBe(0);
   expect(box.y).toBe(0);
   await page.keyboard.press("Escape");

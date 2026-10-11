@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "pretypecheck": "cn build --content \"{app,components,hooks,lib,types}/**/*.{ts,tsx}\" --out lib/cn-tables.ts",
     "typecheck": "tsc --noEmit",
     "test": "node --experimental-strip-types --test tests/*.test.ts && node scripts/verify-assets.mjs",
     "test:e2e": "playwright test",
@@ -14,16 +15,26 @@
     "assets:thumbnails": "/Applications/Blender.app/Contents/MacOS/Blender --background --python scripts/render-thumbnails.py",
     "assets:ai": "node scripts/meshy-pilot.mjs",
     "assets:optimize": "node scripts/optimize-assets.mjs && node scripts/verify-assets.mjs",
-    "format": "prettier --write app components lib scripts tests playwright.config.ts README.md docs .plan",
-    "format:check": "prettier --check app components lib scripts tests playwright.config.ts README.md docs .plan"
+    "format": "prettier --write app components hooks lib scripts tests types playwright.config.ts README.md docs .plan",
+    "format:check": "prettier --check app components hooks lib scripts tests types playwright.config.ts README.md docs .plan",
+    "assets:media": "node scripts/import-product-media.mjs"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.9.1",
+    "@mobily/ts-belt": "^3.13.1",
+    "@radix-ui/react-alert-dialog": "^1.1.24",
+    "@radix-ui/react-dialog": "^1.2.0",
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.1",
+    "cn": "^0.4.0",
+    "jspdf": "^4.2.1",
     "next": "16.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "three": "^0.186.1"
+    "react-hook-form": "^7.89.0",
+    "three": "^0.186.1",
+    "zod": "^4.6.5",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@gltf-transform/cli": "^4.5.1",

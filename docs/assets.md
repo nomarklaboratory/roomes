@@ -4,22 +4,35 @@ The browser consumes a small typed catalog and approved GLB files. It does not c
 
 ## Current assets
 
-All nine assets are original parametric designs made with Three.js. Blender renders the transparent thumbnails. They are product-inspired illustrations, not scans or accurate replicas. Six items use published dimensions for a specific preview posture. The laptop stand is explicitly estimated; the everyday chair and plant are labeled concepts. See [physical scale and primary sources](catalog-scale.md) for measurements, variant conflicts, and remaining intake work.
+All fifteen assets are original parametric interpretations of the real catalog products. Jarvis uses thin tops and black telescopic legs; Aeron has a framed mesh back and seat; Sayl has a frameless lattice and Y support; Dell's 34-inch display uses curved geometry; WiT has articulated arms and a curved light bar; FEJKA has rosemary branches; Curve has an open base and support rails. They are stylized geometry, with photos and recorded films providing material detail. See [physical scale and primary sources](catalog-scale.md).
 
-Sources and measurement evidence live in `lib/catalog.ts`. Each real product links to its rental listing and, where needed, its manufacturer's dimension source. No external product photos or stock 3D models are redistributed.
+Sources and measurement evidence live in `lib/catalog.ts` and `lib/desk-accessories.ts`. Desk mats, mouse pads, keyboard, mouse and shortcut controller use builders in `scripts/desk-accessory-models.mjs`; every new compressed asset is below 16 KB. Product media is curated in `docs/product-media-sources.json`, optimized into `public/product-media`, and typed in `lib/product-media-data.ts`. Catalog and review cards use official product images. Blender thumbnails remain useful for reviewing the original meshes. See [media workflow](product-media.md).
 
 The manifest records asset method, family, version, dimensions and source evidence, bounds, triangle count, bytes, units, origin, and approval state. Models use metres, Y-up, and bottom-center origins. The optimizer preserves semantic material names for finish changes. It preserves hierarchy and transforms to prevent normalization from changing reused primitives.
 
 ## Rebuild
 
 ```sh
+pnpm assets:media # refresh the curated official images
 pnpm assets:build
 # Render uncompressed GLBs; Blender's importer may not support Meshopt.
 pnpm assets:thumbnails
 pnpm assets:optimize
 ```
 
-The thumbnail command currently uses the local macOS Blender path. On another machine run `blender --background --python scripts/render-thumbnails.py`. Blender is needed only to regenerate images, not to run or deploy the app. Repeat the entire sequence when changing a family. Inspect bounds and the actual room after optimization, not only the thumbnails. Meshes are built from reusable rounded boxes, cylinders, and leaf primitives; finish variations do not need fresh AI jobs.
+The thumbnail command currently uses the local macOS Blender path. On another machine run `blender --background --python scripts/render-thumbnails.py`. Blender is needed only to regenerate images, not to run or deploy the app. Repeat the entire sequence when changing a family. Inspect bounds and the actual room after optimization, not only the thumbnails. Meshes are built from reusable rounded boxes, cylinders, tubes, and curved panels; finish variations do not need fresh AI jobs.
+
+Rebuild a single SKU without touching the rest of the catalog:
+
+```sh
+node scripts/build-assets.mjs torq-mod-fun
+ROOMES_ASSET_ID=torq-mod-fun pnpm assets:thumbnails
+node scripts/optimize-assets.mjs torq-mod-fun
+node scripts/import-product-media.mjs torq-mod-fun
+pnpm test
+```
+
+Surfboard geometry is exported horizontally with the same bottom-center convention. Its wall anchor and illustrative brackets are applied by the viewer rather than changing the measured product envelope.
 
 ## Meshy pilot
 

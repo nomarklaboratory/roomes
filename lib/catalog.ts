@@ -1,223 +1,279 @@
-export type Category = "desk" | "chair" | "accessory";
-export type AccessoryKind = "monitor" | "lamp" | "plant" | "stand";
-export type ScaleEvidence = {
-  status: "listed" | "estimated" | "concept";
-  model?: string;
-  source?: string;
-  checkedAt?: string;
-  note: string;
-  heightRange?: readonly [number, number];
-  seatHeightRange?: readonly [number, number];
-};
-export type Product = {
-  id: string;
-  name: string;
-  subtitle: string;
-  category: Category;
-  assetPath: string;
-  weeklyCents: number;
-  width: number;
-  depth: number;
-  height: number;
-  seatHeight?: number;
-  assetVersion?: number;
-  kind?: AccessoryKind;
-  concept?: boolean;
-  source?: string;
-  scale: ScaleEvidence;
-  screen?: { inches: number; aspect: number };
-};
+import type { Finish, Product, ScaleEvidence } from "../types/catalog.ts";
+import { mediaByProduct } from "./product-media-data.ts";
+import { deskAccessories } from "./desk-accessories.ts";
+export type {
+  Category,
+  AccessoryKind,
+  Product,
+  ScaleEvidence,
+  Finish,
+  Weeks,
+  PresetId,
+} from "../types/catalog.ts";
 
-// A replaceable catalog adapter. Dimensions drive placement; prices are demo data.
-const productData: readonly Omit<Product, "assetPath">[] = [
+const checkedAt = "2026-10-11";
+const hm = "https://ukstore.hermanmiller.com/products/";
+const dell = "https://www.dell.com/en-us/shop/monitors/apd/";
+function evidence(
+  source: string,
+  model: string,
+  note: string,
+  extra: Partial<ScaleEvidence> = {},
+): ScaleEvidence {
+  return { status: "listed", source, model, checkedAt, note, ...extra };
+}
+const productData: readonly Omit<
+  Product,
+  "assetPath" | "assetVersion" | "media"
+>[] = [
+  ...deskAccessories,
   {
-    id: "electric-desk",
-    name: "Electric desk",
-    subtitle: "120 × 60 cm · Sit / stand",
+    id: "torq-mod-fun",
+    name: "Torq Mod Fun Surfboard",
+    brand: "Torq",
+    model: "TET Mod Fun · 6′8″",
+    subtitle: "6′8″ · Blue pinline · Back-wall display",
+    category: "accessory",
+    kind: "surfboard",
+    mount: "back-wall",
+    weeklyCents: 500,
+    width: 2.032,
+    depth: 0.06985,
+    height: 0.5334,
+    source: "https://www.torq-surfboards.com/midlength/mod-fun.html",
+    scale: evidence(
+      "https://www.torq-surfboards.com/midlength/mod-fun.html",
+      "Torq TET Mod Fun · 6′8″ × 21″ × 2¾″",
+      "Mounted horizontally: W × D × H means board length × thickness × width. Fins removed for display; mounting hardware is illustrative. Original stylized model. Supplier photos show the related 7′2″ shape and alternative pinline colors, not the preview size. Rental stock is unverified.",
+    ),
+  },
+  {
+    id: "jarvis-bamboo",
+    name: "Jarvis Bamboo",
+    brand: "Fully · Herman Miller",
+    model: "Jarvis Bamboo · 1200 × 800",
+    subtitle: "120 × 80 cm · Natural bamboo · Black frame",
     category: "desk",
     weeklyCents: 500,
     width: 1.2,
-    depth: 0.6,
+    depth: 0.8,
     height: 0.75,
-    assetVersion: 3,
-    source: "https://www.monis.rent/products/electrical-adjustable-desk",
-    scale: {
-      status: "listed",
-      model: "Fantech WS414 / GD914 · Small",
-      source: "https://www.monis.rent/products/electrical-adjustable-desk",
-      checkedAt: "2026-10-11",
-      note: "120 × 60 cm variant. Preview set at 75 cm; adjustable 70–118 cm.",
-      heightRange: [0.7, 1.18],
-    },
+    finishes: ["bamboo"],
+    source: `${hm}jarvis-bamboo-standing-desk`,
+    scale: evidence(
+      `${hm}jarvis-bamboo-standing-desk`,
+      "Jarvis Bamboo · 120 × 80 cm",
+      "Rectangular top, black frame, up/down controls, no powered grommets. Preview at 75 cm; adjustable 64.2–129 cm.",
+      { heightRange: [0.642, 1.29] },
+    ),
   },
   {
-    id: "wooden-desk",
-    name: "Wooden desk",
-    subtitle: "160 × 80 cm · More room to create",
+    id: "jarvis-laminate",
+    name: "Jarvis Laminate",
+    brand: "Fully · Herman Miller",
+    model: "Jarvis Laminate · 1600 × 800",
+    subtitle: "160 × 80 cm · Laminate · Black frame",
     category: "desk",
     weeklyCents: 700,
     width: 1.6,
     depth: 0.8,
     height: 0.75,
-    assetVersion: 3,
-    source: "https://www.monis.rent/products/adjustable-wooden-desk",
-    scale: {
-      status: "listed",
-      model: "IKEA Trotten · 160 × 80 cm",
-      source: "https://www.monis.rent/products/adjustable-wooden-desk",
-      checkedAt: "2026-10-11",
-      note: "160 × 80 cm selector and technical specifications; summary differs. Preview set at 75 cm; adjustable 70–120 cm. Confirm variant before ordering.",
-      heightRange: [0.7, 1.2],
-    },
+    finishes: ["white", "black"],
+    source: `${hm}jarvis-laminate-standing-desk`,
+    scale: evidence(
+      `${hm}jarvis-laminate-standing-desk`,
+      "Jarvis Laminate · 160 × 80 cm",
+      "Rectangular top, black frame and up/down controls. Preview at 75 cm; adjustable 64.2–129 cm. Finishes follow the current UK catalog.",
+      { heightRange: [0.642, 1.29] },
+    ),
   },
   {
-    id: "ergonomic-chair",
-    name: "Ergonomic chair",
-    subtitle: "Headrest · Adjustable support",
+    id: "herman-miller-aeron",
+    name: "Aeron",
+    brand: "Herman Miller",
+    model: "Aeron · B · Graphite",
+    subtitle: "Size B · Graphite · Pellicle mesh",
     category: "chair",
     weeklyCents: 600,
-    width: 0.65,
-    depth: 0.66,
-    height: 1.15,
-    seatHeight: 0.49,
-    assetVersion: 3,
-    source: "https://www.monis.rent/products/ergonomic-office-chair",
-    scale: {
-      status: "listed",
-      model: "Fantech OCA259PRO",
-      source:
-        "https://fantech.ph/wp-content/uploads/2024/10/oca259-pro-black-7.jpg",
-      checkedAt: "2026-10-11",
-      note: "Manufacturer diagram: arms 61–65 cm wide, base 66 cm deep, seat 50 × 48 cm. Preview uses minimum seat / overall height, arms at widest setting, leg rest retracted.",
-      heightRange: [1.15, 1.28],
-      seatHeightRange: [0.49, 0.57],
-    },
+    width: 0.71882,
+    depth: 0.6985,
+    height: 1.0088,
+    seatHeight: 0.45,
+    seat: { width: 0.5, depth: 0.4318 },
+    source: `${hm}aeron-office-chair`,
+    scale: evidence(
+      "https://www.hermanmiller.com/products/seating/office-chairs/aeron-chair/specs/",
+      "Aeron B · height-adjustable arms",
+      "Graphite frame with height-adjustable arms. Published envelope; upright preview at a 45 cm seat height. Seat width and curved surfaces are stylized. Size B seat depth is 17 inches.",
+      { heightRange: [0.93472, 1.04394], seatHeightRange: [0.37592, 0.57912] },
+    ),
   },
   {
-    id: "task-chair",
-    name: "Everyday chair",
-    subtitle: "Soft curves · Easy-going comfort",
+    id: "herman-miller-sayl",
+    name: "Sayl",
+    brand: "Herman Miller",
+    model: "Sayl · Black · Kingsmead",
+    subtitle: "Suspension back · Black Kingsmead seat",
     category: "chair",
     weeklyCents: 400,
-    width: 0.6,
-    depth: 0.6,
-    height: 0.83,
-    seatHeight: 0.46,
-    assetVersion: 3,
-    concept: true,
-    scale: {
-      status: "concept",
-      note: "Original concept; 46 cm seat height. No matching rental SKU.",
-    },
+    width: 0.622,
+    depth: 0.502,
+    height: 0.959,
+    seatHeight: 0.419,
+    seat: { width: 0.464, depth: 0.406 },
+    source: `${hm}sayl-office-chair`,
+    scale: evidence(
+      `${hm}sayl-office-chair`,
+      "Sayl · fixed arms · Kingsmead",
+      "Black suspension back, fixed arms and Kingsmead upholstered seat. Upright preview at minimum listed seat height; suspension lattice is stylized.",
+      { heightRange: [0.959, 1.035], seatHeightRange: [0.419, 0.559] },
+    ),
   },
   {
-    id: "monitor-27",
-    name: "27″ monitor",
-    subtitle: "A little more screen space",
+    id: "dell-u2725qe",
+    name: "Dell UltraSharp 27",
+    brand: "Dell",
+    model: "U2725QE",
+    subtitle: "27-inch 4K · Thunderbolt hub",
     category: "accessory",
     kind: "monitor",
     weeklyCents: 1300,
-    width: 0.6129,
-    depth: 0.2,
-    height: 0.5149,
-    assetVersion: 3,
+    width: 0.61244,
+    depth: 0.189,
+    height: 0.53568,
     screen: { inches: 27, aspect: 16 / 9 },
-    source: "https://www.monis.rent/products/27-4-k-multimedia-monitor",
-    scale: {
-      status: "listed",
-      model: "Redmi A27U / Xiaomi A27Ui",
-      source: "https://www.monis.rent/products/27-4-k-multimedia-monitor",
-      checkedAt: "2026-10-11",
-      note: "Listed assembled dimensions including stand: 612.9 × 200 × 514.9 mm. Preview uses this stand position.",
-    },
+    source: `${dell}dell-ultrasharp-27-4k-thunderbolt-hub-monitor-u2725qe/u2725qe_monitor/-`,
+    scale: evidence(
+      `${dell}dell-ultrasharp-27-4k-thunderbolt-hub-monitor-u2725qe/u2725qe_monitor/-`,
+      "Dell U2725QE",
+      "Dimensions include the stand at its fully extended height. Screen size is the active display diagonal.",
+      { heightRange: [0.38568, 0.53568] },
+    ),
   },
   {
-    id: "monitor-34",
-    name: "34″ ultrawide",
-    subtitle: "Your ideas, side by side",
+    id: "dell-u3425we",
+    name: "Dell UltraSharp 34",
+    brand: "Dell",
+    model: "U3425WE",
+    subtitle: "34.1-inch curved · Thunderbolt hub",
     category: "accessory",
     kind: "monitor",
     weeklyCents: 1900,
-    width: 0.81039,
-    depth: 0.24253,
-    height: 0.52061,
-    assetVersion: 3,
-    screen: { inches: 34, aspect: 3440 / 1440 },
-    source: "https://www.monis.rent/products/4-k-ultra-wide-34",
-    scale: {
-      status: "listed",
-      model: "Xiaomi Mi Curved 34 · 144 Hz",
-      source:
-        "https://i01.appmifile.com/webfile/globalimg/Global_UG/Mi_Ecosystem/Mi_Curved_Gaming_Monitor_34/Mi_CurvedMonitor_34_All_V1.pdf",
-      checkedAt: "2026-10-11",
-      note: "Manufacturer manual gives width 810.39, depth 242.53, height 520.61 mm including stand. Resolves swapped depth/height labels on the rental listing. Stylized screen; curvature is not reproduced.",
-    },
+    width: 0.81346,
+    depth: 0.24043,
+    height: 0.54283,
+    screen: { inches: 34.1, aspect: 3440 / 1440, radius: 1.9 },
+    source:
+      "https://www.dell.com/en-us/shop/dell-ultrasharp-34-curved-thunderbolt-hub-monitor-u3425we/apd/210-bmds",
+    scale: evidence(
+      "https://www.delltechnologies.com/asset/en-in/products/electronics-and-accessories/technical-support/dell-ultrasharp-34-curved-thunderbolt-hub-monitor-u3425we-datasheet.pdf",
+      "Dell U3425WE",
+      "Published dimensions with stand fully extended. The 1900R screen curvature is represented in the preview.",
+      { heightRange: [0.39283, 0.54283] },
+    ),
   },
   {
-    id: "desk-lamp",
-    name: "Desk lamp",
-    subtitle: "A warm glow for late ideas",
+    id: "benq-wit",
+    name: "BenQ WiT",
+    brand: "BenQ",
+    model: "WiT · Silver",
+    subtitle: "Silver · Articulated e-reading lamp",
     category: "accessory",
     kind: "lamp",
     weeklyCents: 300,
-    width: 0.15,
-    depth: 0.44,
-    height: 0.42,
-    assetVersion: 3,
-    source: "https://www.monis.rent/products/smart-led-desk-lamp-1-s",
-    scale: {
-      status: "listed",
-      model: "Xiaomi Mi LED Desk Lamp 1S",
-      source: "https://www.mi.com/sg/support/faq/details/KA-07549/",
-      checkedAt: "2026-10-11",
-      note: "Manufacturer's opened posture: 440 × 150 × 420 mm, 150 mm base. Arm faces forward, so room width is 150 mm and depth is 440 mm. Rental listing's 162 × 162 × 479 mm does not describe this opened posture.",
-    },
+    width: 0.59,
+    depth: 0.22,
+    height: 0.625,
+    source:
+      "https://www.benq.com/en-sg/lighting/e-reading-desk-lamp/e-reading.html",
+    scale: evidence(
+      "https://www.benq.com/en-au/lighting/e-reading-desk-lamp/e-reading/spec.html",
+      "BenQ WiT",
+      "Published 59 × 22 × 62.5 cm envelope. Adjustable arms use one illustrative pose; their footprint changes with articulation.",
+    ),
   },
   {
-    id: "plant",
-    name: "Little green friend",
-    subtitle: "Bring a bit of Bali inside",
+    id: "ikea-fejka",
+    name: "FEJKA Rosemary",
+    brand: "IKEA",
+    model: "FEJKA · 206.107.45",
+    subtitle: "Artificial plant · 9 cm nursery pot",
     category: "accessory",
     kind: "plant",
     weeklyCents: 200,
-    width: 0.19,
-    depth: 0.19,
-    height: 0.35,
-    concept: true,
-    assetVersion: 3,
-    scale: {
-      status: "concept",
-      note: "Original plant concept; size is an illustration, not a rental SKU.",
-    },
+    width: 0.21,
+    depth: 0.21,
+    height: 0.21,
+    source:
+      "https://www.ikea.com/ph/en/p/fejka-artificial-potted-plant-indoor-outdoor-rosemary-20610745/",
+    scale: evidence(
+      "https://www.ikea.com/ph/en/p/fejka-artificial-potted-plant-indoor-outdoor-rosemary-20610745/",
+      "IKEA FEJKA Rosemary",
+      "Published plant height 21 cm and pot diameter 9 cm. Foliage spread is estimated at 21 cm from the product and packaging; leaves are stylized.",
+      { status: "estimated" },
+    ),
   },
   {
-    id: "laptop-stand",
-    name: "Laptop stand",
-    subtitle: "Lift your everyday view",
+    id: "twelve-south-curve",
+    name: "Twelve South Curve",
+    brand: "Twelve South",
+    model: "Curve · Matte black",
+    subtitle: "Stand only · Aluminium and silicone",
     category: "accessory",
     kind: "stand",
     weeklyCents: 200,
-    width: 0.28,
-    depth: 0.24,
-    height: 0.15,
-    assetVersion: 3,
-    source: "https://www.monis.rent/products/ergonomic-laptop-stand",
-    scale: {
-      status: "estimated",
-      model: "KOLMI",
-      source: "https://www.monis.rent/products/ergonomic-laptop-stand",
-      checkedAt: "2026-10-11",
-      note: "Rental listing identifies KOLMI but publishes no dimensions. 28 × 24 × 15 cm is an estimate pending measurement of the actual stock.",
-    },
+    width: 0.263,
+    depth: 0.222,
+    height: 0.149,
+    source: "https://www.twelvesouth.com/products/curve-for-macbook",
+    scale: evidence(
+      "https://twelvesouth.co.uk/products/curve-for-macbook",
+      "Twelve South Curve",
+      "Manufacturer lists 26.3 × 22.2 × 14.9 cm. Laptop shown in supplier photos is for context and is not included.",
+    ),
   },
 ];
 export const products: readonly Product[] = productData.map((product) => ({
   ...product,
-  assetPath: `/models/${product.id}.glb?v=${product.assetVersion ?? 1}`,
+  assetVersion: 4,
+  assetPath: `/models/${product.id}.glb?v=4`,
+  media: mediaByProduct[product.id],
 }));
 export const catalog = Object.fromEntries(
   products.map((p) => [p.id, p]),
 ) as Record<string, Product>;
+export const finishes = [
+  {
+    id: "bamboo",
+    name: "Natural bamboo",
+    color: "#cda773",
+    swatch: "bg-[#cda773]",
+  },
+  {
+    id: "white",
+    name: "White laminate",
+    color: "#f4f2ed",
+    swatch: "bg-[#f4f2ed]",
+  },
+  {
+    id: "black",
+    name: "Black laminate",
+    color: "#30302e",
+    swatch: "bg-[#30302e]",
+  },
+] as const;
+export function finishesFor(productId: string) {
+  return finishes.filter((f) => catalog[productId]?.finishes?.includes(f.id));
+}
+export function normalizeFinish(productId: string, finish: Finish): Finish {
+  const allowed = finishesFor(productId);
+  if (allowed.some((f) => f.id === finish)) return finish;
+  return allowed[0]?.id ?? "bamboo";
+}
+export function productHero(product: Product, finish?: Finish) {
+  const images = product.media.filter((media) => media.kind === "image");
+  return images.find((media) => media.finish === finish) ?? images[0];
+}
 export function dimensionLabel(product: Product) {
   const cm = (metres: number) => Number((metres * 100).toFixed(1));
   return `${cm(product.width)} × ${cm(product.depth)} × ${cm(product.height)} cm`;
@@ -225,51 +281,41 @@ export function dimensionLabel(product: Product) {
 export function scaleLabel(product: Product) {
   return product.scale.status === "listed"
     ? "Published dimensions"
-    : product.scale.status === "estimated"
-      ? "Estimated dimensions"
-      : "Concept dimensions";
+    : "Estimated foliage spread";
 }
-export const finishes = [
-  { id: "oat", name: "Natural oak", color: "#c9a77f" },
-  { id: "walnut", name: "Warm walnut", color: "#76503c" },
-  { id: "chalk", name: "Soft white", color: "#e4ded1" },
-] as const;
-export type Finish = (typeof finishes)[number]["id"];
 export const durations = [1, 2, 4, 8] as const;
-export type Weeks = (typeof durations)[number];
 export const presets = [
   {
     id: "essentials",
     name: "The essentials",
     description: "Less stuff. More headspace.",
     room: "sand",
-    desk: "electric-desk",
-    chair: "task-chair",
-    extras: ["desk-lamp"],
-    finish: "oat",
+    desk: "jarvis-bamboo",
+    chair: "herman-miller-sayl",
+    extras: ["benq-wit"],
+    finish: "bamboo",
   },
   {
     id: "developer",
     name: "Deep focus",
     description: "A home for your next big idea.",
     room: "sage",
-    desk: "electric-desk",
-    chair: "ergonomic-chair",
-    extras: ["monitor-27", "desk-lamp"],
-    finish: "oat",
+    desk: "jarvis-bamboo",
+    chair: "herman-miller-aeron",
+    extras: ["dell-u2725qe", "benq-wit"],
+    finish: "bamboo",
   },
   {
     id: "creative",
     name: "Room to create",
     description: "Spread out. Think a little bigger.",
     room: "clay",
-    desk: "wooden-desk",
-    chair: "task-chair",
-    extras: ["monitor-34", "plant", "laptop-stand"],
-    finish: "walnut",
+    desk: "jarvis-laminate",
+    chair: "herman-miller-sayl",
+    extras: ["dell-u3425we", "ikea-fejka", "twelve-south-curve"],
+    finish: "white",
   },
 ] as const;
-export type PresetId = (typeof presets)[number]["id"];
 export const money = (cents: number) =>
   new Intl.NumberFormat("en-US", {
     style: "currency",

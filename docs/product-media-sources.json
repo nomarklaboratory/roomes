@@ -1,0 +1,265 @@
+{
+  "jarvis-bamboo": [
+    {
+      "url": "https://cdn.shopify.com/s/files/1/0417/3266/9593/files/12-REC-BLK-SUD-NOG-01_b63ee0b2-8631-4260-8680-c55235d9dbe6.jpg?v=1789567333",
+      "caption": "Natural bamboo tabletop \u00b7 black frame",
+      "variant": "120 \u00d7 80 cm \u00b7 bamboo / black",
+      "presentation": "catalog",
+      "finish": "bamboo"
+    },
+    {
+      "url": "https://ukstore.hermanmiller.com/cdn/shop/files/Fully_Jarvis-Design_Details-Bamboo_341x455_crop_center.jpg",
+      "caption": "Bamboo surface and edge detail",
+      "variant": "Natural bamboo",
+      "presentation": "photo",
+      "finish": "bamboo"
+    },
+    {
+      "url": "https://ukstore.hermanmiller.com/cdn/shop/files/Fully-Jarvis-Bamboo-PDP01.jpg",
+      "caption": "Jarvis in a real workspace",
+      "variant": "Bamboo \u00b7 supplier styling example",
+      "presentation": "photo",
+      "finish": "bamboo"
+    }
+  ],
+  "jarvis-laminate": [
+    {
+      "url": "https://cdn.shopify.com/s/files/1/0417/3266/9593/files/FUL_2548841_100348645_white_black_a_81e1cfe1-fbf9-4979-8a3e-20bdd317d588.jpg?v=1789567417",
+      "caption": "White laminate tabletop \u00b7 black frame",
+      "variant": "160 \u00d7 80 cm \u00b7 white / black",
+      "presentation": "catalog",
+      "finish": "white"
+    },
+    {
+      "url": "https://cdn.shopify.com/s/files/1/0417/3266/9593/files/FUL_2548841_100348643_black_black_a_a6c47697-1c5e-489c-9de7-70730e864f8e.jpg?v=1789567417",
+      "caption": "Black laminate tabletop \u00b7 black frame",
+      "variant": "160 \u00d7 80 cm \u00b7 black / black",
+      "presentation": "catalog",
+      "finish": "black"
+    },
+    {
+      "url": "https://ukstore.hermanmiller.com/cdn/shop/files/Fully-Jarvis-Laminate-PDP-DD01_341x455_crop_center.jpg",
+      "caption": "Laminate surface and edge detail",
+      "variant": "Supplier detail \u00b7 finish shown may differ",
+      "presentation": "photo"
+    },
+    {
+      "url": "https://ukstore.hermanmiller.com/cdn/shop/files/Fully-Jarvis-Laminate-PDP01.jpg",
+      "caption": "Jarvis in a real workspace",
+      "variant": "Supplier styling example \u00b7 finish shown may differ",
+      "presentation": "photo"
+    }
+  ],
+  "herman-miller-aeron": [
+    {
+      "url": "https://cdn.shopify.com/s/files/1/0417/3266/9593/files/aFRONT-FPF_HAA_NU_TLO_30455f5b-d9ed-4d58-81bf-5cb913cc6a9c.jpg?v=1789566897",
+      "caption": "Graphite Aeron \u00b7 medium size B",
+      "variant": "Graphite frame \u00b7 height-adjustable arms",
+      "presentation": "catalog"
+    },
+    {
+      "url": "https://ukstore.hermanmiller.com/cdn/shop/files/Aeron-DD-Pellicle_341x455_crop_center.jpg",
+      "caption": "8Z Pellicle mesh detail",
+      "variant": "Aeron suspension \u00b7 supplier detail \u00b7 frame color shown differs",
+      "presentation": "photo"
+    },
+    {
+      "url": "https://www.hermanmiller.com/content/dam/hmicom/page_assets/products/aeron_chair/2026_06/fv_prd_ovw_aeron_chair.mp4",
+      "caption": "Aeron in motion \u00b7 manufacturer film",
+      "variant": "Aeron family \u00b7 multiple colors and sizes shown",
+      "kind": "video",
+      "posterId": "0"
+    }
+  ],
+  "herman-miller-sayl": [
+    {
+      "url": "https://cdn.shopify.com/s/files/1/0417/3266/9593/files/AS1EA33PA_N2_BK_C7_BK_BK_Z1A67_FRONT_88a22093-5af8-48f7-a18e-0ba433a6b7d1.jpg?v=1789567315",
+      "caption": "Black suspension back and Kingsmead seat",
+      "variant": "Black \u00b7 fixed arms \u00b7 Kingsmead upholstery",
+      "presentation": "catalog"
+    },
+    {
+      "url": "https://ukstore.hermanmiller.com/cdn/shop/files/sw_sayl-upholstery-black-kingsmead.jpg",
+      "caption": "Kingsmead upholstery texture",
+      "variant": "Black Kingsmead seat fabric",
+      "presentation": "photo"
+    },
+    {
+      "url": "https://www.hermanmiller.com/content/dam/hmicom/page_assets/products/sayl_chairs/ig_prd_ovw_sayl_chairs_09.jpg",
+      "caption": "Suspension back and Y-Tower support",
+      "variant": "Black suspension back \u00b7 supplier view",
+      "presentation": "catalog"
+    },
+    {
+      "url": "https://cdn.shopify.com/videos/c/o/v/7f369a1682264d1f8520b14c80fbe235.mp4",
+      "caption": "Sayl in use \u00b7 manufacturer film",
+      "variant": "Sayl family \u00b7 finish shown may differ",
+      "kind": "video",
+      "posterId": "0"
+    }
+  ],
+  "dell-u2725qe": [
+    {
+      "url": "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/u-series/u2725qe/media-gallery/monitor-ultrasharp-u2725qe-gy-gallery-1.psd?fmt=jpg&wid=1200",
+      "caption": "27-inch UltraSharp \u00b7 front angle",
+      "variant": "U2725QE \u00b7 silver / black",
+      "presentation": "render"
+    },
+    {
+      "url": "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/u-series/u2725qe/pdp/monitor-u2725qe-quick-access-ports.psd?fmt=jpg&wid=1200",
+      "caption": "Quick-access ports and edge detail",
+      "variant": "U2725QE \u00b7 manufacturer detail",
+      "presentation": "render"
+    }
+  ],
+  "dell-u3425we": [
+    {
+      "url": "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/u-series/u3425we/media-gallery/monitor-ultrasharp-u3425we-gray-gallery-1.psd?fmt=jpg&wid=1200",
+      "caption": "34-inch curved UltraSharp \u00b7 front angle",
+      "variant": "U3425WE \u00b7 silver / black",
+      "presentation": "render"
+    },
+    {
+      "url": "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/u-series/u3425we/media-gallery/monitor-ultrasharp-u3425we-gray-gallery-4.psd?fmt=jpg&wid=1200",
+      "caption": "Underside ports and housing detail",
+      "variant": "U3425WE \u00b7 silver / black",
+      "presentation": "render"
+    }
+  ],
+  "benq-wit": [
+    {
+      "url": "https://image.benq.com/is/image/benqco/01-91?wid=1200&fmt=jpg",
+      "caption": "WiT articulated lamp and curved light bar",
+      "variant": "Supplier styling example \u00b7 colors shown may differ",
+      "presentation": "photo"
+    },
+    {
+      "url": "https://image.benq.com/is/image/benqco/05-silver-1?wid=1200&fmt=jpg",
+      "caption": "Silver WiT in a workspace",
+      "variant": "WiT \u00b7 silver",
+      "presentation": "photo"
+    }
+  ],
+  "ikea-fejka": [
+    {
+      "url": "https://www.ikea.com/ph/en/images/products/fejka-artificial-potted-plant-indoor-outdoor-rosemary__1467004_pe995612_s5.jpg?f=xl",
+      "caption": "Artificial rosemary with grey nursery pot",
+      "variant": "FEJKA \u00b7 9 cm pot \u00b7 21 cm tall",
+      "presentation": "catalog"
+    },
+    {
+      "url": "https://www.ikea.com/ph/en/images/products/fejka-artificial-potted-plant-indoor-outdoor-rosemary__1478100_pe999421_s5.jpg?f=xl",
+      "caption": "Artificial leaf and stem detail",
+      "variant": "FEJKA rosemary \u00b7 decorative cover pot shown is not included",
+      "presentation": "photo"
+    }
+  ],
+  "twelve-south-curve": [
+    {
+      "url": "https://www.twelvesouth.com/cdn/shop/products/12S_Curve_Black_ChildHero.jpg?width=1200",
+      "caption": "Curved aluminium laptop stand",
+      "variant": "Curve \u00b7 matte black \u00b7 laptop shown for context",
+      "presentation": "catalog"
+    },
+    {
+      "url": "https://www.twelvesouth.com/cdn/shop/products/black_4_a53a7b3d-08fd-4acd-9e70-05bd26b2546f.jpg?width=1200",
+      "caption": "Curve in use \u00b7 aluminium and silicone supports",
+      "variant": "Curve \u00b7 matte black \u00b7 laptop shown for context",
+      "presentation": "photo"
+    }
+  ],
+  "torq-mod-fun": [
+    {
+      "url": "https://www.torq-surfboards.com/files/PRODUCT%20PICS/TET/Fun%207%272/TQ22_TET_72_PINLINE_COLORBLUE.png",
+      "caption": "Mod Fun \u00b7 Blue pinline \u00b7 supplier shape reference",
+      "variant": "Supplier photo of 7\u20322\u2033; 3D preview is the 6\u20328\u2033 size",
+      "presentation": "catalog"
+    },
+    {
+      "url": "https://www.torq-surfboards.com/files/PRODUCT%20PICS/TET/Fun%207%272/TQ22_TET_72_PINLINE.png",
+      "caption": "Alternative white pinline \u00b7 supplier reference",
+      "variant": "7\u20322\u2033 alternative color; differs from preview",
+      "presentation": "catalog"
+    }
+  ],
+  "logitech-desk-mat": [
+    {
+      "url": "https://resource.logitech.com/c_fill,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/desk-mat-studio-series/gallery/2026-update/logitech-desk-mat-studio-series-mid-grey-top-angle-gallery-1.png",
+      "kind": "image",
+      "presentation": "catalog",
+      "caption": "Studio Desk Mat \u00b7 Mid Grey",
+      "variant": "Mid Grey \u00b7 Fabric and stitched edge"
+    },
+    {
+      "url": "https://resource.logitech.com/c_fill,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/desk-mat-studio-series/gallery/2026-update/logitech-desk-mat-studio-series-mid-grey-top-angle-curl-gallery-6.png",
+      "kind": "image",
+      "presentation": "photo",
+      "caption": "Fabric surface and rubber base",
+      "variant": "Mid Grey \u00b7 Curled material detail"
+    }
+  ],
+  "logitech-mouse-pad": [
+    {
+      "url": "https://resource.logitech.com/c_fill,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/mouse-pad-studio-series/gallery/logitech-mouse-pad-studio-series-top-view-dark-rose.png",
+      "kind": "image",
+      "presentation": "catalog",
+      "caption": "Studio Mouse Pad \u00b7 Dark Rose",
+      "variant": "Dark Rose \u00b7 Top view"
+    },
+    {
+      "url": "https://resource.logitech.com/c_fill,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/mouse-pad-studio-series/gallery/logitech-mouse-pad-studio-series-curl-view-dark-rose.png",
+      "kind": "image",
+      "presentation": "photo",
+      "caption": "Stitched fabric and anti-slip base",
+      "variant": "Dark Rose \u00b7 Material detail"
+    }
+  ],
+  "logitech-mx-keys-mini": [
+    {
+      "url": "https://resource.logitech.com/c_fill,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/keyboards/mx-keys-mini/gallery/us/mx-keys-mini-top-graphite-us.png",
+      "kind": "image",
+      "presentation": "catalog",
+      "caption": "MX Keys Mini \u00b7 Graphite",
+      "variant": "Graphite \u00b7 US layout \u00b7 Top view"
+    },
+    {
+      "url": "https://resource.logitech.com/c_fill,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/keyboards/mx-keys-mini/gallery/us/mx-keys-mini-3q-tilted-graphite-us.png",
+      "kind": "image",
+      "presentation": "photo",
+      "caption": "Compact profile and sculpted keys",
+      "variant": "Graphite \u00b7 US layout \u00b7 Angled view"
+    }
+  ],
+  "logitech-mx-master-3s": [
+    {
+      "url": "https://resource.logitech.com/c_fill,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/mx-master-3s/2025-update/mx-master-3s-bluetooth-edition-left-front-view-graphite-new-8.png",
+      "kind": "image",
+      "presentation": "catalog",
+      "caption": "MX Master 3S Bluetooth Edition",
+      "variant": "Graphite \u00b7 Front angle"
+    },
+    {
+      "url": "https://resource.logitech.com/c_fill,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/mx-master-3s/2025-update/mx-master-3s-bluetooth-edition-left-profile-view-graphite-new-4.png",
+      "kind": "image",
+      "presentation": "photo",
+      "caption": "Thumb rest and side scroll wheel",
+      "variant": "Graphite \u00b7 Side profile"
+    }
+  ],
+  "elgato-stream-deck-mk2": [
+    {
+      "url": "https://help.elgato.com/hc/article_attachments/4405169706637",
+      "kind": "image",
+      "presentation": "catalog",
+      "caption": "Stream Deck MK.2 \u00b7 Black",
+      "variant": "MK.2 \u00b7 Official photo with detachable stand"
+    },
+    {
+      "url": "https://help.elgato.com/hc/article_attachments/4405494589581",
+      "kind": "image",
+      "presentation": "photo",
+      "caption": "MK.2 interchangeable faceplate",
+      "variant": "MK.2 \u00b7 Unit without stand \u00b7 Faceplate instructions"
+    }
+  ]
+}

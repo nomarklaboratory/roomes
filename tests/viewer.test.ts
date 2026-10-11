@@ -11,13 +11,13 @@ import {
 } from "../lib/viewer.ts";
 
 test("a 170 cm person's camera uses eye height and the actual chair seat height", () => {
-  for (const chairId of ["task-chair", "ergonomic-chair"]) {
+  for (const chairId of ["herman-miller-sayl", "herman-miller-aeron"]) {
     const setup = { ...presetSetup("developer"), chairId };
     assert.equal(person.height, 1.7);
     assert.equal(eyeHeight(setup, "standing"), 1.59);
     assert.equal(
       eyeHeight(setup, "seated"),
-      chairId === "ergonomic-chair" ? 1.27 : 1.24,
+      chairId === "herman-miller-aeron" ? 1.23 : 1.199,
     );
     assert.equal(
       eyeHeight(setup, "seated") - catalog[chairId].seatHeight!,

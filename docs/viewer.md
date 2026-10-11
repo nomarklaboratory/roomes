@@ -1,6 +1,6 @@
 # Viewer scale and posture
 
-The viewer represents a **170 cm person**. World units are metres. Camera height is the eye level, not the top of the head: **1.59 m standing**, and **0.78 m above the chair seat when seated**. The ergonomic chair uses its manufacturer's **0.49 m minimum seat height**, giving **1.27 m seated eyes**. The concept Everyday chair uses an estimated **0.46 m seat**, giving **1.24 m seated eyes**. See [product dimensions and posture sources](catalog-scale.md).
+The viewer represents a **170 cm person**. World units are metres. Camera height is the eye level, not the top of the head: **1.59 m standing**, and **0.78 m above the chair seat when seated**. Aeron B is previewed with a **0.45 m seat**, giving **1.23 m seated eyes**. Sayl uses its published minimum **0.419 m seat**, giving **1.199 m seated eyes** (120 cm in the interface). See [product dimensions and posture sources](catalog-scale.md).
 
 These are representative preview assumptions inferred from the stature, standing eye height, and seated eye height measurements in the [FAA Technical Operations anthropometric survey, Appendix B](https://hf.tc.faa.gov/hfds/download-hfds/hfds_pdfs/App_B_Tech_Ops_Anthropometrics.pdf). The standing eye level is about 93.5% of stature; seated eye height above the seat is about 46% of stature. The ratios are approximations from population summaries, not a prediction of an individual person's proportions or an ergonomic fit assessment.
 
@@ -8,4 +8,10 @@ The seated viewpoint follows the selected chair's floor position, sits over the 
 
 Chair wheels and desk feet meet Y=0. The rug is an 8 mm surface on the floor. Rounded room geometry clamps its bevel radius below half its smallest dimension, preventing a thin rug from becoming an inflated slab. Asset validation checks floor contact and the chair seat surface after compression. Revised desk/chair model and thumbnail URLs include their asset version to avoid stale cached geometry.
 
-The visible +/− buttons dolly the overview camera or adjust the first-person lens. Fullscreen uses the browser API when available and viewport expansion otherwise, with a visible exit. Escape exits viewport expansion before leaving first-person mode.
+The visible +/− buttons dolly the overview camera or adjust the first-person lens. Fullscreen uses the browser API when available and viewport expansion otherwise, with a visible exit. Escape cancels an active product action before leaving the preview or first-person mode.
+
+Hold a product for 420 ms to open its radial action wheel. Slide left to Move, right to Inspect, or down to Delete, then release. The center cancels the gesture. The camera and walking input lock as soon as the hold starts, so product gestures cannot turn the camera.
+
+Move remains active after releasing the wheel. Mouse movement previews placement; click the scene or press Enter to place. Touch users drag to reposition and tap Place. Cancel or Escape discards the draft. The position is only saved on confirmation. The same placement mode works in overview and Inside, where looking and WASD remain paused until placement finishes. Camera controls resume afterward.
+
+Inspect opens the product's official media in a centered dialog. Delete opens a confirmation dialog with Cancel focused; the item is only removed after choosing Delete item. Desk and chair remain required furniture, so Delete is disabled for them. Confirmation and inspection dialogs stay inside the fullscreen preview.

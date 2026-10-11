@@ -4,44 +4,44 @@
   "upAxis": "Y",
   "origin": "bottom-center",
   "assets": {
-    "electric-desk": {
-      "path": "/models/electric-desk.glb",
-      "version": 3,
+    "jarvis-bamboo": {
+      "path": "/models/jarvis-bamboo.glb",
+      "version": 4,
       "method": "parametric-original",
       "family": "desk",
-      "bytes": 14048,
-      "triangles": 2700,
+      "bytes": 14340,
+      "triangles": 1512,
       "bounds": [
         1.2,
         0.75,
-        0.6
+        0.8
       ],
       "scale": {
         "status": "listed",
-        "model": "Fantech WS414 / GD914 · Small",
-        "source": "https://www.monis.rent/products/electrical-adjustable-desk",
+        "source": "https://ukstore.hermanmiller.com/products/jarvis-bamboo-standing-desk",
+        "model": "Jarvis Bamboo · 120 × 80 cm",
         "checkedAt": "2026-10-11",
-        "note": "120 × 60 cm variant. Preview set at 75 cm; adjustable 70–118 cm.",
+        "note": "Rectangular top, black frame, up/down controls, no powered grommets. Preview at 75 cm; adjustable 64.2–129 cm.",
         "heightRange": [
-          0.7,
-          1.18
+          0.642,
+          1.29
         ]
       },
       "dimensions": {
         "width": 1.2,
-        "depth": 0.6,
+        "depth": 0.8,
         "height": 0.75
       },
-      "review": "approved-stylized",
+      "review": "stylized-product-reference",
       "compression": "meshopt"
     },
-    "wooden-desk": {
-      "path": "/models/wooden-desk.glb",
-      "version": 3,
+    "jarvis-laminate": {
+      "path": "/models/jarvis-laminate.glb",
+      "version": 4,
       "method": "parametric-original",
       "family": "desk",
-      "bytes": 15712,
-      "triangles": 2592,
+      "bytes": 14452,
+      "triangles": 1512,
       "bounds": [
         1.6,
         0.75,
@@ -49,13 +49,13 @@
       ],
       "scale": {
         "status": "listed",
-        "model": "IKEA Trotten · 160 × 80 cm",
-        "source": "https://www.monis.rent/products/adjustable-wooden-desk",
+        "source": "https://ukstore.hermanmiller.com/products/jarvis-laminate-standing-desk",
+        "model": "Jarvis Laminate · 160 × 80 cm",
         "checkedAt": "2026-10-11",
-        "note": "160 × 80 cm selector and technical specifications; summary differs. Preview set at 75 cm; adjustable 70–120 cm. Confirm variant before ordering.",
+        "note": "Rectangular top, black frame and up/down controls. Preview at 75 cm; adjustable 64.2–129 cm. Finishes follow the current UK catalog.",
         "heightRange": [
-          0.7,
-          1.2
+          0.642,
+          1.29
         ]
       },
       "dimensions": {
@@ -63,200 +63,384 @@
         "depth": 0.8,
         "height": 0.75
       },
-      "review": "approved-stylized",
+      "review": "stylized-product-reference",
       "compression": "meshopt"
     },
-    "ergonomic-chair": {
-      "path": "/models/ergonomic-chair.glb",
-      "version": 3,
+    "herman-miller-aeron": {
+      "path": "/models/herman-miller-aeron.glb",
+      "version": 4,
       "method": "parametric-original",
       "family": "chair",
-      "bytes": 23836,
-      "triangles": 4624,
+      "bytes": 71564,
+      "triangles": 6318,
       "bounds": [
-        0.65,
-        1.15000000230968,
-        0.66
+        0.71882,
+        1.0087999993294476,
+        0.6985
       ],
       "scale": {
         "status": "listed",
-        "model": "Fantech OCA259PRO",
-        "source": "https://fantech.ph/wp-content/uploads/2024/10/oca259-pro-black-7.jpg",
+        "source": "https://www.hermanmiller.com/products/seating/office-chairs/aeron-chair/specs/",
+        "model": "Aeron B · height-adjustable arms",
         "checkedAt": "2026-10-11",
-        "note": "Manufacturer diagram: arms 61–65 cm wide, base 66 cm deep, seat 50 × 48 cm. Preview uses minimum seat / overall height, arms at widest setting, leg rest retracted.",
+        "note": "Graphite frame with height-adjustable arms. Published envelope; upright preview at a 45 cm seat height. Seat width and curved surfaces are stylized. Size B seat depth is 17 inches.",
         "heightRange": [
-          1.15,
-          1.28
+          0.93472,
+          1.04394
         ],
         "seatHeightRange": [
-          0.49,
-          0.57
+          0.37592,
+          0.57912
         ]
       },
       "dimensions": {
-        "width": 0.65,
-        "depth": 0.66,
-        "height": 1.15,
-        "seatHeight": 0.49
+        "width": 0.71882,
+        "depth": 0.6985,
+        "height": 1.0088,
+        "seatHeight": 0.45
       },
-      "review": "approved-stylized",
+      "review": "stylized-product-reference",
       "compression": "meshopt"
     },
-    "task-chair": {
-      "path": "/models/task-chair.glb",
-      "version": 3,
+    "herman-miller-sayl": {
+      "path": "/models/herman-miller-sayl.glb",
+      "version": 4,
       "method": "parametric-original",
       "family": "chair",
-      "bytes": 17824,
-      "triangles": 2160,
+      "bytes": 59448,
+      "triangles": 5274,
       "bounds": [
-        0.6,
-        0.8299999993294477,
-        0.5999999999999999
+        0.622,
+        0.9589999993294477,
+        0.502
       ],
       "scale": {
-        "status": "concept",
-        "note": "Original concept; 46 cm seat height. No matching rental SKU."
+        "status": "listed",
+        "source": "https://ukstore.hermanmiller.com/products/sayl-office-chair",
+        "model": "Sayl · fixed arms · Kingsmead",
+        "checkedAt": "2026-10-11",
+        "note": "Black suspension back, fixed arms and Kingsmead upholstered seat. Upright preview at minimum listed seat height; suspension lattice is stylized.",
+        "heightRange": [
+          0.959,
+          1.035
+        ],
+        "seatHeightRange": [
+          0.419,
+          0.559
+        ]
       },
       "dimensions": {
-        "width": 0.6,
-        "depth": 0.6,
-        "height": 0.83,
-        "seatHeight": 0.46
+        "width": 0.622,
+        "depth": 0.502,
+        "height": 0.959,
+        "seatHeight": 0.419
       },
-      "review": "approved-stylized",
+      "review": "stylized-product-reference",
       "compression": "meshopt"
     },
-    "monitor-27": {
-      "path": "/models/monitor-27.glb",
-      "version": 3,
+    "dell-u2725qe": {
+      "path": "/models/dell-u2725qe.glb",
+      "version": 4,
       "method": "parametric-original",
       "family": "monitor",
-      "bytes": 20664,
-      "triangles": 3600,
+      "bytes": 10652,
+      "triangles": 972,
       "bounds": [
-        0.6129,
-        0.5149000000000001,
+        0.61244,
+        0.5356800000000002,
+        0.18899999999999997
+      ],
+      "scale": {
+        "status": "listed",
+        "source": "https://www.dell.com/en-us/shop/monitors/apd/dell-ultrasharp-27-4k-thunderbolt-hub-monitor-u2725qe/u2725qe_monitor/-",
+        "model": "Dell U2725QE",
+        "checkedAt": "2026-10-11",
+        "note": "Dimensions include the stand at its fully extended height. Screen size is the active display diagonal.",
+        "heightRange": [
+          0.38568,
+          0.53568
+        ]
+      },
+      "dimensions": {
+        "width": 0.61244,
+        "depth": 0.189,
+        "height": 0.53568
+      },
+      "review": "stylized-product-reference",
+      "compression": "meshopt"
+    },
+    "dell-u3425we": {
+      "path": "/models/dell-u3425we.glb",
+      "version": 4,
+      "method": "parametric-original",
+      "family": "monitor",
+      "bytes": 12652,
+      "triangles": 992,
+      "bounds": [
+        0.81346,
+        0.54283,
+        0.24043
+      ],
+      "scale": {
+        "status": "listed",
+        "source": "https://www.delltechnologies.com/asset/en-in/products/electronics-and-accessories/technical-support/dell-ultrasharp-34-curved-thunderbolt-hub-monitor-u3425we-datasheet.pdf",
+        "model": "Dell U3425WE",
+        "checkedAt": "2026-10-11",
+        "note": "Published dimensions with stand fully extended. The 1900R screen curvature is represented in the preview.",
+        "heightRange": [
+          0.39283,
+          0.54283
+        ]
+      },
+      "dimensions": {
+        "width": 0.81346,
+        "depth": 0.24043,
+        "height": 0.54283
+      },
+      "review": "stylized-product-reference",
+      "compression": "meshopt"
+    },
+    "benq-wit": {
+      "path": "/models/benq-wit.glb",
+      "version": 4,
+      "method": "parametric-original",
+      "family": "lamp",
+      "bytes": 10756,
+      "triangles": 924,
+      "bounds": [
+        0.59,
+        0.625,
+        0.21999999999999997
+      ],
+      "scale": {
+        "status": "listed",
+        "source": "https://www.benq.com/en-au/lighting/e-reading-desk-lamp/e-reading/spec.html",
+        "model": "BenQ WiT",
+        "checkedAt": "2026-10-11",
+        "note": "Published 59 × 22 × 62.5 cm envelope. Adjustable arms use one illustrative pose; their footprint changes with articulation."
+      },
+      "dimensions": {
+        "width": 0.59,
+        "depth": 0.22,
+        "height": 0.625
+      },
+      "review": "stylized-product-reference",
+      "compression": "meshopt"
+    },
+    "ikea-fejka": {
+      "path": "/models/ikea-fejka.glb",
+      "version": 4,
+      "method": "parametric-original",
+      "family": "plant",
+      "bytes": 48912,
+      "triangles": 9280,
+      "bounds": [
+        0.20999999999999996,
+        0.21000000000000002,
+        0.20999999999999996
+      ],
+      "scale": {
+        "status": "estimated",
+        "source": "https://www.ikea.com/ph/en/p/fejka-artificial-potted-plant-indoor-outdoor-rosemary-20610745/",
+        "model": "IKEA FEJKA Rosemary",
+        "checkedAt": "2026-10-11",
+        "note": "Published plant height 21 cm and pot diameter 9 cm. Foliage spread is estimated at 21 cm from the product and packaging; leaves are stylized."
+      },
+      "dimensions": {
+        "width": 0.21,
+        "depth": 0.21,
+        "height": 0.21
+      },
+      "review": "stylized-product-reference",
+      "compression": "meshopt"
+    },
+    "twelve-south-curve": {
+      "path": "/models/twelve-south-curve.glb",
+      "version": 4,
+      "method": "parametric-original",
+      "family": "stand",
+      "bytes": 7864,
+      "triangles": 786,
+      "bounds": [
+        0.263,
+        0.14900000000000002,
+        0.22199999999999998
+      ],
+      "scale": {
+        "status": "listed",
+        "source": "https://twelvesouth.co.uk/products/curve-for-macbook",
+        "model": "Twelve South Curve",
+        "checkedAt": "2026-10-11",
+        "note": "Manufacturer lists 26.3 × 22.2 × 14.9 cm. Laptop shown in supplier photos is for context and is not included."
+      },
+      "dimensions": {
+        "width": 0.263,
+        "depth": 0.222,
+        "height": 0.149
+      },
+      "review": "stylized-product-reference",
+      "compression": "meshopt"
+    },
+    "torq-mod-fun": {
+      "path": "/models/torq-mod-fun.glb",
+      "version": 4,
+      "method": "parametric-original",
+      "family": "surfboard",
+      "bytes": 18876,
+      "triangles": 1046,
+      "bounds": [
+        2.032,
+        0.5334,
+        0.06985
+      ],
+      "scale": {
+        "status": "listed",
+        "source": "https://www.torq-surfboards.com/midlength/mod-fun.html",
+        "model": "Torq TET Mod Fun · 6′8″ × 21″ × 2¾″",
+        "checkedAt": "2026-10-11",
+        "note": "Mounted horizontally: W × D × H means board length × thickness × width. Fins removed for display; mounting hardware is illustrative. Original stylized model. Supplier photos show the related 7′2″ shape and alternative pinline colors, not the preview size. Rental stock is unverified."
+      },
+      "dimensions": {
+        "width": 2.032,
+        "depth": 0.06985,
+        "height": 0.5334
+      },
+      "review": "stylized-product-reference",
+      "compression": "meshopt"
+    },
+    "logitech-desk-mat": {
+      "path": "/models/logitech-desk-mat.glb",
+      "version": 4,
+      "method": "parametric-original",
+      "family": "desk-mat",
+      "bytes": 5276,
+      "triangles": 264,
+      "bounds": [
+        0.7000000000000001,
+        0.002,
+        0.3
+      ],
+      "scale": {
+        "status": "listed",
+        "source": "https://www.logitech.com/en-us/shop/p/desk-mat-studio-series",
+        "model": "Studio Desk Mat · Mid Grey",
+        "checkedAt": "2026-10-11",
+        "note": "Published 700 × 300 × 2 mm. W × D × H describes the mat laid flat. Fabric and stitched edges are stylized; keyboard and mouse shown in supplier photos are separate products."
+      },
+      "dimensions": {
+        "width": 0.7,
+        "depth": 0.3,
+        "height": 0.002
+      },
+      "review": "stylized-product-reference",
+      "compression": "meshopt"
+    },
+    "logitech-mouse-pad": {
+      "path": "/models/logitech-mouse-pad.glb",
+      "version": 4,
+      "method": "parametric-original",
+      "family": "mouse-pad",
+      "bytes": 5292,
+      "triangles": 264,
+      "bounds": [
+        0.23,
+        0.002,
         0.2
       ],
       "scale": {
         "status": "listed",
-        "model": "Redmi A27U / Xiaomi A27Ui",
-        "source": "https://www.monis.rent/products/27-4-k-multimedia-monitor",
+        "source": "https://www.logitech.com/en-us/shop/p/mouse-pad-studio-series",
+        "model": "Studio Mouse Pad · Dark Rose",
         "checkedAt": "2026-10-11",
-        "note": "Listed assembled dimensions including stand: 612.9 × 200 × 514.9 mm. Preview uses this stand position."
+        "note": "Published 230 × 200 × 2 mm, laid flat. The cloth surface, stitched edge and anti-slip rubber base are stylized. Mouse is a separate product."
       },
       "dimensions": {
-        "width": 0.6129,
+        "width": 0.23,
         "depth": 0.2,
-        "height": 0.5149
+        "height": 0.002
       },
-      "review": "approved-stylized",
+      "review": "stylized-product-reference",
       "compression": "meshopt"
     },
-    "monitor-34": {
-      "path": "/models/monitor-34.glb",
-      "version": 3,
+    "logitech-mx-keys-mini": {
+      "path": "/models/logitech-mx-keys-mini.glb",
+      "version": 4,
       "method": "parametric-original",
-      "family": "monitor",
-      "bytes": 19288,
-      "triangles": 3600,
+      "family": "keyboard",
+      "bytes": 15392,
+      "triangles": 8424,
       "bounds": [
-        0.8103900000000002,
-        0.52061,
-        0.24253
+        0.29599,
+        0.020969999999999996,
+        0.13195
       ],
       "scale": {
         "status": "listed",
-        "model": "Xiaomi Mi Curved 34 · 144 Hz",
-        "source": "https://i01.appmifile.com/webfile/globalimg/Global_UG/Mi_Ecosystem/Mi_Curved_Gaming_Monitor_34/Mi_CurvedMonitor_34_All_V1.pdf",
+        "source": "https://www.logitech.com/en-us/shop/p/mx-keys-mini",
+        "model": "MX Keys Mini · Graphite · US layout",
         "checkedAt": "2026-10-11",
-        "note": "Manufacturer manual gives width 810.39, depth 242.53, height 520.61 mm including stand. Resolves swapped depth/height labels on the rental listing. Stylized screen; curvature is not reproduced."
+        "note": "Published 295.99 × 131.95 × 20.97 mm, oriented flat on the desktop. The original preview uses simplified keycaps; legends and backlighting are not simulated."
       },
       "dimensions": {
-        "width": 0.81039,
-        "depth": 0.24253,
-        "height": 0.52061
+        "width": 0.29599,
+        "depth": 0.13195,
+        "height": 0.02097
       },
-      "review": "approved-stylized",
+      "review": "stylized-product-reference",
       "compression": "meshopt"
     },
-    "desk-lamp": {
-      "path": "/models/desk-lamp.glb",
-      "version": 3,
+    "logitech-mx-master-3s": {
+      "path": "/models/logitech-mx-master-3s.glb",
+      "version": 4,
       "method": "parametric-original",
-      "family": "desk-lamp",
-      "bytes": 9464,
-      "triangles": 1028,
+      "family": "mouse",
+      "bytes": 11616,
+      "triangles": 732,
       "bounds": [
-        0.15,
-        0.42,
-        0.43999999999999995
+        0.08430000000000001,
+        0.051,
+        0.1249
       ],
       "scale": {
         "status": "listed",
-        "model": "Xiaomi Mi LED Desk Lamp 1S",
-        "source": "https://www.mi.com/sg/support/faq/details/KA-07549/",
+        "source": "https://www.logitech.com/en-us/shop/p/mx-master-3s",
+        "model": "MX Master 3S Bluetooth Edition · Graphite",
         "checkedAt": "2026-10-11",
-        "note": "Manufacturer's opened posture: 440 × 150 × 420 mm, 150 mm base. Arm faces forward, so room width is 150 mm and depth is 440 mm. Rental listing's 162 × 162 × 479 mm does not describe this opened posture."
+        "note": "Published 84.3 × 124.9 × 51 mm desktop envelope. Ergonomic curves, thumb rest and scroll wheels are stylized. Official photos show the Graphite Bluetooth Edition."
       },
       "dimensions": {
-        "width": 0.15,
-        "depth": 0.44,
-        "height": 0.42
+        "width": 0.0843,
+        "depth": 0.1249,
+        "height": 0.051
       },
-      "review": "approved-stylized",
+      "review": "stylized-product-reference",
       "compression": "meshopt"
     },
-    "plant": {
-      "path": "/models/plant.glb",
-      "version": 3,
+    "elgato-stream-deck-mk2": {
+      "path": "/models/elgato-stream-deck-mk2.glb",
+      "version": 4,
       "method": "parametric-original",
-      "family": "plant",
-      "bytes": 15116,
-      "triangles": 2592,
+      "family": "controller",
+      "bytes": 10772,
+      "triangles": 1908,
       "bounds": [
-        0.19,
-        0.34999999999999987,
-        0.18999999999999997
+        0.118,
+        0.025,
+        0.084
       ],
       "scale": {
-        "status": "concept",
-        "note": "Original plant concept; size is an illustration, not a rental SKU."
-      },
-      "dimensions": {
-        "width": 0.19,
-        "depth": 0.19,
-        "height": 0.35
-      },
-      "review": "approved-stylized",
-      "compression": "meshopt"
-    },
-    "laptop-stand": {
-      "path": "/models/laptop-stand.glb",
-      "version": 3,
-      "method": "parametric-original",
-      "family": "laptop-stand",
-      "bytes": 9016,
-      "triangles": 1328,
-      "bounds": [
-        0.28,
-        0.15000000000000002,
-        0.24
-      ],
-      "scale": {
-        "status": "estimated",
-        "model": "KOLMI",
-        "source": "https://www.monis.rent/products/ergonomic-laptop-stand",
+        "status": "listed",
+        "source": "https://help.elgato.com/hc/en-us/articles/18208816152333-Elgato-Stream-Deck-MK-2-Technical-Specifications",
+        "model": "Stream Deck MK.2 · Without stand",
         "checkedAt": "2026-10-11",
-        "note": "Rental listing identifies KOLMI but publishes no dimensions. 28 × 24 × 15 cm is an estimate pending measurement of the actual stock."
+        "note": "Published 118 × 84 × 25 mm without the detachable stand. Preview lies flat. The supplier hero photo includes the stand; the faceplate photo shows the unit without it. LCD icons are illustrative. This is MK.2, not the newer Scissor Keys model."
       },
       "dimensions": {
-        "width": 0.28,
-        "depth": 0.24,
-        "height": 0.15
+        "width": 0.118,
+        "depth": 0.084,
+        "height": 0.025
       },
-      "review": "approved-stylized",
+      "review": "stylized-product-reference",
       "compression": "meshopt"
     }
   }

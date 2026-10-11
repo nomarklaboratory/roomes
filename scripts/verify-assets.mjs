@@ -82,15 +82,17 @@ for (const [id, asset] of Object.entries(manifest.assets)) {
       Math.abs(getBounds(seat).max[1] - catalog[id].seatHeight) < 0.001,
       `${id}: seat geometry must match the seated camera height`,
     );
-    if (id === "ergonomic-chair") {
+    if (product.seat) {
       const seatBounds = getBounds(seat);
       assert.ok(
-        Math.abs(seatBounds.max[0] - seatBounds.min[0] - 0.5) < 0.002,
-        "OCA259PRO seat width must be 50 cm",
+        Math.abs(seatBounds.max[0] - seatBounds.min[0] - product.seat.width) <
+          0.002,
+        `${id}: seat width must match catalog`,
       );
       assert.ok(
-        Math.abs(seatBounds.max[2] - seatBounds.min[2] - 0.48) < 0.002,
-        "OCA259PRO seat depth must be 48 cm",
+        Math.abs(seatBounds.max[2] - seatBounds.min[2] - product.seat.depth) <
+          0.002,
+        `${id}: seat depth must match catalog`,
       );
     }
   }
@@ -101,7 +103,12 @@ for (const [id, asset] of Object.entries(manifest.assets)) {
       .find((n) => n.getName() === "active-screen");
     assert.ok(screen, `${id}: missing screen geometry`);
     const b = getBounds(screen);
-    const w = b.max[0] - b.min[0],
+    const chord = b.max[0] - b.min[0];
+    const w = product.screen.radius
+        ? 2 *
+          product.screen.radius *
+          Math.asin(chord / (2 * product.screen.radius))
+        : chord,
       h = b.max[1] - b.min[1];
     assert.ok(
       Math.abs(Math.hypot(w, h) / 0.0254 - product.screen.inches) < 0.1,
@@ -123,7 +130,7 @@ for (const [id, asset] of Object.entries(manifest.assets)) {
       `${id}: accessories must meet the tabletop surface`,
     );
   }
-  if (id.endsWith("-desk"))
+  if (product.category === "desk")
     assert.ok(
       doc
         .getRoot()

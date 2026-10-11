@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Page } from "../fixtures/studio";
 import { PerspectiveCamera, Vector3 } from "three";
 
 const savedSetup = (page: Page) =>
@@ -52,15 +52,16 @@ test("drag furniture, precisely move accessories, persist layout, and explore in
   } else {
     await page.mouse.move(x, y);
     await page.mouse.down();
-    await page.mouse.move(x + 40, y + 15, { steps: 10 });
+    // Cross the hold gesture's movement threshold promptly, including when
+    // software rendering makes intermediate animation steps slow in CI.
+    await page.mouse.move(x + 20, y + 8);
+    await page.mouse.move(x + 40, y + 15, { steps: 5 });
     await page.mouse.up();
   }
   await expect
     .poll(async () => (await savedSetup(page)).layout.chair.x)
     .not.toBe(original.layout.chair.x);
-  await expect(page.locator(".placement-panel")).toContainText(
-    "Ergonomic chair",
-  );
+  await expect(page.locator(".placement-panel")).toContainText("Aeron");
   const dragged = await savedSetup(page);
   await page.getByRole("button", { name: "Undo", exact: true }).click();
   expect((await savedSetup(page)).layout.chair).toEqual(original.layout.chair);
@@ -103,16 +104,16 @@ test("drag furniture, precisely move accessories, persist layout, and explore in
   expect((await savedSetup(page)).layout.chair).toEqual(original.layout.chair);
   await page.getByRole("button", { name: "Desk", exact: true }).click();
   await page
-    .getByRole("button", { name: "Move Electric desk right", exact: true })
+    .getByRole("button", { name: "Move Jarvis Bamboo right", exact: true })
     .click();
   expect((await savedSetup(page)).layout.desk.x).toBe(0.1);
-  await page.getByRole("button", { name: "Desk lamp", exact: true }).click();
+  await page.getByRole("button", { name: "BenQ WiT", exact: true }).click();
   await page
-    .getByRole("button", { name: "Move Desk lamp left", exact: true })
+    .getByRole("button", { name: "Move BenQ WiT left", exact: true })
     .click();
   const placed = await savedSetup(page);
   expect(
-    placed.items.find((i: { productId: string }) => i.productId === "desk-lamp")
+    placed.items.find((i: { productId: string }) => i.productId === "benq-wit")
       .position,
   ).toBeDefined();
   await page.reload();
@@ -136,7 +137,7 @@ test("drag furniture, precisely move accessories, persist layout, and explore in
   const after = await canvas.screenshot();
   expect(after.equals(before)).toBe(false);
   expect(await savedSetup(page)).toEqual(placed);
-  await page.locator(".preview-stage").screenshot({
+  await page.locator("[data-preview-stage]").screenshot({
     path: `test-results/${testInfo.project.name}-first-person.png`,
   });
   await page.getByRole("button", { name: "Recenter", exact: true }).click();

@@ -1,0 +1,1 @@
+`inspection.webm` is a generated one-second, 160 × 120 color animation, created with Chromium Canvas/MediaRecorder. Browser tests substitute it for the remote supplier film to verify playback and cleanup without requiring a supplier connection or downloading a large video.

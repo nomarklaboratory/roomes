@@ -40,7 +40,7 @@ export function ProductActionWheel({
     <div
       data-product-wheel
       data-action={action ?? "none"}
-      className="absolute left-1/2 top-1/2 size-[264px] -translate-x-1/2 -translate-y-1/2 max-[700px]:size-[240px]"
+      className="absolute left-1/2 top-1/2 size-[16.5rem] -translate-x-1/2 -translate-y-1/2 max-[700px]:size-[15rem]"
     >
       <ProductActionWheelArt
         selected={action}
@@ -60,7 +60,7 @@ export function ProductActionWheel({
           <span
             key={id}
             className={cn(
-              "absolute flex w-[88px] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 whitespace-nowrap text-center text-base font-medium text-white transition-transform duration-100",
+              "absolute flex w-[5.5rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 whitespace-nowrap text-center text-base font-medium text-white transition-transform duration-100",
               position,
               !enabled && "opacity-30",
               action === id && "scale-110 font-semibold text-[#263b25]",

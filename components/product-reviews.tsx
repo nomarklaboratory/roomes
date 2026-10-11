@@ -37,7 +37,7 @@ function ReviewCard({ review }: { review: DemoProductReview }) {
       <h4 className="mt-3 text-base font-semibold text-stone-800">
         {review.title}
       </h4>
-      <p className="mt-1 max-w-[70ch] text-base leading-relaxed text-stone-600">
+      <p className="mt-1 max-w-prose text-base leading-relaxed text-stone-600">
         {review.comment}
       </p>
     </article>
@@ -59,7 +59,7 @@ export function ProductReviews({
       <h3 className="text-xl font-semibold text-stone-800">
         Ratings &amp; reviews
       </h3>
-      <div className="mt-6 grid gap-8 md:grid-cols-[240px_minmax(0,1fr)]">
+      <div className="mt-6 grid gap-8 md:grid-cols-[15rem_minmax(0,1fr)]">
         <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] gap-5 self-start rounded-2xl border border-stone-200 bg-[#f7f8f2] p-5 md:block">
           <div
             aria-label={`${reviews.average.toFixed(1)} out of 5, from ${reviews.reviews.length} reviews`}

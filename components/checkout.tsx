@@ -11,12 +11,12 @@ export function Checkout() {
   const loaded = useWorkspaceStore((state) => state.loaded);
   const checkout = useCheckout(setup);
   return (
-    <div className="mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12">
+    <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-8 lg:px-12">
       <header className="flex min-h-22 items-center justify-between gap-4 border-b border-[#e0e5d8]">
         <Link
           href="/"
           aria-label="monis.rent workspace studio"
-          className="text-3xl font-extrabold tracking-[-1.5px]"
+          className="text-3xl font-extrabold tracking-[-0.0938rem]"
         >
           monis<span className="text-[#70864f]">.</span>
           <span className="text-xl font-normal tracking-tight">rent</span>
@@ -41,10 +41,10 @@ export function Checkout() {
             Checkout
           </span>
         </nav>
-        <h1 className="text-4xl font-medium tracking-[-1.5px] sm:text-5xl">
+        <h1 className="text-4xl font-medium tracking-[-0.0938rem] sm:text-5xl">
           Make room for good work.
         </h1>
-        <p className="mb-9 mt-3 max-w-xl text-base leading-relaxed text-[#727c67]">
+        <p className="mb-9 mt-3 max-w-prose text-base leading-relaxed text-[#727c67]">
           Your workspace, your schedule. Review your setup and tell us where
           you’d like it delivered.
         </p>

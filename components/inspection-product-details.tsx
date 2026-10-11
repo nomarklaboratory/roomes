@@ -40,7 +40,7 @@ export function InspectionProductDetails({ product }: { product: Product }) {
           {product.scale.model && (
             <p className="font-medium text-stone-800">{product.scale.model}</p>
           )}
-          <p className="max-w-[80ch]">{product.scale.note}</p>
+          <p className="max-w-prose">{product.scale.note}</p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <a
               className="inline-flex min-h-11 items-center text-[#3f583b] underline underline-offset-4"

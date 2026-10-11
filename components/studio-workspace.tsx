@@ -47,11 +47,11 @@ export const StudioWorkspace = memo(function StudioWorkspace({
       {editable && <RoomDimensions room={setup.room} onChange={change} />}
       <WorkspacePreview editable={editable} />
       {editable && (
-        <div className="setup-strip flex gap-3 items-center pt-3 min-h-[53px] max-[700px]:items-start max-[700px]:gap-[9px]">
+        <div className="setup-strip flex gap-3 items-center pt-3 min-h-[3.3125rem] max-[700px]:items-start max-[700px]:gap-[0.5625rem]">
           <span className="strip-label text-base text-[#526346] whitespace-nowrap">
             Your setup
           </span>
-          <div className="item-chips flex flex-wrap gap-[5px] [&_button]:flex [&_button]:items-center [&_button]:gap-[5px] [&_button]:border [&_button]:border-[#e0e4d7] [&_button]:bg-[#f2f3eb] [&_button]:py-[5px] [&_button]:px-[9px] [&_button]:rounded-[6px] [&_button]:text-base [&_button]:min-h-[33px] [&_button]:text-[#647258] [&_button[aria-pressed='true']]:border-[#8b9e6d] [&_button[aria-pressed='true']]:bg-[#e8eedc] max-[700px]:gap-1 max-[700px]:[&_button]:min-h-10 max-[700px]:[&_button]:text-base max-[700px]:[&_button]:py-1 max-[700px]:[&_button]:px-[7px]">
+          <div className="item-chips flex flex-wrap gap-[0.3125rem] [&_button]:flex [&_button]:items-center [&_button]:gap-[0.3125rem] [&_button]:border [&_button]:border-[#e0e4d7] [&_button]:bg-[#f2f3eb] [&_button]:py-[0.3125rem] [&_button]:px-[0.5625rem] [&_button]:rounded-[0.375rem] [&_button]:text-base [&_button]:min-h-[2.0625rem] [&_button]:text-[#647258] [&_button[aria-pressed='true']]:border-[#8b9e6d] [&_button[aria-pressed='true']]:bg-[#e8eedc] max-[700px]:gap-1 max-[700px]:[&_button]:min-h-10 max-[700px]:[&_button]:text-base max-[700px]:[&_button]:py-1 max-[700px]:[&_button]:px-[0.4375rem]">
             <button
               aria-pressed={selected === "desk"}
               onClick={() => {

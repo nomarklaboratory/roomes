@@ -51,8 +51,8 @@ export function PlacementControls({
   ] as const;
   return (
     <>
-      <div className="placement-panel flex items-center gap-[15px] mt-2 p-3 bg-[#edf1e4] border border-[#d8dfcb] rounded-[10px] [&_>_div:first-child]:flex-1 [&_strong]:block [&_strong]:text-base [&_strong]:font-[550] [&_small]:block [&_small]:mt-[3px] [&_small]:text-base [&_small]:text-[#7a856b] max-[700px]:flex-wrap max-[700px]:relative max-[700px]:p-[10px] max-[700px]:gap-[7px] max-[700px]:[&_.placement-title]:basis-[calc(100%_-_40px)] max-[700px]:[&_>_.icon-button]:absolute max-[700px]:[&_>_.icon-button]:top-2 max-[700px]:[&_>_.icon-button]:right-2 max-[700px]:[&_>_.icon-button]:w-9 max-[700px]:[&_>_.icon-button]:h-9 max-[700px]:[&_strong]:text-base max-[700px]:[&_small]:text-base">
-        <div className="placement-title flex gap-[10px] items-center">
+      <div className="placement-panel flex items-center gap-[0.9375rem] mt-2 p-3 bg-[#edf1e4] border border-[#d8dfcb] rounded-[0.625rem] [&_>_div:first-child]:flex-1 [&_strong]:block [&_strong]:text-base [&_strong]:font-[550] [&_small]:block [&_small]:mt-[0.1875rem] [&_small]:text-base [&_small]:text-[#7a856b] max-[700px]:flex-wrap max-[700px]:relative max-[700px]:p-[0.625rem] max-[700px]:gap-[0.4375rem] max-[700px]:[&_.placement-title]:basis-[calc(100%_-_2.5rem)] max-[700px]:[&_>_.icon-button]:absolute max-[700px]:[&_>_.icon-button]:top-2 max-[700px]:[&_>_.icon-button]:right-2 max-[700px]:[&_>_.icon-button]:w-9 max-[700px]:[&_>_.icon-button]:h-9 max-[700px]:[&_strong]:text-base max-[700px]:[&_small]:text-base">
+        <div className="placement-title flex gap-[0.625rem] items-center">
           <span className="placement-symbol flex items-center justify-center w-8 h-8 rounded-full bg-[#dce6cd] text-[#536a40]">
             <Icon name="move" size={18} />
           </span>
@@ -61,19 +61,19 @@ export function PlacementControls({
             <small>
               Drag in 3D or adjust by {Math.round(increment * 100)} cm
             </small>
-            <span className="position-readout block mt-[7px] text-base tracking-[0.6px] text-[#6a785c]">
+            <span className="position-readout block mt-[0.4375rem] text-base tracking-[0.0375rem] text-[#6a785c]">
               {wall ? "BACK WALL" : item ? "DESK" : "ROOM"} · X{" "}
               {Math.round(point.x * 100)} / {wall ? "HEIGHT" : "Z"}{" "}
               {Math.round((wall ? (point.y ?? 0) : point.z) * 100)} cm
             </span>
           </div>
         </div>
-        <div className="placement-tools flex flex-col gap-[6px] max-[700px]:w-full max-[700px]:flex-row max-[700px]:flex-wrap max-[700px]:gap-2">
+        <div className="placement-tools flex flex-col gap-[0.375rem] max-[700px]:w-full max-[700px]:flex-row max-[700px]:flex-wrap max-[700px]:gap-2">
           {selected === "chair" && (
             <SitInChairButton onSit={onSit} label="Sit in this chair" />
           )}
           <div
-            className="nudge-buttons flex gap-1 [&_button]:w-9 [&_button]:h-9 [&_button]:flex [&_button]:items-center [&_button]:justify-center [&_button]:border [&_button]:border-[#dae0ce] [&_button]:rounded-[5px] [&_button]:bg-[#f8f9f1] [&_button]:text-[#4f6341] [&_button:hover]:bg-[#dce6cd] max-[700px]:[&_button]:w-11 max-[700px]:[&_button]:h-11"
+            className="nudge-buttons flex gap-1 [&_button]:w-9 [&_button]:h-9 [&_button]:flex [&_button]:items-center [&_button]:justify-center [&_button]:border [&_button]:border-[#dae0ce] [&_button]:rounded-[0.3125rem] [&_button]:bg-[#f8f9f1] [&_button]:text-[#4f6341] [&_button:hover]:bg-[#dce6cd] max-[700px]:[&_button]:w-11 max-[700px]:[&_button]:h-11"
             aria-label={`Move ${product.name}`}
           >
             {directions.map(({ label, icon, x, z }) => (
@@ -104,7 +104,7 @@ export function PlacementControls({
           </div>
           {item && !wall && (
             <div
-              className="slot-buttons flex gap-1 [&_button]:bg-[#f8f9f1] [&_button]:border [&_button]:border-[#dae0ce] [&_button]:rounded-[5px] [&_button]:min-h-[34px] [&_button]:py-0 [&_button]:px-[11px] [&_button]:text-base [&_button]:capitalize [&_button[aria-pressed='true']]:bg-[#536a40] [&_button[aria-pressed='true']]:text-[white] [&_button[aria-pressed='true']]:border-[#536a40] max-[700px]:[&_button]:min-h-11 max-[700px]:[&_button]:py-0 max-[700px]:[&_button]:px-2 max-[700px]:[&_button]:text-base"
+              className="slot-buttons flex gap-1 [&_button]:bg-[#f8f9f1] [&_button]:border [&_button]:border-[#dae0ce] [&_button]:rounded-[0.3125rem] [&_button]:min-h-[2.125rem] [&_button]:py-0 [&_button]:px-[0.6875rem] [&_button]:text-base [&_button]:capitalize [&_button[aria-pressed='true']]:bg-[#536a40] [&_button[aria-pressed='true']]:text-[white] [&_button[aria-pressed='true']]:border-[#536a40] max-[700px]:[&_button]:min-h-11 max-[700px]:[&_button]:py-0 max-[700px]:[&_button]:px-2 max-[700px]:[&_button]:text-base"
               aria-label="Quick desk positions"
             >
               {(product.kind === "monitor"
@@ -126,7 +126,7 @@ export function PlacementControls({
           )}
         </div>
         <button
-          className="icon-button inline-flex items-center justify-center border border-[#dee2d4] bg-transparent w-8 h-8 rounded-[7px] p-0 max-[700px]:min-h-9 max-[700px]:min-w-9"
+          className="icon-button inline-flex items-center justify-center border border-[#dee2d4] bg-transparent w-8 h-8 rounded-[0.4375rem] p-0 max-[700px]:min-h-9 max-[700px]:min-w-9"
           aria-label="Close movement controls"
           onClick={onClose}
         >

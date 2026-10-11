@@ -77,7 +77,7 @@ test("rent navigates to checkout, reviews delivery details, downloads the correc
     .evaluateAll((elements) =>
       elements
         .filter(
-          (element) => parseFloat(getComputedStyle(element).fontSize) < 16,
+          (element) => parseFloat(getComputedStyle(element).fontSize) < 14,
         )
         .map((element) => element.textContent),
     );

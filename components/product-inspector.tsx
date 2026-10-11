@@ -124,7 +124,7 @@ export function ProductInspector({
       onClick={(event) => {
         if (event.target === event.currentTarget) inspection.close();
       }}
-      className="fixed inset-0 m-auto flex h-[min(900px,calc(100dvh-2rem))] max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-6xl flex-col overflow-hidden rounded-2xl border border-stone-200 bg-[#fcfbf7] p-0 text-stone-800 shadow-2xl outline-none backdrop:bg-stone-900/40 backdrop:backdrop-blur-sm max-sm:h-[calc(100dvh-1rem)] max-sm:max-h-[calc(100dvh-1rem)] max-sm:w-[calc(100vw-1rem)]"
+      className="fixed inset-0 m-auto flex h-[min(56.25rem,calc(100dvh-2rem))] max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-6xl flex-col overflow-hidden rounded-2xl border border-stone-200 bg-[#fcfbf7] p-0 text-stone-800 shadow-2xl outline-none backdrop:bg-stone-900/40 backdrop:backdrop-blur-sm max-sm:h-[calc(100dvh-1rem)] max-sm:max-h-[calc(100dvh-1rem)] max-sm:w-[calc(100vw-1rem)]"
     >
       <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-stone-200 px-5 py-4 sm:px-8">
         <p className="hidden text-lg font-semibold text-stone-800 sm:block">

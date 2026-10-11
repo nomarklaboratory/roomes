@@ -110,7 +110,7 @@ export function WalkControls({
       </div>
       {posture === "standing" && (
         <div
-          className="absolute bottom-5 right-5 grid grid-cols-[repeat(3,44px)] grid-rows-[repeat(2,44px)] gap-1 pointer-events-auto max-[700px]:right-4 max-[700px]:bottom-4"
+          className="absolute bottom-5 right-5 grid grid-cols-[repeat(3,2.75rem)] grid-rows-[repeat(2,2.75rem)] gap-1 pointer-events-auto max-[700px]:right-4 max-[700px]:bottom-4"
           aria-label="Walk through your workspace"
         >
           {directions.map(({ id, icon, label, className }) => (

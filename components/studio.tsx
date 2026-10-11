@@ -19,15 +19,15 @@ export default function Studio() {
     helpRef,
   } = useStudioFlow();
   return (
-    <div className="site-shell w-full max-w-378 m-auto py-0 px-12 max-[1150px]:py-0 max-[1150px]:px-7 max-[900px]:py-0 max-[900px]:px-[22px] max-[700px]:py-0 max-[700px]:px-[17px]">
-      <header className="site-header flex items-center justify-between h-[94px] border-b border-b-[#e4e6dc] max-[900px]:h-19 max-[700px]:h-18 max-[700px]:[&_.text-button]:text-base min-[701px]:h-[82px]">
+    <div className="site-shell w-full max-w-[1280px] m-auto py-0 px-12 max-[1150px]:py-0 max-[1150px]:px-7 max-[900px]:py-0 max-[900px]:px-[1.375rem] max-[700px]:py-0 max-[700px]:px-[1.0625rem]">
+      <header className="site-header flex items-center justify-between h-[5.875rem] border-b border-b-[#e4e6dc] max-[900px]:h-19 max-[700px]:h-18 max-[700px]:[&_.text-button]:text-base min-[701px]:h-[5.125rem]">
         <Link
           href="/"
-          className="brand flex items-baseline font-extrabold text-[35px] tracking-[-2px] max-[700px]:text-[31px]"
+          className="brand flex items-baseline font-extrabold text-[2.1875rem] tracking-[-0.125rem] max-[700px]:text-[1.9375rem]"
           aria-label="monis.rent workspace studio"
         >
           monis<span className="brand-dot text-[#6f8b48]">.</span>
-          <span className="brand-rent text-[22px] font-[450] tracking-[-1px] ml-[1px] max-[700px]:text-[19px]">
+          <span className="brand-rent text-[1.375rem] font-[450] tracking-[-0.0625rem] ml-[0.0625rem] max-[700px]:text-[1.1875rem]">
             rent
           </span>
         </Link>
@@ -39,10 +39,10 @@ export default function Studio() {
         </button>
       </header>
       <main>
-        <div className="hero-row flex items-center justify-between pt-[34px] pr-0 pb-[30px] pl-0 gap-6 max-[900px]:py-[27px] max-[900px]:px-0 max-[700px]:items-start max-[700px]:pt-[25px] max-[700px]:pr-0 max-[700px]:pb-[22px] max-[700px]:pl-0 max-[700px]:gap-0 max-[700px]:flex-col min-[701px]:py-[25px] min-[701px]:px-0">
+        <div className="hero-row flex items-center justify-between pt-[2.125rem] pr-0 pb-[1.875rem] pl-0 gap-6 max-[900px]:py-[1.6875rem] max-[900px]:px-0 max-[700px]:items-start max-[700px]:pt-[1.5625rem] max-[700px]:pr-0 max-[700px]:pb-[1.375rem] max-[700px]:pl-0 max-[700px]:gap-0 max-[700px]:flex-col min-[701px]:py-[1.5625rem] min-[701px]:px-0">
           <div>
             <h1
-              className="focus:outline-none text-[clamp(42px,_4.1vw,_63px)] font-[450] leading-[1.13] tracking-[-2.8px] mt-[10px] mr-0 mb-[10px] ml-0 [&_em]:font-serif [&_em]:font-normal [&_em]:text-[#627746] max-[700px]:text-[45px] max-[700px]:tracking-[-2px] max-[700px]:my-[10px] max-[700px]:mx-0 min-[701px]:text-[clamp(42px,_4vw,_57px)]"
+              className="focus:outline-none text-[clamp(2.625rem,_4.1vw,_3.9375rem)] font-[450] leading-[1.13] tracking-[-0.175rem] mt-[0.625rem] mr-0 mb-[0.625rem] ml-0 [&_em]:font-serif [&_em]:font-normal [&_em]:text-[#627746] max-[700px]:text-[2.8125rem] max-[700px]:tracking-[-0.125rem] max-[700px]:my-[0.625rem] max-[700px]:mx-0 min-[701px]:text-[clamp(2.625rem,_4vw,_3.5625rem)]"
               tabIndex={-1}
               ref={headingRef}
             >
@@ -56,7 +56,7 @@ export default function Studio() {
                 </>
               )}
             </h1>
-            <p className="hero-copy text-[#69715f] text-base m-0 tracking-[0.05px] max-[700px]:text-base max-[700px]:leading-[1.6]">
+            <p className="hero-copy text-[#69715f] text-base m-0 tracking-[0.0031rem] max-[700px]:text-base max-[700px]:leading-[1.6]">
               {ready && step === "brief"
                 ? "Tell us a little about your stay. We’ll give your workspace a head start."
                 : "Design your workspace. Make it yours."}
@@ -103,23 +103,23 @@ export default function Studio() {
       </main>
       <dialog
         ref={helpRef}
-        className="help-dialog text-[#293329] border border-[#dce2cd] rounded-[18px] p-[35px] bg-[#fafbf3] w-[min(470px,_90vw)] fixed [inset:0] m-auto [&::backdrop]:bg-[#27382360] [&::backdrop]:[backdrop-filter:blur(5px)] [&_h2]:text-[28px] [&_h2]:mt-4 [&_h2]:mr-0 [&_h2]:mb-[25px] [&_h2]:ml-0 [&_ol]:[list-style:none] [&_ol]:p-0 [&_ol]:m-0 [&_li]:flex [&_li]:gap-4 [&_li]:mb-5 [&_li]:text-base [&_li]:text-[#7b896c] [&_li]:leading-[1.7] [&_li_b]:text-[#68834b] [&_li_b]:text-base [&_li_strong]:block [&_li_strong]:text-[#3e5630] [&_li_strong]:font-medium [&_li_strong]:mb-[3px] [&_.primary-button]:w-full [&_.primary-button]:mt-[22px]"
+        className="help-dialog text-[#293329] border border-[#dce2cd] rounded-[1.125rem] p-[2.1875rem] bg-[#fafbf3] w-[min(29.375rem,_90vw)] fixed [inset:0] m-auto [&::backdrop]:bg-[#27382360] [&::backdrop]:[backdrop-filter:blur(5px)] [&_h2]:text-[1.75rem] [&_h2]:mt-4 [&_h2]:mr-0 [&_h2]:mb-[1.5625rem] [&_h2]:ml-0 [&_ol]:[list-style:none] [&_ol]:p-0 [&_ol]:m-0 [&_li]:flex [&_li]:gap-4 [&_li]:mb-5 [&_li]:text-base [&_li]:text-[#7b896c] [&_li]:leading-[1.7] [&_li_b]:text-[#68834b] [&_li_b]:text-base [&_li_strong]:block [&_li_strong]:text-[#3e5630] [&_li_strong]:font-medium [&_li_strong]:mb-[0.1875rem] [&_.primary-button]:w-full [&_.primary-button]:mt-[1.375rem]"
         onCancel={() => setHelp(false)}
         onClose={() => setHelp(false)}
         aria-labelledby="help-title"
       >
         <button
-          className="icon-button inline-flex items-center justify-center border border-[#dee2d4] bg-transparent w-8 h-8 rounded-[7px] p-0 max-[700px]:min-h-9 max-[700px]:min-w-9 dialog-close absolute top-[14px] right-[14px]"
+          className="icon-button inline-flex items-center justify-center border border-[#dee2d4] bg-transparent w-8 h-8 rounded-[0.4375rem] p-0 max-[700px]:min-h-9 max-[700px]:min-w-9 dialog-close absolute top-[0.875rem] right-[0.875rem]"
           aria-label="Close how it works"
           onClick={() => setHelp(false)}
         >
           <Icon name="close" />
         </button>
-        <div className="eyebrow text-base font-semibold tracking-[1.7px] text-[#728163]">
+        <div className="eyebrow text-base font-semibold tracking-[0.1062rem] text-[#728163]">
           IT STARTS WITH YOUR SPACE
         </div>
         <h2
-          className="text-[24px] font-[450] tracking-[-0.9px] leading-[1.2] mt-[7px] mr-0 mb-0 ml-0"
+          className="text-[1.5rem] font-[450] tracking-[-0.0563rem] leading-[1.2] mt-[0.4375rem] mr-0 mb-0 ml-0"
           id="help-title"
         >
           Work from somewhere
@@ -153,7 +153,7 @@ export default function Studio() {
         </ol>
 
         <button
-          className="primary-button flex items-center justify-between bg-[#d5ed97] text-[#354726] border border-[#cce18f] min-h-[47px] py-0 px-[21px] rounded-[7px] gap-7 text-base font-[550] hover:bg-[#c6e481]"
+          className="primary-button flex items-center justify-between bg-[#d5ed97] text-[#354726] border border-[#cce18f] min-h-[2.9375rem] py-0 px-[1.3125rem] rounded-[0.4375rem] gap-7 text-base font-[550] hover:bg-[#c6e481]"
           onClick={() => setHelp(false)}
         >
           Let’s make some space <Icon name="arrow" />

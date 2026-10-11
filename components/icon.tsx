@@ -39,8 +39,8 @@ export function Icon({
 }) {
   return (
     <svg
-      width={size}
-      height={size}
+      width={`${size / 16}rem`}
+      height={`${size / 16}rem`}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

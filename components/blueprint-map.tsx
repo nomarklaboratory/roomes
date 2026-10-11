@@ -18,7 +18,7 @@ export function BlueprintMap({
   return (
     <svg
       viewBox="0 0 960 620"
-      className="w-full min-w-[640px] text-[#40583d]"
+      className="w-full min-w-[40rem] text-[#40583d]"
       role="group"
       aria-label={`${view.title}, measurements in centimetres`}
     >

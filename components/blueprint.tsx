@@ -14,7 +14,7 @@ const instructions = {
 export function Blueprint() {
   const blueprint = useBlueprint();
   return (
-    <div className="mx-auto w-full max-w-[1600px] px-4 text-base sm:px-8">
+    <div className="mx-auto w-full max-w-[1280px] px-4 text-base sm:px-8">
       <header className="flex min-h-22 flex-wrap items-center justify-between gap-3 border-b border-[#dce3d4] py-4">
         <Link href="/" className="text-3xl font-semibold tracking-tight">
           monis<span className="text-[#70864f]">.</span>rent
@@ -32,7 +32,7 @@ export function Blueprint() {
             <h1 className="text-4xl font-medium tracking-tight">
               Your setup blueprint
             </h1>
-            <p className="mt-3 max-w-2xl text-base leading-relaxed text-stone-600">
+            <p className="mt-3 max-w-prose text-base leading-relaxed text-stone-600">
               Take the guesswork out of placing your setup. Match the numbers,
               then measure from the edges shown.
             </p>
@@ -79,7 +79,7 @@ export function Blueprint() {
         {!blueprint.loaded ? (
           <p role="status">Loading your setup…</p>
         ) : (
-          <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_370px]">
+          <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_23.125rem]">
             <section
               className="min-w-0 rounded-3xl border border-[#dce3d4] bg-white p-4 sm:p-6"
               aria-label="Placement drawings"
@@ -89,7 +89,7 @@ export function Blueprint() {
                 selected={blueprint.view.id}
                 onChange={blueprint.setViewId}
               />
-              <p className="mt-5 text-base leading-relaxed text-stone-600">
+              <p className="mt-5 max-w-prose text-base leading-relaxed text-stone-600">
                 {instructions[blueprint.view.id]}
               </p>
               <div
@@ -104,14 +104,16 @@ export function Blueprint() {
                   onSelect={blueprint.select}
                 />
               </div>
-              <p className="mt-4 text-base text-stone-600">
+              <p className="mt-4 max-w-prose text-base text-stone-600">
                 All distances in cm, rounded to 1 mm. Scroll the drawing on
                 smaller screens.
               </p>
-              <p className="mt-4 border-t border-[#e6ebdf] pt-4 text-base leading-relaxed text-stone-600">
-                Check the room dimensions against your measurements. Use the
-                product manufacturer’s instructions for assembly and mounting.
-              </p>
+              <div className="mt-4 border-t border-[#e6ebdf] pt-4">
+                <p className="max-w-prose text-base leading-relaxed text-stone-600">
+                  Check the room dimensions against your measurements. Use the
+                  product manufacturer’s instructions for assembly and mounting.
+                </p>
+              </div>
             </section>
             <aside aria-label="Placement measurements">
               <h2 className="mb-4 text-xl font-medium">

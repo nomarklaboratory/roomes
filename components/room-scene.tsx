@@ -384,7 +384,7 @@ export default function RoomScene(props: InspectableSceneProps) {
     <div
       ref={wrapper}
       className={cn(
-        "room-interaction relative w-full h-full [&.is-walking]:outline-offset-[-3px] [&.is-walking:focus-visible]:[outline:2px_solid_#6a8454]",
+        "room-interaction relative w-full h-full [&.is-walking]:outline-offset-[-0.1875rem] [&.is-walking:focus-visible]:[outline:2px_solid_#6a8454]",
         walking &&
           "is-walking [&_.room-canvas]:cursor-grab [&_.room-canvas:active]:cursor-grabbing",
       )}

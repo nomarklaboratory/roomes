@@ -21,11 +21,11 @@ export function PreviewTools({
   });
   return (
     <div
-      className="absolute right-5 top-[62px] z-[3] flex flex-col gap-1 max-[700px]:right-[23px] max-[700px]:top-[58px]"
+      className="absolute right-5 top-[3.875rem] z-[3] flex flex-col gap-1 max-[700px]:right-[1.4375rem] max-[700px]:top-[3.625rem]"
       aria-label="Preview controls"
     >
       <button
-        className="flex h-9 w-9 items-center justify-center rounded-[7px] border border-[#cfd9c1] bg-[#f7f7eeef] text-[#395334] hover:bg-[#e1e7d3] max-[700px]:h-11 max-[700px]:w-11"
+        className="flex h-9 w-9 items-center justify-center rounded-[0.4375rem] border border-[#cfd9c1] bg-[#f7f7eeef] text-[#395334] hover:bg-[#e1e7d3] max-[700px]:h-11 max-[700px]:w-11"
         aria-label="Zoom in preview"
         title="Zoom in"
         onClick={() => onZoom(1)}
@@ -33,7 +33,7 @@ export function PreviewTools({
         <Icon name="plus" size={17} />
       </button>
       <button
-        className="flex h-9 w-9 items-center justify-center rounded-[7px] border border-[#cfd9c1] bg-[#f7f7eeef] text-[#395334] hover:bg-[#e1e7d3] max-[700px]:h-11 max-[700px]:w-11"
+        className="flex h-9 w-9 items-center justify-center rounded-[0.4375rem] border border-[#cfd9c1] bg-[#f7f7eeef] text-[#395334] hover:bg-[#e1e7d3] max-[700px]:h-11 max-[700px]:w-11"
         aria-label="Zoom out preview"
         title="Zoom out"
         onClick={() => onZoom(-1)}
@@ -41,7 +41,7 @@ export function PreviewTools({
         <Icon name="minus" size={17} />
       </button>
       <button
-        className="flex h-9 w-9 items-center justify-center rounded-[7px] border border-[#cfd9c1] bg-[#f7f7eeef] text-[#395334] hover:bg-[#e1e7d3] max-[700px]:h-11 max-[700px]:w-11"
+        className="flex h-9 w-9 items-center justify-center rounded-[0.4375rem] border border-[#cfd9c1] bg-[#f7f7eeef] text-[#395334] hover:bg-[#e1e7d3] max-[700px]:h-11 max-[700px]:w-11"
         aria-label={
           fullscreen ? "Exit fullscreen preview" : "Fullscreen preview"
         }

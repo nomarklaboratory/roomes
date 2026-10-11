@@ -111,7 +111,7 @@ export const WorkspacePreview = memo(function WorkspacePreview({
       ref={stageRef}
       data-preview-stage
       className={cn(
-        "@container relative isolate flex h-[min(72dvh,760px)] min-h-[520px] w-full flex-col overflow-hidden rounded-2xl border border-[#dce1d2] bg-[#f0f2e8] max-[700px]:h-[min(68dvh,640px)] max-[700px]:min-h-[420px]",
+        "@container relative isolate flex h-[min(72dvh,47.5rem)] min-h-[32.5rem] w-full flex-col overflow-hidden rounded-2xl border border-[#dce1d2] bg-[#f0f2e8] max-[700px]:h-[min(68dvh,40rem)] max-[700px]:min-h-[26.25rem]",
         scene.previewExpanded &&
           "fixed inset-0 z-[100] h-dvh w-screen max-w-none rounded-none border-0",
       )}

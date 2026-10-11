@@ -6,44 +6,51 @@ An interactive Bali workspace designer: arrange real products in 3D, step inside
 
 **Source:** https://github.com/nomarklaboratory/roomes
 
-## Approach
-
-Customers arriving in Bali automatically start with a one-page rental brief: area, preferred date, duration, work style and screen space, with optional budget and room measurements. A deterministic recommendation checks monitor dimensions and finds a complete desk/chair setup within the equipment budget when possible. If it cannot, it shows the cheapest valid option and shortfall without dropping requested monitors. Applying a suggestion is one undoable change. The scoped rental-brief store carries answers into checkout without writing them to browser storage; only a separate pending/completed marker persists. The brief opens until explicitly completed or skipped, including for older saved rooms. Saved setups remain intact, and the renderer mounts after entering Design.
-
-The hard part is helping someone picture a complete setup quickly. The rental brief gives them a useful starting point, and a large cutaway room makes each selection tangible. The designer goes straight to their suggested room without another preset chooser. Drag furniture across the room and accessories across the tabletop, or use precise movement buttons. The desk carries its accessories, positions stay within their surfaces, and each completed drag creates one undo step. Quick placement slots and deterministic reflow still handle smaller desks and incompatible monitor combinations.
-
-Next.js App Router and Tailwind CSS provide the interface; React Three Fiber, Drei, and Three.js render original, reusable GLB models. Tailwind utilities style the components; `app/tailwind.css` contains only the Tailwind entry and theme. Shared domain types live in `types/`, `cn` combines class names, and ts-belt groups the catalog. Three scoped Zustand stores are shared across studio and checkout routes. The session-only rental-brief store holds committed answers; the workspace store owns committed configuration and undo, while the editor store owns selection, camera/posture controls, and unfinished placement. Objects subscribe only to their own movement draft. Hooks keep camera input, pointer capture, fullscreen, and inspection effects local; checkout owns its form state. The catalog and configuration rules are independent of the renderer. The existing pure reducer handles history and configuration rules; quotes are derived in integer cents. Device storage keeps the existing versioned setup envelope, including product IDs, finishes, and layouts migrated from earlier saves. Draft movement and editor controls never write to storage; confirming placement creates one undo entry. The renderer loads on the client, renders on demand outside first-person mode, bounds its pixel density, and falls back to an updating 2D illustration if WebGL is unavailable. First-person navigation uses a separate eye-level camera with room and furniture collision bounds; it supports drag-to-look, keyboard walking, and touch controls without requiring pointer lock.
+**Stack:** Next.js, Tailwind CSS, Vercel
 
 ## Try it
 
-- On a first visit, fill the **rental brief** for an editable suggestion, or **Skip rental brief** to start designing. Monitor users can record a laptop connection preference; compatibility and cables still need verification. **Edit rental brief** reopens it; **Back to my setup** leaves the room untouched.
+On a first visit, fill the **rental brief** for an editable suggestion, or **Skip rental brief** to start designing. Monitor users can record a laptop connection preference; compatibility and cables still need verification. **Edit rental brief** reopens it. **Back to my setup** leaves the room untouched.
 
-- Choose from two desks and two chairs, and change the tabletop finish.
-- Add monitors, a lamp, a plant, or a laptop stand. Up to two monitors must fit the desk. Accessories can be duplicated when another copy fits on their tabletop or wall surface; desks and chairs remain one per setup.
-- Hold a setup item until the action wheel appears. Slide up to **Duplicate** to add another copy of that accessory directly, left to **Move**, right to **Inspect**, or down to **Delete** an accessory, then release. Copies get independent positions, count toward the rental quote, save on the device, and undo in one step. Duplicate is disabled for furniture and when another copy cannot fit. Move the pointer or drag on touch, then click or tap **Place**; **Cancel** or Escape discards the draft. Use Top for easier placement, or select a chip below the preview for movement buttons and position reset. Furniture and wall items move in 10 cm steps; tabletop accessories in 2 cm steps. Undo and device saving include positions.
-- Use the **+ / −** controls to zoom and the expand button to make the preview fullscreen. The product catalog works inside both native fullscreen and viewport expansion; closing it keeps the room expanded and restores focus to the catalog button. A viewport expansion works in browsers without element fullscreen; its exit button or Escape restores the editor.
-- Click **Sit in chair** directly in the preview, or select the Chair chip and choose **Sit in this chair**. Both enter first person over the selected chair cushion at a 170 cm person's estimated seated eye level: 123 cm on Aeron, 120 cm on Sayl. Looking around stays enabled; **Stand up** returns to walking beside the chair.
-- Open **Room dimensions** to enter width and depth (2.4–10 m) and height (2.2–5 m). Apply updates the room, camera framing, and walking limits without resizing products. Dimensions persist, support Undo, and appear at checkout.
-- Select a product and use **Position by measurement** to enter edge distances in cm. Open **Blueprint** for Room, Desk and Back wall drawings with matching product numbers and **Download PDF** for a vector placement guide. Checkout completion also links to the blueprint. See [blueprint conventions](docs/blueprint.md).
-- Add **Torq Mod Fun Surfboard** under Extras to mount it on the back wall. Drag horizontally or vertically, or use the movement buttons. Desk movement leaves wall items in place.
-- Choose **Inside** to start standing at an estimated 159 cm eye level. Drag to look; use WASD, arrow keys, or hold the onscreen direction buttons to walk. The same Sit in chair / Stand up toggle is available inside the room. Recenter restores the current posture's viewpoint; Exit view or Escape returns to the overview.
-- Hold a 3D product until its action wheel appears, slide right to **Inspect**, and release to open the official media in a centered dialog. Moving before the hold completes cancels the action; sliding down to **Delete** asks for confirmation on accessories. **Inspect product** provides keyboard access and shows the selected item, or the desk by default. Switch between setup items, zoom photos, inspect material details, and play recorded manufacturer films where available. Videos load only after Play and stop when the media, product, or dialog changes. Inspection also works in fullscreen, Inside, and the 2D fallback. Escape, the close button, and the backdrop dismiss the dialog.
-- Choose 1, 2, 4, or 8 weeks, then click **Rent this setup** to open `/checkout`. Review your itemized setup, fill in contact and delivery details, and save the rental request as a JSON file. **Back to studio** preserves the setup, positions, and duration.
+Choose from two desks and two chairs, and change the tabletop finish. Add monitors, a lamp, a plant, or a laptop stand. Up to two monitors must fit the desk. Accessories can be duplicated when another copy fits on their tabletop or wall surface. Desks and chairs stay one per setup.
 
-Desk input accessories have dedicated default positions. Keyboard and mouse rest on the desk mat; the mouse pad adds its own surface height. Each kind can be added once, and all extras survive device hydration and undo.
+Hold a setup item until the action wheel appears, then slide and release:
 
-All prices are **illustrative USD weekly rates**. The catalog contains Jarvis Bamboo and Laminate desks, Herman Miller Aeron and Sayl chairs, Dell UltraSharp 27 and 34 monitors, BenQ WiT, IKEA FEJKA Rosemary, Twelve South Curve, Torq Mod Fun, Logitech Studio Desk Mat and Mouse Pad, MX Keys Mini, MX Master 3S, and Elgato Stream Deck MK.2. Models represent their silhouettes and published envelopes; official images show the actual materials. FEJKA foliage spread is estimated. Bamboo is available on the bamboo desk; white and black laminate on the laminate desk. Supplier photos or films that show another finish, size, or a styling prop are labeled. These sample products do not imply Monis stock or manufacturer affiliation. No payment, reservation, or booking request is sent. Contact and delivery fields stay in memory and in the request file only when explicitly downloaded. Download completion clears customer details from this tab. Only the product configuration and a versioned onboarding completion marker are automatically saved on the device. Delivery dates are checked against Bali's UTC+8 calendar.
+- **Duplicate** (up) adds another copy of that accessory. Copies get their own positions, count toward the quote, save on the device, and undo in one step. Duplicate is unavailable for furniture and when another copy cannot fit.
+- **Move** (left) starts a draft. Drag, then click or tap **Place**. **Cancel** or Escape discards it. Use Top for placement. A chip below the preview opens movement buttons and position reset. Furniture and wall items move in 10 cm steps. Tabletop accessories move in 2 cm steps. Undo and device saving include positions.
+- **Inspect** (right) opens that product's official media.
+- **Delete** (down) asks for confirmation on accessories.
+
+Moving before the hold completes cancels the action. **Inspect product** is the keyboard path and shows the selected item, or the desk by default. From there, switch setup items, zoom photos, inspect material details, and play recorded manufacturer films where they exist. Videos load only after Play and stop when the media, product, or dialog changes. Inspection also works in fullscreen, Inside, and the 2D fallback. Escape, the close button, and the backdrop close the dialog.
+
+**+ / −** zooms. The expand button makes the preview fullscreen. The product catalog works inside native fullscreen and inside the viewport expansion. Closing the catalog keeps the room expanded and returns focus to the catalog button. Browsers without element fullscreen get the viewport expansion. Its exit button or Escape restores the editor.
+
+**Sit in chair**, in the preview or from the Chair chip, enters first person over the selected cushion at a 170 cm person's estimated seated eye level: 123 cm on Aeron, 120 cm on Sayl. Looking around stays available. **Stand up** returns to walking beside the chair.
+
+**Inside** starts standing at an estimated 159 cm eye level. Drag to look. WASD, arrow keys, or the onscreen direction buttons walk. The same **Sit in chair** / **Stand up** toggle is available inside the room. Recenter restores the current posture's viewpoint. Exit view or Escape returns to the overview.
+
+**Room dimensions** takes width and depth from 2.4–10 m and height from 2.2–5 m. Apply updates the room, camera framing, and walking limits without resizing products. Dimensions persist, support Undo, and appear at checkout.
+
+**Position by measurement** sets edge distances in cm. **Blueprint** opens Room, Desk, and Back wall drawings with matching product numbers. **Download PDF** saves a vector placement guide. The completed checkout also links to the blueprint. See [blueprint conventions](docs/blueprint.md).
+
+**Torq Mod Fun Surfboard**, under Extras, mounts on the back wall. Drag it horizontally or vertically, or use the movement buttons. Moving the desk leaves wall items where they are.
+
+Desk input accessories start in fixed places. The keyboard and mouse rest on the desk mat, and the mouse pad adds its own surface height. Each kind can be added once. Extras survive device hydration and undo.
+
+Choose 1, 2, 4, or 8 weeks, then **Rent this setup** opens `/checkout`. Review the itemized setup, fill in contact and delivery details, and save the rental request as JSON. **Back to studio** keeps the setup, positions, and duration.
+
+Prices are illustrative USD weekly rates. The catalog is Jarvis Bamboo and Laminate desks, Herman Miller Aeron and Sayl chairs, Dell UltraSharp 27 and 34 monitors, BenQ WiT, IKEA FEJKA Rosemary, Twelve South Curve, Torq Mod Fun, Logitech Studio Desk Mat and Mouse Pad, MX Keys Mini, MX Master 3S, and Elgato Stream Deck MK.2. Models represent their silhouettes and published envelopes. Official images show the materials. FEJKA foliage spread is estimated. Bamboo is available on the bamboo desk. White and black laminate are available on the laminate desk. Supplier photos or films that show another finish, size, or a styling prop are labeled. These samples do not imply Monis stock or manufacturer affiliation.
+
+No payment, reservation, or booking request is sent. Contact and delivery fields stay in memory, and in the request file only after an explicit download. A finished download clears customer details from the tab. Only the product configuration and a versioned onboarding completion marker are saved on the device automatically. Delivery dates are checked against Bali's UTC+8 calendar.
 
 ## Run locally
 
-Use Node.js 24+ and pnpm 11.
+Use Node.js 24+ and pnpm 11. No account, backend, or environment variables are required.
 
 ```sh
 pnpm install --frozen-lockfile
 pnpm dev
 ```
-
-No account, backend, or environment variables are required to use the app.
 
 ```sh
 pnpm typecheck
@@ -55,24 +62,24 @@ pnpm build
 pnpm start
 ```
 
-`pnpm test:e2e` builds the app and serves it on port 3100, so it never reuses or disturbs a running `pnpm dev`.
+`pnpm test:e2e` builds the app and serves it on port 3100, so it never reuses a running `pnpm dev`.
 
-Store tests cover independent studio instances, compatible v1/v2/v3 hydration, unavailable storage, draft isolation, and coordinated seating. Domain tests exercise real catalog/media metadata, old product/finish migration, viewer heights/posture, placement bounds, undo, walking collisions, fit/reflow, quantities, quotes, corrupted persistence, and date boundaries. Asset checks verify floor contact, chair seat height, geometry, compression, and budgets. Browser tests cover real mouse/touch hold-and-slide actions, moves, precise placement, layout persistence, standing/seated navigation, zoom, fullscreen and its browser fallback, the complete rental flow, desk finishes, desktop/mobile layouts, 3D readiness, the help dialog, and a device without WebGL. Inspection checks cover photo zoom/reset, finish and chair replacement, lazy video playback/cleanup, image retry, selected item removal, and desktop/mobile layouts. Tests retain traces on failure and capture the editor, first-person views, fullscreen, and confirmation for visual inspection.
+Store tests cover independent studio instances, v1/v2/v3 hydration, unavailable storage, draft isolation, and coordinated seating. Domain tests cover catalog and media metadata, old product and finish migration, viewer heights and posture, placement bounds, undo, walking collisions, fit and reflow, quantities, quotes, corrupted saves, and date boundaries. Asset checks cover floor contact, chair seat height, geometry, compression, and budgets. Browser tests cover mouse and touch hold-and-slide, moves, precise placement, layout persistence, standing and seated navigation, zoom, fullscreen and its fallback, the rental flow, desk finishes, desktop and mobile layouts, 3D readiness, the help dialog, and a device without WebGL. Inspection checks cover photo zoom and reset, finish and chair replacement, lazy video playback and cleanup, image retry, removing the selected item, and desktop and mobile layouts. Failures keep traces. The suite also captures the editor, first-person views, fullscreen, and confirmation.
 
 ## Sustainable asset workflow
 
-The real-product catalog uses original parametric models with product-specific silhouettes and runtime desk finishes. Blender renders development thumbnails; customer-facing catalog and review images use curated official product media, optimized locally. Recorded films use official supplier URLs and never preload on opening the dialog. A manifest records bounds, versions, provenance, and budgets. The optional, bounded Meshy pilot was skipped because no credentials were configured; no credits were spent. AI generation happens offline, followed by optimization, dimension calibration, and human approval.
+Catalog models are original and parametric, with product-specific silhouettes and runtime desk finishes. Blender renders development thumbnails. Customer-facing catalog and review images are curated official product media, optimized locally. Recorded films use official supplier URLs and do not preload when the dialog opens. A manifest records bounds, versions, provenance, and budgets. The Meshy pilot was skipped because no credentials were configured, and no credits were spent. Any AI generation happens offline, then goes through optimization, dimension calibration, and human approval.
 
 See [asset workflow and pilot](docs/assets.md) for reproducible commands and the production pipeline.
 
-See [viewer calibration](docs/viewer.md) for human proportions, seated positioning, and floor/rug geometry. The eye-height assumptions are representative preview measurements; exact product fit requires validated client dimensions.
+See [viewer calibration](docs/viewer.md) for human proportions, seated positioning, and floor and rug geometry. Eye heights are representative preview measurements. Exact product fit needs validated client dimensions.
 
-See [catalog scale and live sources](docs/catalog-scale.md) and [product media and inspiration](docs/product-media.md). All fifteen products have official sources and posture notes; FEJKA foliage spread remains estimated. The catalog and inspector show W × D × H and evidence status; select an item in the preview to inspect its source and adjustment notes. Every compressed model is checked against catalog dimensions within 2 mm, with separate seat, tabletop, and screen checks.
+See [catalog scale and live sources](docs/catalog-scale.md) and [product media and inspiration](docs/product-media.md). All fifteen products have official sources and posture notes. FEJKA foliage spread remains estimated. The catalog and inspector show W × D × H and evidence status. Select an item in the preview to inspect its source and adjustment notes. Every compressed model is checked against catalog dimensions within 2 mm, with separate seat, tabletop, and screen checks.
 
 ## With more time
 
-Connect authoritative inventory, date availability, delivery pricing, and server-side quotes before taking bookings. Validate product dimensions and asset fidelity with the client, map the sample products to actual rental stock and media rights, and test performance on low-end phones. Then introduce asynchronous asset jobs, human review/version rollback, and a real commerce integration. Extend placement with rotation, furniture-to-furniture collision checks, non-rectangular rooms, and door/window editing. Room scanning remains a separate product bet.
+Connect inventory, date availability, delivery pricing, and server-side quotes before taking bookings. Validate dimensions and asset fidelity with the client, map the samples to real rental stock and media rights, and test on low-end phones. Then add asynchronous asset jobs, human review with version rollback, and a real commerce integration. Placement could add rotation, furniture-to-furniture collision, non-rectangular rooms, and door and window editing. Room scanning remains a separate product bet.
 
 ## Submission
 
-Next.js · Tailwind CSS · Vercel. Public GitHub repository; `desent-bot` was invited with **Read** access on 10 October 2026. Acceptance is controlled by the bot.
+Public GitHub repository. `desent-bot` was invited with **Read** access on 10 October 2026. Acceptance is controlled by the bot.

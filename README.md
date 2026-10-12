@@ -8,6 +8,10 @@ An interactive Bali workspace designer: arrange real products in 3D, step inside
 
 **Stack:** Next.js, Tailwind CSS, Vercel
 
+## Approach and tech choices
+
+I made the room preview the main workspace, with hold-and-slide product actions and a catalog modal that leaves more space for designing. React Three Fiber and Drei power the 3D experience, while official product photos help users inspect materials and a downloadable blueprint helps them recreate their saved layout. Next.js and TypeScript provide the app structure, Tailwind handles styling, Zustand manages the setup and undo history, and React Hook Form with Zod handles form validation; interaction logic lives in reusable hooks. With more time, I would connect real rental inventory and availability, validate product dimensions with the client, and improve performance on low-end phones before adding payments.
+
 ## Try it
 
 On a first visit, fill the **rental brief** for an editable suggestion, or **Skip rental brief** to start designing. Monitor users can record a laptop connection preference; compatibility and cables still need verification. **Edit rental brief** reopens it. **Back to my setup** leaves the room untouched.
